@@ -1,0 +1,51 @@
+.sidemenu {
+    width: 210px;
+    height: 100vh;
+    min-height: 100vh;
+    display: block;
+    float: left;
+    background-color: var(--primary-color);
+    padding: 10px 0px;
+    box-shadow: 4px 0px 10px 4px var(--shadow-color);
+    margin-right: 16px;
+
+    ul {
+        padding: 0;
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: bold;
+        margin-left: 4px;
+        letter-spacing: 3px;
+    }
+
+    li {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-color-second);
+        padding: 14px 24px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        transition: 0.2s linear all;
+
+        mat-icon{
+            margin-right: 14px;
+            font-size: 24px;
+        }
+
+        &:hover{
+            background-color: var(--text-white-3);
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+    }
+
+    .logout {
+        position: absolute;
+        bottom: 0;
+        width: 210px;
+    }
+}

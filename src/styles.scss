@@ -5,12 +5,14 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
-    --primary-color: #f0b800;
+    --primary-color: #e0ad02;
     --error-color: #ac2828;
     --gray-color: #757575;
     --shadow-color: #0a0a0a20;
     --shadow-color-hover: #0a0a0a50;
     --text-color:#000000;
+    --text-color-second:#fafafa;
+    --text-white-3:#f0f0f0;
     --text-button-color:#000000;
     --backgroud-color: #fff;
 }
@@ -30,3 +32,5 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .hover:hover {
     cursor: pointer;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

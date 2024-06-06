@@ -1,0 +1,14 @@
+<div class="area-login-background d-none d-md-block"></div>
+
+<div class="area-form">
+    <form action="">
+        <h1 class="titulo">SIMPLE</h1>
+        <h2 class="subtitulo">O parceiro de todo MEI</h2>
+
+        <input [(ngModel)]="userName" [ngModelOptions]="{standalone: true}" class="input-form" type="text" placeholder="Digite seu nome">
+
+        <app-button textButton="Acessar" size="100" (click)="login()"></app-button>
+    </form>
+
+    <p class="footer">© 2024 | Desenvolvido por Micael Almeida</p>
+</div>

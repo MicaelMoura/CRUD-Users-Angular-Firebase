@@ -5,7 +5,7 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
-    --primary-color: #e0ad02;
+    --primary-color: #f5be0c;
     --error-color: #ac2828;
     --gray-color: #757575;
     --shadow-color: #0a0a0a20;
@@ -17,20 +17,14 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --backgroud-color: #fff;
 }
 
-.c-primary {
-    color: var(--primary-color);
-}
-
-.c-error {
-    color: var(--error-color);
-}
-
-.c-gray {
-    color: var(--gray-color);
-}
+.c-primary {color: var(--primary-color);}
+.c-error {color: var(--error-color);}
+.c-gray {color: var(--gray-color);}
 
 .hover:hover {
     cursor: pointer;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-mdc-progress-spinner .mdc-circular-progress__determinate-circle, .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic {
+    stroke: var(--primary-color) !important;
+}

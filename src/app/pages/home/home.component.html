@@ -2,13 +2,14 @@
 
 <div class="container-fluid pt-3">
     <div class="row">
+        <!--LADO ESQUERDO-->
         <div class="col-12 col-lg-9">
             <div class="card-info">
                 <div class="row">
                     <div class="col-12 col-md-8">
                         <h1 class="titulo">Seja bem-vindo!</h1>
                         <h3 class="subtitulo">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <span>incididunt</span> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco <span>laboris</span> nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum<br>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor <span>incididunt</span> ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco <span>laboris</span> nisi ut aliquip ex ea commodo consequat. Duis rehenderit in voluptate velit esse cillum.<br>
                             In culpa qui officia deserunt <span>mollit</span> anim id est laborum.
                         </h3>
 
@@ -31,17 +32,67 @@
                                 <p class="destaque-card"></p>
                             </div>
                             <div class="col-4">
-                                <mat-progress-spinner
-        class="example-margin"
-        [value]="79">
-    </mat-progress-spinner>
+                                <mat-progress-spinner class="example-margin mx-auto color-spinner" mode="determinate" value="79"></mat-progress-spinner>
                                 <p class="info-spinner">79/150</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
+                <!-- Card da direita -->
+                <div class="col-6">
+                    <div class="card-info">
+                        <div class="row">
+                            <div class="col-8">
+                                <p class="texto-card">Total de benefícios cadastrados</p>
+                                <p class="numero-card">4</p>
+                                <p class="destaque-card">+ 2 adicionados no último mês</p>
+                            </div>
+                            <div class="col-4">
+                                <mat-progress-spinner class="example-margin mx-auto color-spinner" mode="determinate" value="80"></mat-progress-spinner>
+                                <p class="info-spinner">4/5</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Último usuário cadastrado -->
+                 <div class="col-12 mt-4">
+                    <div class="card-info">
+                        <h3 class="titulo">Último usuário cadastrado</h3>
+                        <hr class="hr">
+                        <div class="row">
+                            <div class="col-1"><mat-icon>account_circle</mat-icon></div>
+                            <div class="col-1"><p class="texto-p">1</p></div>
+                            <div class="col"><p class="texto-p">Micael Moura</p></div>
+                            <div class="col"><p class="texto-p">Desenvolvedor</p></div>
+                        </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+        <!--LADO DIREITO-->
+        <div class="col-12 col-lg-3">
+            <div class="card-info">
+                <div class="container-perfil">
+                    <img src="../../../assets/perfil.jpg" alt="Imagem perfil" class="img-perfil">
+                    <h4>Seja bem-vindo!</h4>
+                    <h5>{{userName}}</h5>
+                    <li><mat-icon>location_on</mat-icon> Curitiba - PR</li>
+                </div>
+
+                <hr class="hr">
+                <p class="texto-p">
+                    "Se você não vivenciar o fracasso, não saberá reconhecer quando o sucesso realmente chegar."
+                </p>
+                <hr class="hr">
+
+                <li><mat-icon>person</mat-icon> Gerenciar usuários</li>
+                <li><mat-icon>loyalty</mat-icon> Adicionar benefícios</li>
+                <li><mat-icon>format_list_bulleted</mat-icon> Consultar cadastros</li>
+                <li><mat-icon>delete</mat-icon> Excluir usuários</li>
+            </div>
         </div>
     </div>
 </div>

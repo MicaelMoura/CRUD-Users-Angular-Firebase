@@ -9,11 +9,10 @@
     padding: 6px 20px;
     border-radius: 5px;
     box-shadow: 0px 0px 3px 1px var(--shadow-color);
-    transition: 0.1s linear all;
-    margin-left: 5px;
+    transition: 0.1s linear all;    
     &:hover{
         box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
-
+        color: white;
     }
     &:disabled {
         cursor: default;

@@ -7,4 +7,15 @@ import { Component } from '@angular/core';
 })
 export class HomeComponent {
 
+  userName: string | null;
+
+  ngOnInit() {
+    if (typeof window !== 'undefined') {
+      this.userName = sessionStorage.getItem('userName');
+    }
+    else {
+      this.userName = 'Usuário';
+    }
+  }
+
 }

@@ -1,0 +1,77 @@
+<app-menu></app-menu>
+
+<div class="container-fluid pt-3">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="titulo">Cadastro de usuários</h1>
+            <h2 class="subtitulo">Gerencie usuários adicionando, editando ou excluindo</h2>
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div class="col-8">
+            <mat-form-field>
+                <mat-label>Busca usuário</mat-label>
+                <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+            </mat-form-field>
+        </div>
+        <div class="col-4">
+            <app-button textButton="+ Cadastrar" class="float-end"></app-button>
+        </div>
+
+        <div class="col-12 shadow-lg">
+            <table mat-table [dataSource]="dataSource" matSort>
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Id </th>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.firebaseId}} </td>
+                </ng-container>
+            
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Nome </th>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.name}} </td>
+                </ng-container>
+            
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> E-mail </th>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.email}} </td>
+                </ng-container>
+            
+                <ng-container matColumnDef="role">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Cargo </th>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.role}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="benefits">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Benefícios </th>
+                    <td mat-cell class="td-table" *matCellDef="let user">
+                        @if (user.healthPlan || user.dentalPlan) {
+                            <mat-icon class="c-primary" >check</mat-icon>
+                        }
+
+                        @if (!user.healthPlan && !user.dentalPlan) {
+                            <mat-icon class="c-error">remove</mat-icon>
+                        }
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
+                    <td mat-cell class="td-table" *matCellDef="let user">
+                        <mat-icon class="icone-tabela">visibility</mat-icon>
+                        <mat-icon class="icone-tabela">edit</mat-icon>
+                        <mat-icon class="icone-tabela">delete</mat-icon>
+                    </td>
+                  </ng-container>
+            
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            
+                <tr class="mat-row no-data" *matNoDataRow>
+                  <td class="mat-cell" colspan="4">Nenhuma informação compatível com o filtro: "{{input.value}}"</td>
+                </tr>
+            </table>
+            
+            <mat-paginator [pageSizeOptions]="[1,5, 10, 25, 50]" aria-label="Quantidade de usuários por página"></mat-paginator>
+        </div>
+    </div>
+</div>

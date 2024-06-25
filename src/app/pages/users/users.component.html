@@ -57,7 +57,7 @@
                   <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
                     <td mat-cell class="td-table" *matCellDef="let user">
-                        <mat-icon class="icone-tabela">visibility</mat-icon>
+                        <mat-icon class="icone-tabela" (click)="openModalViewUser(user)">visibility</mat-icon>
                         <mat-icon class="icone-tabela">edit</mat-icon>
                         <mat-icon class="icone-tabela">delete</mat-icon>
                     </td>
@@ -71,7 +71,7 @@
                 </tr>
             </table>
             
-            <mat-paginator [pageSizeOptions]="[1,5, 10, 25, 50]" aria-label="Quantidade de usuários por página"></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" aria-label="Quantidade de usuários por página"></mat-paginator>
         </div>
     </div>
 </div>

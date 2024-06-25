@@ -19,7 +19,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort';
-import { MatPaginatorModule} from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { ModalViewUserComponent } from './pages/users/modal-view-user/modal-view-user.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -28,7 +31,8 @@ import { MatPaginatorModule} from '@angular/material/paginator';
     LoginComponent,
     HomeComponent,
     MenuComponent,
-    UsersComponent
+    UsersComponent,
+    ModalViewUserComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +45,7 @@ import { MatPaginatorModule} from '@angular/material/paginator';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatDialogModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [

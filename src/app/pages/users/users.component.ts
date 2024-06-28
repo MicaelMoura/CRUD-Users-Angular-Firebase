@@ -12,6 +12,7 @@ import { ModalViewUserComponent } from './modal-view-user/modal-view-user.compon
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
+
 export class UsersComponent {
   
   displayedColumns: string[] = ['id', 'name', 'email', 'role', 'benefits', 'action'];
@@ -66,8 +67,8 @@ export class UsersComponent {
   // Modal
   openModalViewUser(user: User) {
     this.dialog.open(ModalViewUserComponent, {
-      width: '700px',
-      height: '330px',
+      width: '900px',
+      height: '450px',
       data: user
     })
   }

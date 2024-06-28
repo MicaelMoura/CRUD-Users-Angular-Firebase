@@ -67,9 +67,13 @@ export class UsersComponent {
   // Modal
   openModalViewUser(user: User) {
     this.dialog.open(ModalViewUserComponent, {
-      width: '900px',
-      height: '450px',
+      width: '1000px',
+      height: '430px',
       data: user
     })
+  }
+
+  deleteUser(firebaseId: string) {
+    this.usersService.deleteUser(firebaseId);
   }
 }

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { NAME_SOFTWARE, SLOGAN } from '../../../constants'
 
 @Component({
   selector: 'app-login',
@@ -8,8 +9,8 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   userName: string;
-  nameCompany: string = "CRUD";
-  slogan: string = "O sistema para qualquer empresa";
+  nameSoftware: string = NAME_SOFTWARE;
+  slogan: string = SLOGAN;
 
   constructor(private rota: Router) {}
 

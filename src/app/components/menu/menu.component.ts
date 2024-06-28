@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { NAME_SOFTWARE } from '../../../constants'
 
 @Component({
   selector: 'app-menu',
@@ -7,7 +8,8 @@ import { Router } from '@angular/router';
   styleUrl: './menu.component.scss'
 })
 export class MenuComponent {
-  
+  nameSoftware: string = NAME_SOFTWARE;
+
   constructor(private rota: Router) {}
   
   logout() {

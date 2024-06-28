@@ -19,8 +19,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort';
-import { MatPaginatorModule} from '@angular/material/paginator';
-import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { ModalViewUserComponent } from './pages/users/modal-view-user/modal-view-user.component';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +32,7 @@ import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form
     HomeComponent,
     MenuComponent,
     UsersComponent,
-    ModalFormUserComponent
+    ModalViewUserComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +45,7 @@ import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatDialogModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [

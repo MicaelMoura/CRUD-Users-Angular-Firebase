@@ -57,7 +57,7 @@
                   <ng-container matColumnDef="action">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
                     <td mat-cell class="td-table" *matCellDef="let user">
-                        <mat-icon class="icone-tabela">visibility</mat-icon>
+                        <mat-icon class="icone-tabela" (click)="openModalViewUser(user)">visibility</mat-icon>
                         <mat-icon class="icone-tabela">edit</mat-icon>
                         <mat-icon class="icone-tabela" (click)="deleteUser(user.firebaseId)">delete</mat-icon>
                     </td>

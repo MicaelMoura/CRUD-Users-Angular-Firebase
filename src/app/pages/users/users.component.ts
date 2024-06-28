@@ -4,6 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { User } from '../../interfaces/user';
 import { MatTableDataSource } from '@angular/material/table';
+import { response } from 'express';
 
 @Component({
   selector: 'app-users',
@@ -38,6 +39,14 @@ export class UsersComponent {
         console.log('Erro: ', err);
       }
     });
+  }
+
+  deleteUser(firebaseId: string) {
+    this.usersService.deleteUser(firebaseId).then(
+      (response: any) => {
+        window.alert('Usuário excluído com sucesso!')
+      }
+    );
   }
 
   ngAfterViewInit() {

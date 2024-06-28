@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort';
 import { MatPaginatorModule} from '@angular/material/paginator';
+import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { MatPaginatorModule} from '@angular/material/paginator';
     LoginComponent,
     HomeComponent,
     MenuComponent,
-    UsersComponent
+    UsersComponent,
+    ModalFormUserComponent
   ],
   imports: [
     BrowserModule,

@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   userName: string;
+  nameCompany: string = "CRUD";
+  slogan: string = "O sistema para qualquer empresa";
 
   constructor(private rota: Router) {}
 

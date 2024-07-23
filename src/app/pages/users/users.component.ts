@@ -6,6 +6,7 @@ import { User } from '../../interfaces/user';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewUserComponent } from './modal-view-user/modal-view-user.component';
+import { ModalFormUserComponent } from './modal-form-user/modal-form-user.component';
 
 @Component({
   selector: 'app-users',
@@ -36,9 +37,14 @@ export class UsersComponent {
   gelListUsers() {
     this.usersService.getAllUsers().subscribe({
       next: (response: any) => {
+
         this.listUsers = response;
+
         this.dataSource = new MatTableDataSource<any>(this.listUsers);
-        this.orderUsers();
+        //this.orderUsers();
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.paginator._intl.itemsPerPageLabel="Itens por página";
       },
       error: (err) => {
         console.log('Erro: ', err);
@@ -76,4 +82,15 @@ export class UsersComponent {
   deleteUser(firebaseId: string) {
     this.usersService.deleteUser(firebaseId);
   }
+
+    // Modal
+    openModalAddUser() {
+      this.dialog.open(ModalFormUserComponent, {
+        width: '1000px',
+        height: '430px'
+      })
+      .afterClosed().subscribe(() => {
+        this.gelListUsers()
+      })
+    }
 }

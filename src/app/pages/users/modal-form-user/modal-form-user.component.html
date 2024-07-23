@@ -1,1 +1,75 @@
-<p>modal-form-user works!</p>
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">Cadastro de Usuário</h1>
+    <h2 class="subtitulo">Preencha o formulário com os dados do usuário</h2>
+
+    <form class="row" [formGroup]="formUser">
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Nome</mat-label>
+                <input type="text" matInput formControlName="name" placeholder="Digite o nome">
+                @if (formUser.controls['name'].invalid) {
+                  <mat-error>Preencha com um nome válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>E-mail</mat-label>
+                <input type="email" matInput formControlName="email" placeholder="Ex. exemplo@crud.com">
+                @if (formUser.controls['email'].invalid) {
+                  <mat-error>Preencha com um e-mail válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Setor</mat-label>
+                <input type="text" matInput formControlName="sector" placeholder="Digite o setor">
+                @if (formUser.controls['sector'].invalid) {
+                  <mat-error>Preencha com um setor válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Cargo</mat-label>
+                <input type="text" matInput formControlName="role" placeholder="Digite o cargo">
+                @if (formUser.controls['role'].invalid) {
+                  <mat-error>Preencha com um cargo válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label><mat-icon>favorite</mat-icon> Plano de Saúde</mat-label>
+                <mat-select  formControlName="healthPlan" placeholder="Escolha o plano de saúde">
+                    <mat-option></mat-option>
+                    @for (plano of planosSaude; track plano) {
+                        <mat-option [value]="plano.descricao">{{plano.descricao}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 md-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label><mat-icon>mood</mat-icon> Plano Odontológico</mat-label>
+                <mat-select  formControlName="dentalPlan" placeholder="Escolha o plano odontológico">
+                    <mat-option></mat-option>
+                    @for (plano of planosOdonto; track plano) {
+                        <mat-option [value]="plano.descricao">{{plano.descricao}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="col-12">
+            <!-- Criar propriedade no nosso componente para aceitar ficar inativo -->
+            <!-- <app-button textButton="Salvar" class="float-end"></app-button> -->
+             <button class="botao-primario float-end" [disabled]="!formUser.valid">Salvar</button>
+        </div>
+    </form>
+</div>

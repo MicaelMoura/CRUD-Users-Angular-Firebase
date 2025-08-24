@@ -1,2 +1,2 @@
-export const NAME_SOFTWARE = 'CRUD';
-export const SLOGAN = 'O sistema para qualquer empresa';
+export const NAME_SOFTWARE = 'COMMERCIUM';
+export const SLOGAN = 'Seu parceiro de negócios';

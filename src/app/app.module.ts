@@ -24,6 +24,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
 import {  NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 
 
 @NgModule({
@@ -55,7 +56,16 @@ import {  NoopAnimationsModule } from '@angular/platform-browser/animations';
     NoopAnimationsModule
   ],
   providers: [
-    //provideFirebaseApp(() => initializeApp({"projectId":"curso-angular-8e009","appId":"1:1030430354633:web:4406e95e86574a7496f118","storageBucket":"curso-angular-8e009.appspot.com","apiKey":"AIzaSyBe5ZFIlFEbUqcIPDWLD8YKFozSEP4oAOM","authDomain":"curso-angular-8e009.firebaseapp.com","messagingSenderId":"1030430354633"})),
+    provideFirebaseApp(() => initializeApp(
+      {
+        "projectId":"curso-angular-8e009",
+        "appId":"1:1030430354633:web:4406e95e86574a7496f118",
+        "storageBucket":"curso-angular-8e009.appspot.com",
+        "apiKey":"AIzaSyBe5ZFIlFEbUqcIPDWLD8YKFozSEP4oAOM",
+        "authDomain":"curso-angular-8e009.firebaseapp.com",
+        "messagingSenderId":"1030430354633"
+      }
+    )),
     provideFirestore(() => getFirestore())
   ],
   bootstrap: [AppComponent]

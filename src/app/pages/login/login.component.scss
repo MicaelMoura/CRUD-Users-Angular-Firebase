@@ -4,21 +4,22 @@
 }
 
 .area-login-background {
-    flex: 1 1 55%;
+    flex: 0 0 30%; // Agora a imagem ocupará 30% da largura da página
     display: none;
 
     @media only screen and (min-width: 768px) {
         display: block;
         background-image: url('../../../assets/back2.png');
         background-color: var(--primary-color);
-        background-size: auto 100%;
+        background-size: auto 110%;
         background-position: center bottom;
         background-repeat: no-repeat;
     }
 }
 
+
 .area-form {
-    flex: 1 1 45%;
+    flex: 1; // Ocupará todo o espaço restante (os outros 70%)
     background: var(--backgroud-color);
     display: flex;
     align-items: center;

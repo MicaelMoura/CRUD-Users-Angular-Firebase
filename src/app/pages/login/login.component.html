@@ -1,13 +1,31 @@
 <div class="area-login-background d-none d-md-block"></div>
 
 <div class="area-form">
-    <form action="">
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
         <h1 class="titulo">{{ nameSoftware }}</h1>
         <h2 class="subtitulo">{{ slogan }}</h2>
 
-        <input [(ngModel)]="userName" [ngModelOptions]="{standalone: true}" class="input-form" type="text" placeholder="Digite seu nome">
+        <div class="form-group">
+          <input formControlName="email" class="input-form" type="email" placeholder="Digite seu email">
+          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
+            <p *ngIf="loginForm.get('email')?.errors?.['required']">Email é obrigatório.</p>
+            <p *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido.</p>
+          </div>
+        </div>
 
-        <app-button textButton="Acessar" size="100" (click)="login()"></app-button>
+        <div class="form-group">
+          <input formControlName="password" class="input-form" type="password" placeholder="Digite sua senha">
+          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
+            <p *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</p>
+            <p *ngIf="loginForm.get('password')?.errors?.['minlength']">A senha deve ter no mínimo 6 caracteres.</p>
+          </div>
+        </div>
+        
+        <button type="submit" [disabled]="loginForm.invalid">Acessar</button>
+        
+        <div *ngIf="errorMessage" class="error-message-box">
+          {{ errorMessage }}
+        </div>
     </form>
 
     <p class="footer">© 2024 | Desenvolvido por Micael Almeida</p>

@@ -21,8 +21,8 @@
           </div>
         </div>
         
-        <button type="submit" [disabled]="loginForm.invalid">Acessar</button>
-        
+        <app-button textButton="Acessar" type="submit"></app-button>
+
         <div *ngIf="errorMessage" class="error-message-box">
           {{ errorMessage }}
         </div>

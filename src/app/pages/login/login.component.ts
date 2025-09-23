@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { NAME_SOFTWARE, SLOGAN } from '../../../constants'
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,9 @@ export class LoginComponent implements OnInit {
   errorMessage: string = '';
   nameSoftware: string = NAME_SOFTWARE;
   slogan: string = SLOGAN;
+
+  private snackBar: MatSnackBar = inject(MatSnackBar);
+  hidePassword = signal(true);
 
   constructor(
     private fb: FormBuilder,
@@ -44,5 +48,25 @@ export class LoginComponent implements OnInit {
       console.error('Erro no login:', error.message);
       this.errorMessage = 'Email ou senha incorretos.';
     }
+  }
+
+  async recoverPassword(): Promise<void> {
+    this.errorMessage = '';
+    const emailControl = this.loginForm.get('email');
+
+    if (emailControl && emailControl.valid) {
+      try {
+        await this.afAuth.sendPasswordResetEmail(emailControl.value);
+        this.snackBar.open('Email de recuperação enviado! Verifique sua caixa de entrada.', 'Fechar', { duration: 3000 });
+      } catch (error: any) {
+        console.error('Erro ao enviar email de recuperação:', error.message);
+      }
+    } else {
+      this.snackBar.open('Por favor, insira um email válido para continuar', 'Fechar', { duration: 3000 });
+    }
+  }
+
+  togglePasswordVisibility(): void {
+    this.hidePassword.set(!this.hidePassword());
   }
 }

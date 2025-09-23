@@ -18,7 +18,7 @@ import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { EmpresasComponent } from './pages/empresas/empresas.component';
-import { provideNgxMask, NgxMaskDirective } from 'ngx-mask';
+import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -64,7 +64,8 @@ import {MatCardModule} from '@angular/material/card';
     MatCardModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     NoopAnimationsModule,
-    NgxMaskDirective
+    NgxMaskDirective, 
+    NgxMaskPipe, 
   ],
   providers: [
     provideFirebaseApp(() => initializeApp(
@@ -78,7 +79,7 @@ import {MatCardModule} from '@angular/material/card';
       }
     )),
     provideFirestore(() => getFirestore()),
-    provideNgxMask()
+    provideNgxMask(),
   ],
   bootstrap: [AppComponent]
 })

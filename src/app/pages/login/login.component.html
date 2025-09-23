@@ -1,32 +1,43 @@
 <div class="area-login-background d-none d-md-block"></div>
 
 <div class="area-form">
-    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
-        <h1 class="titulo">{{ nameSoftware }}</h1>
-        <h2 class="subtitulo">{{ slogan }}</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <h1 class="titulo">{{ nameSoftware }}</h1>
+    <h2 class="subtitulo">{{ slogan }}</h2>
 
-        <div class="form-group">
-          <input formControlName="email" class="input-form" type="email" placeholder="Digite seu email">
-          <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
-            <p *ngIf="loginForm.get('email')?.errors?.['required']">Email é obrigatório.</p>
-            <p *ngIf="loginForm.get('email')?.errors?.['email']">Email inválido.</p>
-          </div>
-        </div>
+    <mat-form-field class="full-width-input">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="Digite seu email">
+      <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+        Email é obrigatório.
+      </mat-error>
+      <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+        Email inválido.
+      </mat-error>
+    </mat-form-field>
 
-        <div class="form-group">
-          <input formControlName="password" class="input-form" type="password" placeholder="Digite sua senha">
-          <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
-            <p *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória.</p>
-            <p *ngIf="loginForm.get('password')?.errors?.['minlength']">A senha deve ter no mínimo 6 caracteres.</p>
-          </div>
-        </div>
-        
-        <app-button textButton="Acessar" type="submit"></app-button>
+    <mat-form-field class="full-width-input">
+      <mat-label>Senha</mat-label>
+      <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" placeholder="Digite sua senha">
+      <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+        <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+        Senha é obrigatória.
+      </mat-error>
+      <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+        A senha deve ter no mínimo 6 caracteres.
+      </mat-error>
+    </mat-form-field>
 
-        <div *ngIf="errorMessage" class="error-message-box">
-          {{ errorMessage }}
-        </div>
-    </form>
+    <a (click)="recoverPassword()" class="forgot-password-link">Esqueci minha senha</a>
 
-    <p class="footer">© 2024 | Desenvolvido por Micael Almeida</p>
+    <app-button textButton="Acessar" type="submit" [disabled]="loginForm.invalid"></app-button>
+
+    <div *ngIf="errorMessage" class="error-message-box">
+      {{ errorMessage }}
+    </div>
+  </form>
+
+  <p class="footer">© 2024 | Desenvolvido por Micael Almeida</p>
 </div>

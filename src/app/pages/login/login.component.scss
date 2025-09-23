@@ -4,7 +4,7 @@
 }
 
 .area-login-background {
-    flex: 0 0 30%; // Agora a imagem ocupará 30% da largura da página
+    flex: 0 0 30%;
     display: none;
 
     @media only screen and (min-width: 768px) {
@@ -17,9 +17,8 @@
     }
 }
 
-
 .area-form {
-    flex: 1; // Ocupará todo o espaço restante (os outros 70%)
+    flex: 1;
     background: var(--backgroud-color);
     display: flex;
     align-items: center;
@@ -34,7 +33,7 @@
 
     form {
         width: 100%;
-        max-width: 400px;
+        max-width: 300px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -60,18 +59,27 @@
         text-align: center;
     }
 
-    .input-form {
-        outline: none;
-        padding: 8px 10px;
-        width: 100%;
-        border-radius: 7px;
-        border: 1px solid transparent;
-        margin-bottom: 32px;
-        transition: 0.2s linear all;
-        box-shadow: inset 1px 1px 2px #b1b4c280, inset -1px -1px 2px #adadadb0;
-        
-        &:focus {
-            border: 1px solid var(--primary-color);
+    // Estilos para os campos do Material
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .forgot-password-button {
+      // Remover estilos conflitantes com o Material
+      text-align: center;
+    }
+
+    .forgot-password-link {
+        font-size: 14px;
+        color: var(--primary-color);
+        margin-top: -10px;
+        margin-bottom: 15px;
+        cursor: pointer; // Adiciona o cursor de ponteiro
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+            text-decoration: underline;
         }
     }
 

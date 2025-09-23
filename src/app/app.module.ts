@@ -14,6 +14,13 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from '../environments/environment';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { UsersComponent } from './pages/users/users.component';
+import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { EmpresasComponent } from './pages/empresas/empresas.component';
+import { provideNgxMask, NgxMaskDirective } from 'ngx-mask';
+import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
@@ -22,9 +29,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { ModalViewUserComponent } from './pages/users/modal-view-user/modal-view-user.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
-import {  NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { MatIcon } from '@angular/material/icon';
+import {MatCardModule} from '@angular/material/card';
 
 
 @NgModule({
@@ -36,7 +42,9 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
     MenuComponent,
     UsersComponent,
     ModalViewUserComponent,
-    ModalFormUserComponent
+    ModalFormUserComponent,
+    EmpresasComponent,
+    ModalEmpresasFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,8 +60,11 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
     MatPaginatorModule,
     MatDialogModule,
     MatSelectModule,
+    MatIcon,
+    MatCardModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    NoopAnimationsModule
+    NoopAnimationsModule,
+    NgxMaskDirective
   ],
   providers: [
     provideFirebaseApp(() => initializeApp(
@@ -66,7 +77,8 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
         "messagingSenderId":"1030430354633"
       }
     )),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => getFirestore()),
+    provideNgxMask()
   ],
   bootstrap: [AppComponent]
 })

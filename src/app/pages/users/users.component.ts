@@ -39,7 +39,7 @@ export class UsersComponent {
       next: (response: any) => {
 
         this.listUsers = response;
-        console.log(this.listUsers);
+
         this.dataSource = new MatTableDataSource<any>(this.listUsers);
         //this.orderUsers();
         this.dataSource.paginator = this.paginator;

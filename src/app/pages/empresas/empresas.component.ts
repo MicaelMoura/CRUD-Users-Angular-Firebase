@@ -21,6 +21,7 @@ export class EmpresasComponent implements OnInit {
   @ViewChild(MatSort) sort!: MatSort;
 
   private empresasService: EmpresasService = inject(EmpresasService);
+  
   constructor(public dialog: MatDialog) {
     this.dataSource = new MatTableDataSource<Empresas>([]);
   }
@@ -34,21 +35,23 @@ export class EmpresasComponent implements OnInit {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  openModalAddCompany() {
+  // Novo método para abrir o modal de adição ou edição
+  openCompanyFormModal(empresas?: Empresas | null) {
     this.dialog.open(ModalEmpresasFormComponent, {
-      width: '900px'
+      width: '900px',
+      data: empresas // Passa os dados da empresa para o modal
     })
     .afterClosed().subscribe(() => {
       this.getListEmpresas();
-    })
+    });
   }
 
   openModalViewCompany(empresas: Empresas) {
     this.dialog.open(ModalViewEmpresasComponent, {
-          width: '1000px',
-          height: '430px',
-          data: empresas
-    })
+      width: '1000px',
+      height: '430px',
+      data: empresas
+    });
   }
 
   deleteCompany(companyId: string) {
@@ -57,7 +60,7 @@ export class EmpresasComponent implements OnInit {
   }
 
   getListEmpresas() {
-     this.empresasService.getEmpresas().subscribe(data => {
+    this.empresasService.getEmpresas().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

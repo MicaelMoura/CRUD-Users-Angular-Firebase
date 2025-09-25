@@ -1,37 +1,43 @@
-import { Component, inject, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { EmpresasService } from '../../../services/empresas.service'; // Importe o serviço
-import { Empresas } from '../../../interfaces/empresas'; // Importe a interface
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { EmpresasService } from '../../../services/empresas.service';
+import { Empresas } from '../../../interfaces/empresas';
 
 @Component({
   selector: 'app-companies-form',
   templateUrl: './modal-form-empresas.component.html',
-  styleUrls: ['./modal-form-empresas.component.scss']
+  styleUrls: ['./modal-form-empresas.component.scss'],
 })
 export class ModalEmpresasFormComponent implements OnInit {
   formCompany!: FormGroup;
-
-  private empresasService: EmpresasService  = inject(EmpresasService);
+  isEditMode = false;
 
   constructor(
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<ModalEmpresasFormComponent>,
+    private empresasService: EmpresasService,
+    @Inject(MAT_DIALOG_DATA) public data: Empresas
   ) { }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     this.formCompany = this.fb.group({
-        razaoSocial: ['', Validators.required],
-        nomeFantasia: ['', Validators.required],
-        cnpj: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        telefone: ['',Validators.required],
-        endereco: ['', Validators.required],
-        bairro: ['', Validators.required],
-        cidadeUf: ['', Validators.required],
-        cep: ['', [Validators.required, Validators.pattern(/^\d{5}-\d{3}$/)]]
+      razaoSocial: ['', Validators.required],
+      nomeFantasia: ['', Validators.required],
+      cnpj: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      telefone: ['', [Validators.required]],
+      endereco: ['', Validators.required],
+      bairro: ['', Validators.required],
+      cidadeUf: ['', Validators.required],
+      cep: ['', [Validators.required]]
     });
+
+    if (this.data) {
+      this.isEditMode = true;
+      this.formCompany.patchValue(this.data);
     }
+  }
 
   closeModal(): void {
     this.dialogRef.close();
@@ -39,19 +45,26 @@ export class ModalEmpresasFormComponent implements OnInit {
 
   saveCompany(): void {
     if (this.formCompany.valid) {
-      // Cria o objeto da empresa a partir do formulário
-      const novaEmpresa: Empresas = { ...this.formCompany.value };
-
-      // Chama o método do serviço e fecha o modal SOMENTE após o salvamento
-      this.empresasService.addEmpresa(novaEmpresa)
-        .then(() => {
-          console.log('Empresa salva com sucesso!');
-          this.dialogRef.close();
-        })
-        .catch(error => {
-          console.error('Erro ao salvar a empresa:', error);
-          // Opcional: mostrar uma mensagem de erro para o usuário
-        });
+      const empresaData = { ...this.formCompany.value };
+      if (this.isEditMode) {
+        this.empresasService.updateEmpresa(this.data.id, empresaData)
+          .then(() => {
+            console.log('Empresa atualizada com sucesso!');
+            this.dialogRef.close();
+          })
+          .catch(error => {
+            console.error('Erro ao atualizar a empresa:', error);
+          });
+      } else {
+        this.empresasService.addEmpresa(empresaData)
+          .then(() => {
+            console.log('Empresa salva com sucesso!');
+            this.dialogRef.close();
+          })
+          .catch(error => {
+            console.error('Erro ao salvar a empresa:', error);
+          });
+      }
     }
   }
 }

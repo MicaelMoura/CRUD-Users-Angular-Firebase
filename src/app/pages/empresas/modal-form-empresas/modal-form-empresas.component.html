@@ -1,7 +1,7 @@
 <div class="modal-container p-3">
     <div class="modal-header">
         <mat-icon class="close-icon hover" (click)="closeModal()">close</mat-icon>
-        <h1 class="titulo">Cadastro de Empresa</h1>
+        <h1 class="titulo">{{ isEditMode ? 'Editar Empresa' : 'Cadastro de Empresa' }}</h1>
         <h2 class="subtitulo">Preencha o formulário com os dados da empresa</h2>
     </div>
 
@@ -18,7 +18,7 @@
         <div class="col-12 col-md-6 form-field-container">
             <mat-form-field class="w-100">
                 <mat-label>CNPJ</mat-label>
-                <input type="text" matInput formControlName="cnpj" placeholder="Ex. 00.000.000/0001-00">
+                <input type="text" matInput formControlName="cnpj" placeholder="Ex. 00.000.000/0001-00" mask="00.000.000/0000-00">
                 @if (formCompany.controls['cnpj'].invalid) {
                   <mat-error>Preencha com um CNPJ válido</mat-error>
                 }
@@ -83,13 +83,13 @@
                 <mat-label>CEP</mat-label>
                 <input type="text" matInput formControlName="cep" placeholder="Digite o CEP ex. 00000-000" mask="00000-000">
                 @if (formCompany.controls['cep'].invalid) {
-                  <mat-error>Preencha com uma cidade válida</mat-error>
+                  <mat-error>Preencha com um CEP válido</mat-error>
                 }
             </mat-form-field>
         </div>
 
         <div class="col-12">
-            <button class="botao-primario float-end" [disabled]="!formCompany.valid" type="submit">Salvar</button>
+            <button class="botao-primario float-end" [disabled]="!formCompany.valid" type="submit">{{ isEditMode ? 'Atualizar' : 'Salvar' }}</button>
         </div>
     </form>
 </div>

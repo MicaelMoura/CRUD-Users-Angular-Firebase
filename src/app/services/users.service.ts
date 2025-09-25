@@ -11,15 +11,15 @@ export class UsersService {
   constructor(private dataBaseStore: AngularFirestore) {}
 
   getAllUsers() {
-    return this.dataBaseStore.collection('users', user => user.orderBy('name')).valueChanges({idField: 'firebaseId'}) as Observable<any[]>;
+    return this.dataBaseStore.collection('users', user => user.orderBy('nome')).valueChanges({idField: 'firebaseId'}) as Observable<any[]>;
   }
 
   addUser(user: User) {
     return this.dataBaseStore.collection('users').add(user);
   }
 
-  update(userId: string, user: User) {
-    return this.dataBaseStore.collection('users').doc(userId).update(user);
+  updateUser(id: string, data: Partial<User>): Promise<void> {
+      return this.dataBaseStore.doc(id).update(data);
   }
 
   deleteUser(userId: string) {

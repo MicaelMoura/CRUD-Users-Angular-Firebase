@@ -1,0 +1,95 @@
+<div class="modal-container p-3">
+    <div class="modal-header">
+        <mat-icon class="close-icon hover" (click)="closeModal()">close</mat-icon>
+        <h1 class="titulo">{{ isEditMode ? 'Editar Empresa' : 'Cadastro de Empresa' }}</h1>
+        <h2 class="subtitulo">Preencha o formulário com os dados da empresa</h2>
+    </div>
+
+    <form class="row" [formGroup]="formCompany" (ngSubmit)="saveCompany()">
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Razão Social</mat-label>
+                <input type="text" matInput formControlName="razaoSocial" placeholder="Digite a razão social">
+                @if (formCompany.controls['razaoSocial'].invalid) {
+                  <mat-error>Preencha com um nome válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>CNPJ</mat-label>
+                <input type="text" matInput formControlName="cnpj" placeholder="Ex. 00.000.000/0001-00" mask="00.000.000/0000-00">
+                @if (formCompany.controls['cnpj'].invalid) {
+                  <mat-error>Preencha com um CNPJ válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Nome fantasia</mat-label>
+                <input type="text" matInput formControlName="nomeFantasia" placeholder="Digite o nome fantasia">
+                @if (formCompany.controls['nomeFantasia'].invalid) {
+                  <mat-error>Preencha com um nome válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>E-mail</mat-label>
+                <input type="email" matInput formControlName="email" placeholder="Ex. contato@empresa.com">
+                @if (formCompany.controls['email'].invalid) {
+                  <mat-error>Preencha com um e-mail válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Telefone</mat-label>
+                <input type="tel" matInput formControlName="telefone" placeholder="Digite o telefone" mask="(00) 00000-0000">
+                @if (formCompany.controls['telefone'].invalid) {
+                  <mat-error>Preencha com um telefone válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Endereço</mat-label>
+                <input type="text" matInput formControlName="endereco" placeholder="Digite o endereço completo">
+                @if (formCompany.controls['endereco'].invalid) {
+                  <mat-error>Preencha com um endereço válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Bairro</mat-label>
+                <input type="text" matInput formControlName="bairro" placeholder="Digite o nome do bairro">
+                @if (formCompany.controls['bairro'].invalid) {
+                  <mat-error>Preencha com um bairro válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>Cidade-UF</mat-label>
+                <input type="text" matInput formControlName="cidadeUf" placeholder="Digite o nome da cidade e o estado">
+                @if (formCompany.controls['cidadeUf'].invalid) {
+                  <mat-error>Preencha com uma cidade válida</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>CEP</mat-label>
+                <input type="text" matInput formControlName="cep" placeholder="Digite o CEP ex. 00000-000" mask="00000-000">
+                @if (formCompany.controls['cep'].invalid) {
+                  <mat-error>Preencha com um CEP válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        <div class="col-12">
+            <button class="botao-primario float-end" [disabled]="!formCompany.valid" type="submit">{{ isEditMode ? 'Atualizar' : 'Salvar' }}</button>
+        </div>
+    </form>
+</div>

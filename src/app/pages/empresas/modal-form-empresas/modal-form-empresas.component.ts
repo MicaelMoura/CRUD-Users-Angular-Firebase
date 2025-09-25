@@ -47,7 +47,7 @@ export class ModalEmpresasFormComponent implements OnInit {
     if (this.formCompany.valid) {
       const empresaData = { ...this.formCompany.value };
       if (this.isEditMode) {
-        this.empresasService.updateEmpresa(this.data.id, empresaData)
+        this.empresasService.updateEmpresa(this.data.firebaseId, empresaData)
           .then(() => {
             console.log('Empresa atualizada com sucesso!');
             this.dialogRef.close();

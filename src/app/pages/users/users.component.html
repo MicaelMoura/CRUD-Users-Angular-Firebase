@@ -16,7 +16,7 @@
             </mat-form-field>
         </div>
         <div class="col-4">
-            <app-button textButton="+ Cadastrar" class="float-end" (click)="openModalAddUser()"></app-button>
+            <app-button textButton="+ Cadastrar" class="float-end" (click)="openModalAddUser(null)"></app-button>
         </div>
 
         <div class="col-12 shadow-lg">
@@ -40,7 +40,7 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
                   <td mat-cell class="td-table" *matCellDef="let user">
                       <mat-icon class="icone-tabela" (click)="openModalViewUser(user)">visibility</mat-icon>
-                      <mat-icon class="icone-tabela">edit</mat-icon>
+                      <mat-icon class="icone-tabela" (click)="openModalAddUser(user)">edit</mat-icon>
                       <mat-icon class="icone-tabela" (click)="deleteUser(user.firebaseId)">delete</mat-icon>
                   </td>
                 </ng-container>

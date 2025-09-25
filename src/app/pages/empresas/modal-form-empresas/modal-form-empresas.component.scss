@@ -1,0 +1,81 @@
+.modal-container {
+    background: var(--background-color);
+}
+
+.modal-header {
+    display: flex;
+    flex-direction: column; // Força os elementos a se empilharem verticalmente
+    align-items: flex-start; // Alinha os itens à esquerda, caso necessário
+    padding-bottom: 20px;
+}
+
+.close-icon {
+    position: absolute; // Posicionamento absoluto em relação ao pai
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px; // Aumenta um pouco o tamanho do ícone
+    z-index: 10;
+}
+
+.titulo {
+    font-size: 26px;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    color: var(--primary-color);
+    width: 100%;;
+}
+
+.subtitulo {
+    font-size: 16px;
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+    color: var(--gray-color);
+    padding-bottom: 14px;
+    width: 100%;
+}
+.form-field-container {
+    margin-bottom: 15px;
+}
+
+mat-form-field {
+    width: 100%;
+
+    // Aumenta a fonte do rótulo
+    .mat-mdc-form-field-label {
+        font-size: 16px;
+    }
+
+    // Aumenta a fonte e a altura do input
+    .mat-mdc-form-field-input-control {
+        .mdc-text-field__input {
+            height: 40px !important;
+            font-size: 16px;
+            padding-top: 10px;
+        }
+    }
+}
+
+.botao-primario{
+    width: auto;
+    outline: none;
+    border: 0;
+    background: var(--primary-color);
+    color: var(--text-button-color);
+    font-weight: 400;
+    font-size: 16px;
+    padding: 6px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 1px var(--shadow-color);
+    transition: 0.1s linear all;    
+    &:hover{
+        box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
+        color: white;
+    }
+    &:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+}

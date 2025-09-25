@@ -25,4 +25,9 @@ export class EmpresasService {
   deleteEmpresa(id: string): Promise<void> {
     return this.empresasCollection.doc(id).delete();
   }
+
+  // Método para atualizar uma empresa
+  updateEmpresa(id: string, data: Partial<Empresas>): Promise<void> {
+    return this.empresasCollection.doc(id).update(data);
+  }
 }

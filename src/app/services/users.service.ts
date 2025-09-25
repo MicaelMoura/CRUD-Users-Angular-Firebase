@@ -18,8 +18,8 @@ export class UsersService {
     return this.dataBaseStore.collection('users').add(user);
   }
 
-  update(userId: string, user: User) {
-    return this.dataBaseStore.collection('users').doc(userId).update(user);
+  updateUser(id: string, data: Partial<User>): Promise<void> {
+      return this.dataBaseStore.doc(id).update(data);
   }
 
   deleteUser(userId: string) {

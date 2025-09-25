@@ -1,5 +1,5 @@
 export interface Empresas {
-    id: string,
+    firebaseId: string,
     razaoSocial: string,
     nomeFantasia: string,
     cnpj: string,

@@ -9,36 +9,6 @@ import { MatDialogRef } from '@angular/material/dialog';
 })
 export class ModalFormUserComponent {
 
-  planosSaude = [
-    {
-      id: 1,
-      descricao: 'Viva-Bem'
-    },
-    {
-      id: 2,
-      descricao: 'A vida é uma festa'
-    },
-    {
-      id: 3,
-      descricao: 'QuaseLá'
-    }
-  ];
-
-  planosOdonto = [
-    {
-      id: 1,
-      descricao: 'SorriDente'
-    },
-    {
-      id: 2,
-      descricao: 'Unidente'
-    },
-    {
-      id: 3,
-      descricao: 'Dentin'
-    }
-  ];
-
   formUser: FormGroup;
 
   constructor(private formBuilder: FormBuilder, public dialogRef: MatDialogRef<ModalFormUserComponent>) {}

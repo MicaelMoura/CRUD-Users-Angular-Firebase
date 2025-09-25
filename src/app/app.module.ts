@@ -20,6 +20,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
+import { ModalViewEmpresasComponent} from './pages/empresas/modal-view-empresas/modal-view-empresas.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -45,6 +46,7 @@ import {MatCardModule} from '@angular/material/card';
     ModalFormUserComponent,
     EmpresasComponent,
     ModalEmpresasFormComponent,
+    ModalViewEmpresasComponent
   ],
   imports: [
     BrowserModule,

@@ -5,8 +5,8 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { EmpresasService } from '../../services/empresas.service'; 
 import { Empresas } from '../../interfaces/empresas'; 
-import e from 'express';
 import { ModalEmpresasFormComponent } from './modal-form-empresas/modal-form-empresas.component';
+import { ModalViewEmpresasComponent } from './modal-view-empresas/modal-view-empresas.component';
 
 @Component({
   selector: 'app-empresas',
@@ -43,8 +43,12 @@ export class EmpresasComponent implements OnInit {
     })
   }
 
-  openModalViewCompany(company: Empresas) {
-    // Lógica para abrir o modal de visualização de empresa
+  openModalViewCompany(empresas: Empresas) {
+    this.dialog.open(ModalViewEmpresasComponent, {
+          width: '1000px',
+          height: '430px',
+          data: empresas
+    })
   }
 
   deleteCompany(companyId: string) {
@@ -57,6 +61,7 @@ export class EmpresasComponent implements OnInit {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+      this.paginator._intl.itemsPerPageLabel="Itens por página";
     });
   }
 }

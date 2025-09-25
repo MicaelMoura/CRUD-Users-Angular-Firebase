@@ -1,12 +1,12 @@
 export interface Empresas {
-    razaoSicial: string,
+    razaoSocial: string,
     nomeFantasia: string,
     cnpj: string,
     endereco: string,
     telefone: string,
     email: string
-    Cidade?: string,
-    Bairro?: string,
-    Cep?: string,
-    Complemento?: string
+    cidade?: string,
+    bairro?: string,
+    cep?: string,
+    complemento?: string
 }

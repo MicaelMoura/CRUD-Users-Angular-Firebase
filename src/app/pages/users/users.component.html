@@ -22,46 +22,28 @@
         <div class="col-12 shadow-lg">
             <table mat-table [dataSource]="dataSource" matSort>
                 <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Id </th>
-                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.firebaseId}} </td>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Id Empresa </th>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.empresaid}} </td>
                 </ng-container>
             
                 <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Nome </th>
-                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.name}} </td>
+                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.nome}} </td>
                 </ng-container>
             
                 <ng-container matColumnDef="email">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> E-mail </th>
                   <td mat-cell class="td-table" *matCellDef="let user"> {{user.email}} </td>
                 </ng-container>
-            
-                <ng-container matColumnDef="role">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Cargo </th>
-                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.role}} </td>
+                
+                <ng-container matColumnDef="action">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
+                  <td mat-cell class="td-table" *matCellDef="let user">
+                      <mat-icon class="icone-tabela" (click)="openModalViewUser(user)">visibility</mat-icon>
+                      <mat-icon class="icone-tabela">edit</mat-icon>
+                      <mat-icon class="icone-tabela" (click)="deleteUser(user.firebaseId)">delete</mat-icon>
+                  </td>
                 </ng-container>
-
-                <ng-container matColumnDef="benefits">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Benefícios </th>
-                    <td mat-cell class="td-table" *matCellDef="let user">
-                        @if (user.healthPlan || user.dentalPlan) {
-                            <mat-icon class="c-primary" >check</mat-icon>
-                        }
-
-                        @if (!user.healthPlan && !user.dentalPlan) {
-                            <mat-icon class="c-error">remove</mat-icon>
-                        }
-                    </td>
-                  </ng-container>
-
-                  <ng-container matColumnDef="action">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
-                    <td mat-cell class="td-table" *matCellDef="let user">
-                        <mat-icon class="icone-tabela" (click)="openModalViewUser(user)">visibility</mat-icon>
-                        <mat-icon class="icone-tabela">edit</mat-icon>
-                        <mat-icon class="icone-tabela" (click)="deleteUser(user.firebaseId)">delete</mat-icon>
-                    </td>
-                  </ng-container>
             
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

@@ -9,8 +9,10 @@
 
     @media only screen and (min-width: 768px) {
         display: block;
-        background-image: url('../../../assets/back2.png');
-        background-color: var(--primary-color);
+        background-image: 
+            linear-gradient(to left, rgb(255, 255, 255) 0%, rgba(14, 19, 61, 0.404) 50%),
+            url('../../../assets/bg.jpg');
+        background-color: var(--backgroud-color);
         background-size: auto 110%;
         background-position: center bottom;
         background-repeat: no-repeat;
@@ -20,7 +22,7 @@
 .area-form {
     flex: 1;
     background: var(--backgroud-color);
-    display: flex;
+    display: flex; 
     align-items: center;
     justify-content: center;
     position: relative;

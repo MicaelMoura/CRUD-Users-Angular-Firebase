@@ -1,9 +1,6 @@
 export interface User {
-    name: string,
+    id: string,
+    nome: string,
     email: string,
-    sector: string,
-    role: string,
-    firebaseId?: string,
-    healthPlan?: string,
-    dentalPlan?: string
+    empresaid: string
 }

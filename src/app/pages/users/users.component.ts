@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewUserComponent } from './modal-view-user/modal-view-user.component';
 import { ModalFormUserComponent } from './modal-form-user/modal-form-user.component';
+import { EmpresasService } from '../../services/empresas.service'; // Importar o serviço de empresas
+import { Empresas } from '../../interfaces/empresas'; // Importar a interface de empresas
 
 @Component({
   selector: 'app-users',
@@ -14,34 +16,34 @@ import { ModalFormUserComponent } from './modal-form-user/modal-form-user.compon
   styleUrl: './users.component.scss'
 })
 
-export class UsersComponent {
+export class UsersComponent implements OnInit {
   
-  displayedColumns: string[] = ['id', 'name', 'email', 'role', 'benefits', 'action'];
+  displayedColumns: string[] = ['id', 'name', 'email', 'action'];
   dataSource: any;
   listUsers: User[] = [];
+  listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private usersService: UsersService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private empresasService: EmpresasService // Injetar o serviço de empresas
   ) {
     this.dataSource = new MatTableDataSource<any>(this.listUsers);
   }
 
   ngOnInit() {
     this.gelListUsers();
+    this.getListEmpresas(); // Chamar o método para buscar a lista de empresas
   }
 
   gelListUsers() {
     this.usersService.getAllUsers().subscribe({
       next: (response: any) => {
-
         this.listUsers = response;
-
         this.dataSource = new MatTableDataSource<any>(this.listUsers);
-        //this.orderUsers();
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.paginator._intl.itemsPerPageLabel="Itens por página";
@@ -49,6 +51,12 @@ export class UsersComponent {
       error: (err) => {
         console.log('Erro: ', err);
       }
+    });
+  }
+
+  getListEmpresas() {
+    this.empresasService.getEmpresas().subscribe(data => {
+      this.listEmpresas = data;
     });
   }
 
@@ -70,7 +78,6 @@ export class UsersComponent {
     }
   }
 
-  // Modal
   openModalViewUser(user: User) {
     this.dialog.open(ModalViewUserComponent, {
       width: '1000px',
@@ -83,14 +90,14 @@ export class UsersComponent {
     this.usersService.deleteUser(firebaseId);
   }
 
-    // Modal
-    openModalAddUser() {
-      this.dialog.open(ModalFormUserComponent, {
-        width: '1000px',
-        height: '430px'
-      })
-      .afterClosed().subscribe(() => {
-        this.gelListUsers()
-      })
-    }
+  openModalAddUser(user: User | null = null) {
+    this.dialog.open(ModalFormUserComponent, {
+      width: '1000px',
+      height: '430px',
+      data: { user: user, empresas: this.listEmpresas } // Passar a lista de empresas junto com os dados do usuário
+    })
+    .afterClosed().subscribe(() => {
+      this.gelListUsers();
+    });
+  }
 }

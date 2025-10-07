@@ -1,0 +1,58 @@
+// Estilos gerais para o modal
+:host {
+    display: block;
+    padding: 10px;
+}
+
+.titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: #6c757d; // Cor cinza padrão do Bootstrap para texto secundário
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef; // Linha sutil para separar
+    padding-bottom: 5px;
+}
+
+// Estilo para o ícone de fechar (X)
+.hover {
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #dc3545; // Cor de alerta/vermelho ao passar o mouse
+    }
+}
+
+// Estilo do botão primário (adaptado do seu uso anterior)
+.botao-primario {
+    background-color: #007bff; // Azul primário
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+
+    &:hover:not([disabled]) {
+        background-color: #0056b3;
+    }
+
+    // Estilo para o botão desabilitado
+    &[disabled] {
+        background-color: #adb5bd; // Cinza claro
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+// Garante que os campos de formulário e a linha do formulário sejam consistentes
+form {
+    .row {
+        margin-top: 15px;
+    }
+}

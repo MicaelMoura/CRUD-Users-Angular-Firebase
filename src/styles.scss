@@ -5,7 +5,8 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 :root {
-    --primary-color: #f5be0c;
+    --primary-color: #006494;
+    --second-color: #272727;
     --error-color: #ac2828;
     --gray-color: #757575;
     --shadow-color: #0a0a0a20;
@@ -13,7 +14,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     --text-color:#000000;
     --text-color-second:#fafafa;
     --text-white-3:#f0f0f0;
-    --text-button-color:#000000;
+    --text-button-color:#fafafa;
     --backgroud-color: #fff;
 }
 

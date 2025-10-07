@@ -21,6 +21,9 @@ import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
 import { ModalViewEmpresasComponent} from './pages/empresas/modal-view-empresas/modal-view-empresas.component';
+import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
+import { ModalFormFornecedorComponent } from './pages/fornecedores/modal-form/modal-form-fornecedor.component';
+import { ModalViewFornecedorComponent } from './pages/fornecedores/modal-view/modal-view-fornecedor.component';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -46,7 +49,10 @@ import {MatCardModule} from '@angular/material/card';
     ModalFormUserComponent,
     EmpresasComponent,
     ModalEmpresasFormComponent,
-    ModalViewEmpresasComponent
+    ModalViewEmpresasComponent,
+    FornecedoresComponent,
+    ModalFormFornecedorComponent,
+    ModalViewFornecedorComponent,
   ],
   imports: [
     BrowserModule,

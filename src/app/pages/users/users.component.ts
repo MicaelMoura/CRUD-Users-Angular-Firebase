@@ -23,6 +23,10 @@ export class UsersComponent implements OnInit {
   listUsers: User[] = [];
   listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
 
+  // VARIÁVEL DE ESTADO MULTI-EMPRESA
+  // **ATENÇÃO:** VOCÊ DEVE SUBSTITUIR ESTE VALOR MOCK PELO ID REAL DA EMPRESA DO USUÁRIO LOGADO
+  currentEmpresaId: string = 'ID_DA_EMPRESA_ATUAL_MOCK'; 
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -35,12 +39,20 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.gelListUsers();
+    // Chamar a listagem apenas se o ID da empresa atual for válido
+    if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
+      this.gelListUsers(this.currentEmpresaId); 
+    } else {
+      console.warn('ID da empresa não definido. Os dados não serão carregados. (Ajuste "currentEmpresaId" no users.component.ts)');
+    }
+    
     this.getListEmpresas(); // Chamar o método para buscar a lista de empresas
   }
 
-  gelListUsers() {
-    this.usersService.getAllUsers().subscribe({
+  // MÉTODO AGORA RECEBE O ID DA EMPRESA
+  gelListUsers(empresaId: string) {
+    // Passar o ID da empresa para o serviço
+    this.usersService.getAllUsers(empresaId).subscribe({
       next: (response: any) => {
         this.listUsers = response;
         this.dataSource = new MatTableDataSource<any>(this.listUsers);
@@ -86,18 +98,27 @@ export class UsersComponent implements OnInit {
     })
   }
 
+  // MÉTODO AGORA EXIGE O ID DA EMPRESA PARA EXCLUSÃO
   deleteUser(firebaseId: string) {
-    this.usersService.deleteUser(firebaseId);
+    if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
+        alert('ID da empresa não definido. Não foi possível excluir o usuário.');
+        return;
+    }
+    // Passar o ID da empresa e o ID do usuário para o serviço
+    this.usersService.deleteUser(this.currentEmpresaId, firebaseId);
   }
 
   openModalAddUser(user: User | null = null) {
     this.dialog.open(ModalFormUserComponent, {
       width: '1000px',
       height: '430px',
-      data: { user: user, empresas: this.listEmpresas } // Passar a lista de empresas junto com os dados do usuário
+      data: { user: user, empresas: this.listEmpresas } // Passa a lista de empresas
     })
     .afterClosed().subscribe(() => {
-      this.gelListUsers();
+      // Recarregar a lista após o fechamento do modal
+      if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
+        this.gelListUsers(this.currentEmpresaId);
+      }
     });
   }
 }

@@ -1,8 +1,9 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { ProdutosService } from '../../services/produtos.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Produto } from '../../interfaces/produto';
+import { AuthService } from '../../services/auth.services';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewProdutoComponent } from './modal-view/modal-view-produto.component';
@@ -15,6 +16,7 @@ import { ModalFormProdutoComponent } from './modal-form/modal-form-produto.compo
 })
 
 export class ProdutosComponent implements OnInit {
+  private authService: AuthService = inject(AuthService);
   
   // Colunas da tabela. 'compra' e 'venda' para valores.
   displayedColumns: string[] = ['id', 'nome', 'marca', 'venda', 'action'];
@@ -22,8 +24,7 @@ export class ProdutosComponent implements OnInit {
   listProdutos: Produto[] = [];
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
-  // **ATENÇÃO:** MOCK: VOCÊ DEVE SUBSTITUIR PELO ID REAL DA EMPRESA DO USUÁRIO LOGADO.
-  currentEmpresaId: string = 'ID_DA_EMPRESA_ATUAL_MOCK'; 
+  private currentEmpresaId: string = this.authService.activeTenantId() ?? '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -37,7 +38,7 @@ export class ProdutosComponent implements OnInit {
 
   ngOnInit() {
     // Chamar a listagem apenas se o ID da empresa atual for válido
-    if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (this.currentEmpresaId) {
       this.getListProdutos(this.currentEmpresaId); 
     } else {
       console.warn('ID da empresa não definido. Os dados de produtos não serão carregados.');
@@ -88,7 +89,7 @@ export class ProdutosComponent implements OnInit {
 
   // MÉTODO AGORA EXIGE O ID DA EMPRESA PARA EXCLUSÃO
   deleteProduto(produtoId: string) {
-    if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (!this.currentEmpresaId) {
         alert('ID da empresa não definido. Não foi possível excluir o produto.');
         return;
     }
@@ -114,7 +115,7 @@ export class ProdutosComponent implements OnInit {
     })
     .afterClosed().subscribe((result: boolean) => {
       // Recarrega a lista apenas se a operação (criação/edição) foi bem-sucedida (result === true)
-      if (result === true && this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
+      if (result === true && this.currentEmpresaId) {
         this.getListProdutos(this.currentEmpresaId);
       }
     });

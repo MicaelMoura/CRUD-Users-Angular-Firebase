@@ -5,6 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { FornecedoresService } from '../../services/fornecedores.service'; 
 import { Fornecedor } from '../../interfaces/fornecedor';
+import { AuthService } from '../../services/auth.services';
 // IMPORTAÇÃO DOS NOVOS MODAIS
 import { ModalFormFornecedorComponent } from './modal-form/modal-form-fornecedor.component'; 
 import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor.component'; 
@@ -25,17 +26,16 @@ export class FornecedoresComponent implements OnInit {
 
   // Injeção de dependências
   private fornecedoresService: FornecedoresService = inject(FornecedoresService);
+  private authService: AuthService = inject(AuthService);
   
-  // Variável de controle para o sistema Multi-Empresa
-  // VOCÊ DEVE SUBSTITUIR ESTA LINHA PELA LÓGICA REAL DE OBTENÇÃO DO ID DA EMPRESA ATUAL
-  currentEmpresaId: string = 'ID_DA_EMPRESA_ATUAL_MOCK'; 
+  private currentEmpresaId: string = this.authService.activeTenantId() ?? ''; 
 
   constructor(public dialog: MatDialog) {
     this.dataSource = new MatTableDataSource<Fornecedor>([]);
   }
 
   ngOnInit(): void {
-    if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (this.currentEmpresaId) {
       this.getListFornecedores(this.currentEmpresaId);
     } else {
       // Mensagem de aviso se o ID da empresa não for real (durante o desenvolvimento)
@@ -68,7 +68,7 @@ export class FornecedoresComponent implements OnInit {
 
   // Abre o modal para ADICIONAR ou EDITAR um fornecedor
   openFornecedorFormModal(fornecedor: Fornecedor | null = null) {
-    if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (!this.currentEmpresaId) {
       alert('Não é possível adicionar/editar. ID da empresa inválido.');
       return;
     }
@@ -98,7 +98,7 @@ export class FornecedoresComponent implements OnInit {
 
   // Exclui um fornecedor
   deleteFornecedor(fornecedorId: string) {
-    if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (!this.currentEmpresaId) {
       alert('Não é possível excluir. ID da empresa inválido.');
       return;
     }

@@ -1,8 +1,10 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, inject } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { User } from '../../interfaces/user';
+import { AuthService } from '../../services/auth.services';
+
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewUserComponent } from './modal-view-user/modal-view-user.component';
@@ -17,6 +19,7 @@ import { Empresas } from '../../interfaces/empresas'; // Importar a interface de
 })
 
 export class UsersComponent implements OnInit {
+  private authService: AuthService = inject(AuthService);
   
   displayedColumns: string[] = ['id', 'name', 'email', 'action'];
   dataSource: any;
@@ -24,8 +27,7 @@ export class UsersComponent implements OnInit {
   listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
-  // **ATENÇÃO:** VOCÊ DEVE SUBSTITUIR ESTE VALOR MOCK PELO ID REAL DA EMPRESA DO USUÁRIO LOGADO
-  currentEmpresaId: string = 'ID_DA_EMPRESA_ATUAL_MOCK'; 
+  private currentEmpresaId: string = this.authService.activeTenantId() ?? ''; 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;

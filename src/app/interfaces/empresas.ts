@@ -10,4 +10,6 @@ export interface Empresas {
     bairro?: string,
     cep?: string,
     complemento?: string
+    emailAdmin: string; // E-mail inicial para o primeiro administrador
+    senhaAdmin: string; // NOVO: Senha para criação do login
 }

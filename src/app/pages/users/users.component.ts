@@ -41,12 +41,7 @@ export class UsersComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Chamar a listagem apenas se o ID da empresa atual for válido
-    if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
-      this.gelListUsers(this.currentEmpresaId); 
-    } else {
-      console.warn('ID da empresa não definido. Os dados não serão carregados. (Ajuste "currentEmpresaId" no users.component.ts)');
-    }
+    this.gelListUsers(this.currentEmpresaId); 
     
     this.getListEmpresas(); // Chamar o método para buscar a lista de empresas
   }

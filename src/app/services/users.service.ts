@@ -16,7 +16,7 @@ export class UsersService {
    */
   private getCompanyUsersCollection(empresaId: string): AngularFirestoreCollection<User> {
     return this.dataBaseStore
-      .collection('empresas')
+      .collection('business')
       .doc(empresaId)
       .collection<User>('users');
   }

@@ -2,7 +2,7 @@
     <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
 
     <h1 class="titulo">Detalhes do Fornecedor</h1>
-    <h2 class="subtitulo">{{ fornecedor.name }} ({{ fornecedor.razaoSocial }})</h2>
+    <h2 class="subtitulo">{{ fornecedor.razaoSocial }} ({{ fornecedor.razaoSocial }})</h2>
 
     <div class="details-grid">
         <div class="detail-item">
@@ -21,29 +21,15 @@
             <span class="label">ID da Empresa:</span>
             <span class="value">{{ fornecedor.empresaid }}</span>
         </div>
-        
-        <div class="detail-group-header">Endereço</div>
-        
-        <div class="detail-item">
-            <span class="label">Endereço:</span>
-            <span class="value">{{ fornecedor.endereco }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="label">Bairro:</span>
-            <span class="value">{{ fornecedor.bairro }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="label">Cidade/UF:</span>
-            <span class="value">{{ fornecedor.cidadeUf }}</span>
-        </div>
-        <div class="detail-item">
-            <span class="label">CEP:</span>
-            <span class="value">{{ fornecedor.cep }}</span>
-        </div>
 
         <div class="detail-group-header">Observações</div>
         <div class="detail-item full-width">
             <p class="value-observacoes">{{ fornecedor.observacoes || 'Nenhuma observação registrada.' }}</p>
+        </div>
+        
+        <div class="detail-group-header">Representante</div>
+        <div class="detail-item full-width">
+            <p class="value-observacoes">{{ fornecedor.representante }}</p>
         </div>
     </div>
     

@@ -41,33 +41,10 @@
             </mat-form-field>
         </div>
 
-        <h3 class="subtitulo mt-3">Endereço</h3>
-        <div class="col-12 col-md-6 mb-2">
+        <div class="col-12 mb-4">
             <mat-form-field class="example-full-width w-100">
-                <mat-label>CEP</mat-label>
-                <input type="text" matInput formControlName="cep" placeholder="00000-000">
-                <mat-error *ngIf="formFornecedor.controls['cep'].invalid">Preencha o CEP</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Endereço</mat-label>
-                <input type="text" matInput formControlName="endereco" placeholder="Rua, Avenida, etc.">
-                <mat-error *ngIf="formFornecedor.controls['endereco'].invalid">Preencha o endereço</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Bairro</mat-label>
-                <input type="text" matInput formControlName="bairro" placeholder="Digite o bairro">
-                <mat-error *ngIf="formFornecedor.controls['bairro'].invalid">Preencha o bairro</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Cidade/UF</mat-label>
-                <input type="text" matInput formControlName="cidadeUf" placeholder="Ex: Curitiba/PR">
-                <mat-error *ngIf="formFornecedor.controls['cidadeUf'].invalid">Preencha a cidade/UF</mat-error>
+                <mat-label>Representante</mat-label>
+                <textarea matInput formControlName="representante" placeholder="nome do representante"></textarea>
             </mat-form-field>
         </div>
         

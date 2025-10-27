@@ -1,0 +1,54 @@
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">Detalhes do Produto</h1>
+    <h2 class="subtitulo">{{ produtoData.nome }} ({{ produtoData.marca }})</h2>
+
+    <div class="details-grid">
+        
+        <div class="detail-group-header">Informações Gerais</div>
+
+        <div class="detail-item">
+            <span class="label">Nome:</span>
+            <span class="value">{{ produtoData.nome }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Marca:</span>
+            <span class="value">{{ produtoData.marca }}</span>
+        </div>
+        
+        <div class="detail-item">
+            <span class="label">Código de Barras:</span>
+            <span class="value">{{ produtoData.codigoDeBarras || 'N/A' }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Unidade de Medida:</span>
+            <span class="value">{{ produtoData.unidadeDeMedida }}</span>
+        </div>
+
+        <div class="detail-group-header">Valores e Estoque</div>
+
+        <div class="detail-item">
+            <span class="label">Valor de Compra Unitário:</span>
+            <span class="value">{{ produtoData.valorUnitarioCompra | currency:'BRL' }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Valor de Venda Unitário:</span>
+            <span class="value strong-value">{{ produtoData.valorUnitarioVenda | currency:'BRL' }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="label">Quantidade Mínima em Estoque:</span>
+            <span class="value">{{ produtoData.quantidadeMinima }} {{ produtoData.unidadeDeMedida }}</span>
+        </div>
+        
+        <div class="detail-item">
+            <span class="label">ID da Empresa:</span>
+            <span class="value">{{ produtoData.empresaid }}</span>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-end mt-4">
+        <button mat-flat-button (click)="closeModal()">Fechar</button>
+    </div>
+</div>

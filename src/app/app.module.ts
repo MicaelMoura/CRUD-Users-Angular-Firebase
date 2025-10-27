@@ -24,6 +24,10 @@ import { ModalViewEmpresasComponent} from './pages/empresas/modal-view-empresas/
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
 import { ModalFormFornecedorComponent } from './pages/fornecedores/modal-form/modal-form-fornecedor.component';
 import { ModalViewFornecedorComponent } from './pages/fornecedores/modal-view/modal-view-fornecedor.component';
+import { ProdutosComponent } from './pages/produtos/produtos.component';
+import { ModalFormProdutoComponent } from './pages/produtos/modal-form/modal-form-produto.component';
+import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-view-produto.component';
+
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -53,6 +57,9 @@ import {MatCardModule} from '@angular/material/card';
     FornecedoresComponent,
     ModalFormFornecedorComponent,
     ModalViewFornecedorComponent,
+    ProdutosComponent,
+    ModalFormProdutoComponent,
+    ModalViewProdutoComponent
   ],
   imports: [
     BrowserModule,

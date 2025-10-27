@@ -46,10 +46,7 @@ export class ModalFormFornecedorComponent implements OnInit {
       cnpj: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telefone: ['', Validators.required],
-      endereco: ['', Validators.required],
-      bairro: ['', Validators.required],
-      cidadeUf: ['', Validators.required],
-      cep: ['', Validators.required],
+      representante: ['', Validators.required],
       observacoes: ['']
     });
     

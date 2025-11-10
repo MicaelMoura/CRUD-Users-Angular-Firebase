@@ -20,7 +20,7 @@ export class EmpresasService {
         // Usa valueChanges para obter um Observable do array de dados
         return this.dataBaseStore.collection<Empresas>('business')
             // O idField garante que o ID do documento seja incluído no objeto como 'firebaseId'
-            .valueChanges({ idField: 'firebaseId' }); 
+          .valueChanges({ idField: 'firebaseId' }); 
   }
 
   async addEmpresa(empresa: Empresas): Promise<string> {

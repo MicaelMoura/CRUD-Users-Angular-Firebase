@@ -7,16 +7,9 @@
     <form class="row" [formGroup]="formFornecedor" (ngSubmit)="saveFornecedor()">
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
-                <mat-label>Nome Fantasia</mat-label>
-                <input type="text" matInput formControlName="name" placeholder="Digite o nome fantasia">
-                <mat-error *ngIf="formFornecedor.controls['name'].invalid">Preencha o nome fantasia</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
                 <mat-label>Razão Social</mat-label>
-                <input type="text" matInput formControlName="razaoSocial" placeholder="Digite a razão social">
-                <mat-error *ngIf="formFornecedor.controls['razaoSocial'].invalid">Preencha a razão social</mat-error>
+                <input type="text" matInput formControlName="corporate" placeholder="Digite a razão social">
+                <mat-error *ngIf="formFornecedor.controls['corporate'].invalid">Preencha a razão social</mat-error>
             </mat-form-field>
         </div>
         <div class="col-12 col-md-6 mb-2">
@@ -24,6 +17,13 @@
                 <mat-label>CNPJ</mat-label>
                 <input type="text" matInput formControlName="cnpj" placeholder="00.000.000/0000-00">
                 <mat-error *ngIf="formFornecedor.controls['cnpj'].invalid">Preencha o CNPJ</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Nome fantasia</mat-label>
+                <input type="text" matInput formControlName="fantasyName" placeholder="Digite o nome fantasia">
+                <mat-error *ngIf="formFornecedor.controls['fantasyName'].invalid">Preencha o Nome Fantasia</mat-error>
             </mat-form-field>
         </div>
         <div class="col-12 col-md-6 mb-2">
@@ -36,22 +36,22 @@
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Telefone</mat-label>
-                <input type="text" matInput formControlName="telefone" placeholder="(00) 00000-0000">
-                <mat-error *ngIf="formFornecedor.controls['telefone'].invalid">Preencha o telefone</mat-error>
+                <input type="text" matInput formControlName="phone" placeholder="(00) 00000-0000">
+                <mat-error *ngIf="formFornecedor.controls['phone'].invalid">Preencha o telefone</mat-error>
             </mat-form-field>
         </div>
 
         <div class="col-12 mb-4">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Representante</mat-label>
-                <textarea matInput formControlName="representante" placeholder="nome do representante"></textarea>
+                <textarea matInput formControlName="salesRep" placeholder="nome do representante"></textarea>
             </mat-form-field>
         </div>
         
         <div class="col-12 mb-4">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Observações</mat-label>
-                <textarea matInput formControlName="observacoes" placeholder="Notas sobre o fornecedor..."></textarea>
+                <textarea matInput formControlName="observations" placeholder="Notas sobre o fornecedor..."></textarea>
             </mat-form-field>
         </div>
 

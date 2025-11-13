@@ -1,43 +1,34 @@
-import { Injectable, inject } from '@angular/core';
-import { Firestore, collection, collectionData, doc, deleteDoc, updateDoc, CollectionReference, 
-  DocumentReference, query, where, setDoc,
-} from '@angular/fire/firestore';
+import { Injectable, } from '@angular/core';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
-import { AuthService } from './auth.services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsersService {
-  private firestore: Firestore = inject(Firestore);
-  private authService = inject(AuthService);
 
-  private getUsuariosCollectionRef(empresaId: string): CollectionReference<User, User> {
-    
-    return collection(this.firestore, `business/${empresaId}/users`) as CollectionReference<User, User>;
+  constructor(private firestore: AngularFirestore) { }
+
+  private getUsuariosCollectionRef(empresaId: string): AngularFirestoreCollection<User> {
+    return this.firestore
+          .collection('business')
+          .doc(empresaId)
+          .collection<User>('users');
   }
 
   /**
    * Busca todos os usuários de uma empresa específica.
    */
   getAllUsers(empresaId: string): Observable<User[]> {
-    const usuariosCollection = this.getUsuariosCollectionRef(empresaId);
-
-    return collectionData(usuariosCollection, { idField: 'id' }) as Observable<User[]>;
+    return this.getUsuariosCollectionRef(empresaId).valueChanges({ idField: 'id' });
   }
 
   /**
    * Adiciona um novo usuário à sub-coleção da empresa.
    */
   addUser(empresaId: string, user: User) {
-    const usuarioRef: DocumentReference<User> = doc(
-      this.getUsuariosCollectionRef(empresaId), // Obtém a CollectionReference
-      //idUser // Usa o authUid como ID do documento
-    );
-    
-    // Observe que agora 'usuario' DEVE ter o authUid definido antes de chamar esta função
-    return setDoc(usuarioRef, user);
+    return this.getUsuariosCollectionRef(empresaId).add(user);
   }
 
   /**
@@ -45,21 +36,13 @@ export class UsersService {
    * A função original não usava o ID da empresa. Agora ela precisa.
    */
   updateUser(empresaId: string, userId: string, data: Partial<User>): Promise<void> {
-    const usuarioRef: DocumentReference = doc(
-      this.firestore,
-      `empresas/${empresaId}/usuarios/${userId}`
-    );
-    return updateDoc(usuarioRef, data);
+    return this.getUsuariosCollectionRef(empresaId).doc(userId).update(data);
   }
 
   /**
    * Exclui um usuário da sub-coleção da empresa.
    */
   deleteUser(empresaId: string, userId: string): Promise<void> {
-    const usuarioRef: DocumentReference = doc(
-      this.firestore,
-      `empresas/${empresaId}/usuarios/${userId}`
-    );
-    return deleteDoc(usuarioRef);
+    return this.getUsuariosCollectionRef(empresaId).doc(userId).delete();
   }
 }

@@ -18,14 +18,9 @@ export class FornecedoresService {
     return this.firestore
       .collection('business')
       .doc(empresaId)
-      .collection<Fornecedor>('fornecedores');
+      .collection<Fornecedor>('supplier');
   }
-
-  // --- MÉTODOS CRUD ---
-
-  /**
-   * Busca todos os fornecedores de uma empresa específica.
-   */
+  
   getAllFornecedores(empresaId: string): Observable<Fornecedor[]> {
     return this.getCompanyFornecedoresCollection(empresaId).valueChanges({ idField: 'id' });
   }

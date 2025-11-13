@@ -3,15 +3,13 @@ export interface Fornecedor {
     id?: string; 
 
     // Dados principais
-    razaoSocial: string;
+    corporate: string;
+    fantasyName: string;
     cnpj: string;
     email: string;
-    telefone: string;
-    representante: string;
+    phone: string;
+    salesRep: string;
     
     // Outros dados (opcional)
-    observacoes?: string; 
-
-    // ID da empresa à qual este fornecedor está vinculado (Multi-empresa)
-    empresaid: string;
+    observations?: string;
 }

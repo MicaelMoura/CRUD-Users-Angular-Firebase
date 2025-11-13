@@ -35,6 +35,7 @@ export class ProdutosService {
    * Adiciona um novo produto à sub-coleção da empresa.
    */
   addProduto(empresaId: string, produto: Produto) {
+    console.log('produto a salvar e empresa', produto, empresaId);
     return this.getCompanyProductsCollection(empresaId).add(produto);
   }
 

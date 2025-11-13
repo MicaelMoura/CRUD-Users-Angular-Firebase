@@ -4,4 +4,5 @@ export interface User {
     email: string,
     perfilId: string,
     authUid: string,
+    empresaId: string
 }

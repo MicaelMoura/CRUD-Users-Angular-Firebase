@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FornecedoresService } from '../../services/fornecedores.service'; 
 import { Fornecedor } from '../../interfaces/fornecedor';
 import { AuthService } from '../../services/auth.services';
+import { Subscription } from 'rxjs';
 // IMPORTAÇÃO DOS NOVOS MODAIS
 import { ModalFormFornecedorComponent } from './modal-form/modal-form-fornecedor.component'; 
 import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor.component'; 
@@ -15,7 +16,7 @@ import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor
   templateUrl: './fornecedores.component.html',
   styleUrls: ['./fornecedores.component.scss']
 })
-export class FornecedoresComponent implements OnInit {
+export class FornecedoresComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['name', 'cnpj', 'email', 'action'];
   dataSource!: MatTableDataSource<Fornecedor>;
@@ -28,7 +29,8 @@ export class FornecedoresComponent implements OnInit {
   private fornecedoresService: FornecedoresService = inject(FornecedoresService);
   private authService: AuthService = inject(AuthService);
   
-  private currentEmpresaId: string = this.authService.activeTenantId() ?? ''; 
+ currentEmpresaId: string | null = null;
+ private tenantSubscription!: Subscription;
 
   constructor(public dialog: MatDialog) {
     this.dataSource = new MatTableDataSource<Fornecedor>([]);
@@ -41,6 +43,28 @@ export class FornecedoresComponent implements OnInit {
       // Mensagem de aviso se o ID da empresa não for real (durante o desenvolvimento)
       console.warn("ID da empresa não definido/mockado. Não foi possível carregar os fornecedores reais.");
       // Se necessário, você pode carregar dados mockados ou exibir um aviso na interface.
+    }
+
+  }
+  inscreverObservarTenant() {
+    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
+      this.currentEmpresaId = tenantId;
+      
+      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
+      if (this.currentEmpresaId) {
+        this.getListFornecedores(this.currentEmpresaId); 
+      } else {
+        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
+        this.listFornecedores = [];
+        this.dataSource = new MatTableDataSource<any>(this.listFornecedores);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    // Cancelar a inscrição para evitar vazamentos de memória
+    if (this.tenantSubscription) {
+      this.tenantSubscription.unsubscribe();
     }
   }
 
@@ -83,7 +107,7 @@ export class FornecedoresComponent implements OnInit {
     }).afterClosed().subscribe((result) => {
       // Recarrega a lista somente se a operação no modal foi bem sucedida
       if (result) { 
-        this.getListFornecedores(this.currentEmpresaId); 
+        this.inscreverObservarTenant();
       }
     });
   }
@@ -107,7 +131,7 @@ export class FornecedoresComponent implements OnInit {
         this.fornecedoresService.deleteFornecedor(this.currentEmpresaId, fornecedorId)
             .then(() => {
                 // Recarrega a lista após a exclusão
-                this.getListFornecedores(this.currentEmpresaId); 
+                this.inscreverObservarTenant();
             })
             .catch(error => {
                 console.error('Erro ao excluir fornecedor:', error);

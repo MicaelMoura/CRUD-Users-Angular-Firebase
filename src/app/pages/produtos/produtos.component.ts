@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, inject, OnDestroy } from '@angular/core';
 import { ProdutosService } from '../../services/produtos.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewProdutoComponent } from './modal-view/modal-view-produto.component';
 import { ModalFormProdutoComponent } from './modal-form/modal-form-produto.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-produtos',
@@ -15,8 +16,9 @@ import { ModalFormProdutoComponent } from './modal-form/modal-form-produto.compo
   styleUrl: './produtos.component.scss'
 })
 
-export class ProdutosComponent implements OnInit {
+export class ProdutosComponent implements OnInit, OnDestroy {
   private authService: AuthService = inject(AuthService);
+  private produtosService: ProdutosService = inject(ProdutosService);
   
   // Colunas da tabela. 'compra' e 'venda' para valores.
   displayedColumns: string[] = ['id', 'nome', 'marca', 'venda', 'action'];
@@ -24,13 +26,13 @@ export class ProdutosComponent implements OnInit {
   listProdutos: Produto[] = [];
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
-  private currentEmpresaId: string = this.authService.activeTenantId() ?? '';
+  currentEmpresaId: string | null = null;
+  private tenantSubscription!: Subscription;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
-    private produtosService: ProdutosService,
     public dialog: MatDialog
   ) {
     this.dataSource = new MatTableDataSource<any>(this.listProdutos);
@@ -38,10 +40,28 @@ export class ProdutosComponent implements OnInit {
 
   ngOnInit() {
     // Chamar a listagem apenas se o ID da empresa atual for válido
-    if (this.currentEmpresaId) {
-      this.getListProdutos(this.currentEmpresaId); 
-    } else {
-      console.warn('ID da empresa não definido. Os dados de produtos não serão carregados.');
+    this.inscreverObservarTenant();
+  }
+
+  inscreverObservarTenant() {
+    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
+      this.currentEmpresaId = tenantId;
+      
+      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
+      if (this.currentEmpresaId) {
+        this.getListProdutos(this.currentEmpresaId); 
+      } else {
+        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
+        this.listProdutos = [];
+        this.dataSource = new MatTableDataSource<any>(this.listProdutos);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    // Cancelar a inscrição para evitar vazamentos de memória
+    if (this.tenantSubscription) {
+      this.tenantSubscription.unsubscribe();
     }
   }
 
@@ -97,7 +117,7 @@ export class ProdutosComponent implements OnInit {
         this.produtosService.deleteProduto(this.currentEmpresaId, produtoId)
             .then(() => {
                 // Recarrega a lista após a exclusão
-                this.getListProdutos(this.currentEmpresaId); 
+                this.inscreverObservarTenant();
             })
             .catch(err => console.error('Erro ao excluir produto:', err));
     }

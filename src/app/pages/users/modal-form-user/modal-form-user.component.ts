@@ -18,7 +18,6 @@ export class ModalFormUserComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder, 
-    // O MatDialogRef é tipado para o próprio componente, e o segundo tipo define o resultado que ele pode retornar (neste caso, um boolean)
     public dialogRef: MatDialogRef<ModalFormUserComponent, boolean>, 
     @Inject(MAT_DIALOG_DATA) public data: { user: User | null, empresas: Empresas[] }, 
     private usersService: UsersService

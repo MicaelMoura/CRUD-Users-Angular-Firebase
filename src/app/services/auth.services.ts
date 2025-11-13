@@ -28,7 +28,7 @@ export class AuthService {
     
     // DADOS DO TENANT ATIVO
     private _activeTenantId = signal<string | null>(null);
-    public activeTenantId = toObservable(this._activeTenantId);
+    public activeTenantId = this._activeTenantId.asReadonly();
     
     // PAPEL (ROLE) DO USUÁRIO NO TENANT ATIVO
     private _userRole = signal<UserRole>(null);
@@ -177,7 +177,7 @@ export class AuthService {
 
     public async setBusinessId(tenantId: string): Promise<void> {
         this._activeTenantId.set(tenantId);
-        
+        console.log('EmpresaId setado', tenantId);
         const uid = this.userUid();
         if (uid) {
             await this._fetchUserRole(tenantId, uid);

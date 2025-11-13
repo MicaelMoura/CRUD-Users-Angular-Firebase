@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +7,7 @@ import { EmpresasService } from '../../services/empresas.service';
 import { Empresas } from '../../interfaces/empresas'; 
 import { ModalEmpresasFormComponent } from './modal-form-empresas/modal-form-empresas.component';
 import { ModalViewEmpresasComponent } from './modal-view-empresas/modal-view-empresas.component';
+import { AuthService } from '../../services/auth.services';
 
 @Component({
   selector: 'app-empresas',
@@ -19,15 +20,19 @@ export class EmpresasComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
-  private empresasService: EmpresasService = inject(EmpresasService);
+  listBusiness: Empresas[] = [];
   
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog,
+      private empresasService: EmpresasService,  
+      private authService: AuthService
+  ) {
     this.dataSource = new MatTableDataSource<Empresas>([]);
   }
 
+  public empresaIdAtual = this.authService.activeTenantId;
+
   ngOnInit(): void {
-    this.getListEmpresas();
+    this.getListEmpresas(this.empresaIdAtual() || '');
   }
 
   applyFilter(event: Event) {
@@ -42,7 +47,7 @@ export class EmpresasComponent implements OnInit {
       data: empresas // Passa os dados da empresa para o modal
     })
     .afterClosed().subscribe(() => {
-      this.getListEmpresas();
+      this.getListEmpresas(this.empresaIdAtual() || '');
     });
   }
 
@@ -59,7 +64,7 @@ export class EmpresasComponent implements OnInit {
     this.empresasService.deleteEmpresa(companyId);
   }
 
-  getListEmpresas() {
+  getListEmpresas(empresasId: string) {
     this.empresasService.getEmpresas().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;

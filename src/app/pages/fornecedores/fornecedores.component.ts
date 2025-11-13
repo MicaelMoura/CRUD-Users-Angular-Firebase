@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -6,7 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { FornecedoresService } from '../../services/fornecedores.service'; 
 import { Fornecedor } from '../../interfaces/fornecedor';
 import { AuthService } from '../../services/auth.services';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router'; 
+import { MatSnackBar } from '@angular/material/snack-bar';
 // IMPORTAÇÃO DOS NOVOS MODAIS
 import { ModalFormFornecedorComponent } from './modal-form/modal-form-fornecedor.component'; 
 import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor.component'; 
@@ -16,60 +17,37 @@ import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor
   templateUrl: './fornecedores.component.html',
   styleUrls: ['./fornecedores.component.scss']
 })
-export class FornecedoresComponent implements OnInit, OnDestroy {
+export class FornecedoresComponent implements OnInit {
 
-  displayedColumns: string[] = ['name', 'cnpj', 'email', 'action'];
+  displayedColumns: string[] = ['fantasyName', 'cnpj', 'email', 'action'];
   dataSource!: MatTableDataSource<Fornecedor>;
   listFornecedores: Fornecedor[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  // Injeção de dependências
-  private fornecedoresService: FornecedoresService = inject(FornecedoresService);
-  private authService: AuthService = inject(AuthService);
-  
- currentEmpresaId: string | null = null;
- private tenantSubscription!: Subscription;
-
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog,
+    private authService: AuthService,
+    private fornecedoresService: FornecedoresService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+  ) {
     this.dataSource = new MatTableDataSource<Fornecedor>([]);
   }
 
+  public empresaIdAtual = this.authService.activeTenantId;
+
   ngOnInit(): void {
-    if (this.currentEmpresaId) {
-      this.getListFornecedores(this.currentEmpresaId);
-    } else {
-      // Mensagem de aviso se o ID da empresa não for real (durante o desenvolvimento)
-      console.warn("ID da empresa não definido/mockado. Não foi possível carregar os fornecedores reais.");
-      // Se necessário, você pode carregar dados mockados ou exibir um aviso na interface.
-    }
-
-  }
-  inscreverObservarTenant() {
-    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
-      this.currentEmpresaId = tenantId;
-      
-      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
-      if (this.currentEmpresaId) {
-        this.getListFornecedores(this.currentEmpresaId); 
-      } else {
-        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
-        this.listFornecedores = [];
-        this.dataSource = new MatTableDataSource<any>(this.listFornecedores);
-      }
-    });
-  }
-
-  ngOnDestroy() {
-    // Cancelar a inscrição para evitar vazamentos de memória
-    if (this.tenantSubscription) {
-      this.tenantSubscription.unsubscribe();
-    }
+    this.getListFornecedores(this.empresaIdAtual() || '');
   }
 
   // Busca a lista de fornecedores da empresa atual (Multi-empresa)
   getListFornecedores(empresaId: string) {
+    if(empresaId == ''){
+      this.snackBar.open('ID da empresa inválido.', 'Fechar', { duration: 3000 });
+      this.router.navigate(['home']);
+      return;
+    }
     this.fornecedoresService.getAllFornecedores(empresaId).subscribe(data => {
       this.listFornecedores = data;
       this.dataSource = new MatTableDataSource(this.listFornecedores);
@@ -92,8 +70,8 @@ export class FornecedoresComponent implements OnInit, OnDestroy {
 
   // Abre o modal para ADICIONAR ou EDITAR um fornecedor
   openFornecedorFormModal(fornecedor: Fornecedor | null = null) {
-    if (!this.currentEmpresaId) {
-      alert('Não é possível adicionar/editar. ID da empresa inválido.');
+    if (!this.empresaIdAtual()) {
+      this.snackBar.open('Não é possível adicionar/editar. ID da empresa inválido.', 'Fechar', { duration: 3000 });
       return;
     }
     
@@ -102,12 +80,12 @@ export class FornecedoresComponent implements OnInit, OnDestroy {
       // Passa o fornecedor (para edição) e o ID da empresa (para o CRUD)
       data: { 
           fornecedor: fornecedor, 
-          empresaId: this.currentEmpresaId 
+          empresaId: this.empresaIdAtual()
       } 
     }).afterClosed().subscribe((result) => {
       // Recarrega a lista somente se a operação no modal foi bem sucedida
       if (result) { 
-        this.inscreverObservarTenant();
+        this.getListFornecedores(this.empresaIdAtual() || '');
       }
     });
   }
@@ -122,16 +100,16 @@ export class FornecedoresComponent implements OnInit, OnDestroy {
 
   // Exclui um fornecedor
   deleteFornecedor(fornecedorId: string) {
-    if (!this.currentEmpresaId) {
+    if (!this.empresaIdAtual()) {
       alert('Não é possível excluir. ID da empresa inválido.');
       return;
     }
     
     if (confirm('Tem certeza que deseja excluir este fornecedor? Esta ação é irreversível.')) {
-        this.fornecedoresService.deleteFornecedor(this.currentEmpresaId, fornecedorId)
+        this.fornecedoresService.deleteFornecedor(this.empresaIdAtual() || '', fornecedorId)
             .then(() => {
                 // Recarrega a lista após a exclusão
-                this.inscreverObservarTenant();
+                this.getListFornecedores(this.empresaIdAtual() || '');
             })
             .catch(error => {
                 console.error('Erro ao excluir fornecedor:', error);

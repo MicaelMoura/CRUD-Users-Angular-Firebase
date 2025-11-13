@@ -1,16 +1,14 @@
-import { Component, ViewChild, OnInit, inject, OnDestroy } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { User } from '../../interfaces/user';
 import { AuthService } from '../../services/auth.services';
-import { Subscription } from 'rxjs'; 
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewUserComponent } from './modal-view-user/modal-view-user.component';
 import { ModalFormUserComponent } from './modal-form-user/modal-form-user.component';
-import { EmpresasService } from '../../services/empresas.service'; // Importar o serviço de empresas
 import { Empresas } from '../../interfaces/empresas'; // Importar a interface de empresas
 
 @Component({
@@ -19,10 +17,7 @@ import { Empresas } from '../../interfaces/empresas'; // Importar a interface de
   styleUrl: './users.component.scss'
 })
 
-export class UsersComponent implements OnInit, OnDestroy {
-  private authService: AuthService = inject(AuthService);
-  private usersService: UsersService = inject(UsersService);
-  private empresasService: EmpresasService = inject(EmpresasService); // Injetar o serviço de empresas
+export class UsersComponent implements OnInit {
   
   displayedColumns: string[] = ['id', 'name', 'email', 'action'];
   dataSource: any;
@@ -30,35 +25,22 @@ export class UsersComponent implements OnInit, OnDestroy {
   listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
-  currentEmpresaId: string | null = null;
-  private tenantSubscription!: Subscription; 
+
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(public dialog: MatDialog,
+    private usersService: UsersService,
+    private authService: AuthService,
   ) {
     this.dataSource = new MatTableDataSource<any>(this.listUsers);
   }
 
+  public empresaIdAtual = this.authService.activeTenantId;
+
   ngOnInit() {
-    this.inscreverObservarTenant();
-  }
-
-
-  inscreverObservarTenant() {
-    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
-      this.currentEmpresaId = tenantId;
-      
-      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
-      if (this.currentEmpresaId) {
-        this.getListUsers(this.currentEmpresaId); 
-      } else {
-        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
-        this.listUsers = [];
-        this.dataSource = new MatTableDataSource<any>(this.listUsers);
-      }
-    });
+    this.getListUsers(this.empresaIdAtual() || '');
   }
 
   // MÉTODO AGORA RECEBE O ID DA EMPRESA
@@ -75,12 +57,6 @@ export class UsersComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.log('Erro: ', err);
       }
-    });
-  }
-
-  getListEmpresas() {
-    this.empresasService.getEmpresas().subscribe(data => {
-      this.listEmpresas = data;
     });
   }
 
@@ -110,20 +86,14 @@ export class UsersComponent implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy(): void {
-    if (this.tenantSubscription) {
-      this.tenantSubscription.unsubscribe();
-    }
-  }
-
   // MÉTODO AGORA EXIGE O ID DA EMPRESA PARA EXCLUSÃO
   deleteUser(firebaseId: string) {
-    if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
+    if (!this.empresaIdAtual()) {
         alert('ID da empresa não definido. Não foi possível excluir o usuário.');
         return;
     }
     // Passar o ID da empresa e o ID do usuário para o serviço
-    this.usersService.deleteUser(this.currentEmpresaId, firebaseId);
+    this.usersService.deleteUser(this.empresaIdAtual() || '', firebaseId);
   }
 
   openModalAddUser(user: User | null = null) {
@@ -134,8 +104,8 @@ export class UsersComponent implements OnInit, OnDestroy {
     })
     .afterClosed().subscribe(() => {
       // Recarregar a lista após o fechamento do modal
-      if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
-        this.getListUsers(this.currentEmpresaId);
+      if (this.empresaIdAtual()) {
+        this.getListUsers(this.empresaIdAtual() || '');
       }
     });
   }

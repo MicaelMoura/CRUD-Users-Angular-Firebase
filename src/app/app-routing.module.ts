@@ -8,8 +8,9 @@ import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
 
 const routes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', redirectTo: 'login', pathMatch: 'full' },
   {path: 'login', component: LoginComponent},
+  {path: 'login/:business', component: LoginComponent },
   {path: 'home', component: HomeComponent},
   {path: 'users', component: UsersComponent},
   {path: 'empresas', component: EmpresasComponent},

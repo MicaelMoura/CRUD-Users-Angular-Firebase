@@ -1,7 +1,7 @@
 <div class="area-login-background d-none d-md-block"></div>
 
 <div class="area-form">
-  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()" autocomplete="off">
     <h1 class="titulo">{{ nameSoftware }}</h1>
     <h2 class="subtitulo">{{ slogan }}</h2>
 

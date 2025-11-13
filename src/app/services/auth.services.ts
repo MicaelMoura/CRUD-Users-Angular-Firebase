@@ -171,7 +171,7 @@ export class AuthService {
             return docSnap.id; 
         } else {
             // Caso o documento não exista
-            throw new Error(`Empresa com ID ${businessInput} não encontrada.`);
+            throw new Error(`Empresa '${businessInput}' não encontrada.`);
         }
     }
 

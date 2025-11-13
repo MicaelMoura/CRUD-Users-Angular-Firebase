@@ -7,7 +7,6 @@ import { EmpresasService } from '../../services/empresas.service';
 import { Empresas } from '../../interfaces/empresas'; 
 import { ModalEmpresasFormComponent } from './modal-form-empresas/modal-form-empresas.component';
 import { ModalViewEmpresasComponent } from './modal-view-empresas/modal-view-empresas.component';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.services';
 
 @Component({
@@ -22,9 +21,6 @@ export class EmpresasComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   listBusiness: Empresas[] = [];
-
-  currentEmpresaId: string | null = null;
-   private tenantSubscription!: Subscription;
   
   constructor(public dialog: MatDialog,
       private empresasService: EmpresasService,  
@@ -33,22 +29,10 @@ export class EmpresasComponent implements OnInit {
     this.dataSource = new MatTableDataSource<Empresas>([]);
   }
 
+  public empresaIdAtual = this.authService.activeTenantId;
+
   ngOnInit(): void {
-    this.inscreverObservarTenant();
-  }
-  inscreverObservarTenant() {
-    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
-      this.currentEmpresaId = tenantId;
-      
-      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
-      if (this.currentEmpresaId) {
-        this.getListEmpresas(this.currentEmpresaId); 
-      } else {
-        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
-        this.listBusiness = [];
-        this.dataSource = new MatTableDataSource<any>(this.listBusiness);
-      }
-    });
+    this.getListEmpresas(this.empresaIdAtual() || '');
   }
 
   applyFilter(event: Event) {
@@ -63,7 +47,7 @@ export class EmpresasComponent implements OnInit {
       data: empresas // Passa os dados da empresa para o modal
     })
     .afterClosed().subscribe(() => {
-      this.inscreverObservarTenant();
+      this.getListEmpresas(this.empresaIdAtual() || '');
     });
   }
 

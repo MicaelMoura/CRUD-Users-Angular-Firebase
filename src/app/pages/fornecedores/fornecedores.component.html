@@ -21,33 +21,28 @@
 
         <div class="col-12 shadow-lg">
             <table mat-table [dataSource]="dataSource" matSort>
-                
-                <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Id Empresa </th>
-                  <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.empresaid}} </td>
-                </ng-container>
             
-                <ng-container matColumnDef="razaoSocial">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Razão Social </th>
-                  <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.nome}} </td>
+                <ng-container matColumnDef="fantasyName">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Nome fantasia </th>
+                  <td mat-cell class="td-table" *matCellDef="let fornecedor"> {{fornecedor.fantasyName}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="cnpj">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> CNPJ </th>
-                    <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.marca}} </td>
+                    <td mat-cell class="td-table" *matCellDef="let fornecedor"> {{fornecedor.cnpj}} </td>
                 </ng-container>
                 
                 <ng-container matColumnDef="email">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Email </th>
-                    <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.valorUnitarioVenda | currency:'BRL'}} </td>
+                    <td mat-cell class="td-table" *matCellDef="let fornecedor"> {{fornecedor.email}} </td>
                 </ng-container>
                 
                 <ng-container matColumnDef="action">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"></th>
-                  <td mat-cell class="td-table" *matCellDef="let produto">
-                      <mat-icon class="icone-tabela" (click)="openModalViewFornecedor(produto)">visibility</mat-icon>
-                      <mat-icon class="icone-tabela" (click)="openFornecedorFormModal(produto)">edit</mat-icon>
-                      <mat-icon class="icone-tabela" (click)="deleteFornecedor(produto.firebaseId)">delete</mat-icon>
+                  <td mat-cell class="td-table" *matCellDef="let fornecedor">
+                      <mat-icon class="icone-tabela" (click)="openModalViewFornecedor(fornecedor)">visibility</mat-icon>
+                      <mat-icon class="icone-tabela" (click)="openFornecedorFormModal(fornecedor)">edit</mat-icon>
+                      <mat-icon class="icone-tabela" (click)="deleteFornecedor(fornecedor.firebaseId)">delete</mat-icon>
                   </td>
                 </ng-container>
             

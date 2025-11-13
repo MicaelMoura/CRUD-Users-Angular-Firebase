@@ -40,8 +40,7 @@ export class ModalFormFornecedorComponent implements OnInit {
   buildForm() {
     this.formFornecedor = this.fb.group({
       // O 'id' é necessário para a atualização, mas não é um campo visível
-      id: [null], 
-      name: ['', Validators.required],
+      id: [null],
       razaoSocial: ['', Validators.required],
       cnpj: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],

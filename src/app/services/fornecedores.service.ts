@@ -18,7 +18,7 @@ export class FornecedoresService {
     return this.firestore
       .collection('business')
       .doc(empresaId)
-      .collection<Fornecedor>('fornecedores');
+      .collection<Fornecedor>('supplier');
   }
 
   // --- MÉTODOS CRUD ---

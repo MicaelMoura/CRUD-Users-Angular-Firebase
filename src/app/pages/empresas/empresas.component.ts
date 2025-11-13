@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -7,6 +7,8 @@ import { EmpresasService } from '../../services/empresas.service';
 import { Empresas } from '../../interfaces/empresas'; 
 import { ModalEmpresasFormComponent } from './modal-form-empresas/modal-form-empresas.component';
 import { ModalViewEmpresasComponent } from './modal-view-empresas/modal-view-empresas.component';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../services/auth.services';
 
 @Component({
   selector: 'app-empresas',
@@ -19,15 +21,34 @@ export class EmpresasComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  listBusiness: Empresas[] = [];
 
-  private empresasService: EmpresasService = inject(EmpresasService);
+  currentEmpresaId: string | null = null;
+   private tenantSubscription!: Subscription;
   
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog,
+      private empresasService: EmpresasService,  
+      private authService: AuthService
+  ) {
     this.dataSource = new MatTableDataSource<Empresas>([]);
   }
 
   ngOnInit(): void {
-    this.getListEmpresas();
+    this.inscreverObservarTenant();
+  }
+  inscreverObservarTenant() {
+    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
+      this.currentEmpresaId = tenantId;
+      
+      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
+      if (this.currentEmpresaId) {
+        this.getListEmpresas(this.currentEmpresaId); 
+      } else {
+        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
+        this.listBusiness = [];
+        this.dataSource = new MatTableDataSource<any>(this.listBusiness);
+      }
+    });
   }
 
   applyFilter(event: Event) {
@@ -42,7 +63,7 @@ export class EmpresasComponent implements OnInit {
       data: empresas // Passa os dados da empresa para o modal
     })
     .afterClosed().subscribe(() => {
-      this.getListEmpresas();
+      this.inscreverObservarTenant();
     });
   }
 
@@ -59,7 +80,7 @@ export class EmpresasComponent implements OnInit {
     this.empresasService.deleteEmpresa(companyId);
   }
 
-  getListEmpresas() {
+  getListEmpresas(empresasId: string) {
     this.empresasService.getEmpresas().subscribe(data => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;

@@ -20,9 +20,6 @@ import { Empresas } from '../../interfaces/empresas'; // Importar a interface de
 })
 
 export class UsersComponent implements OnInit, OnDestroy {
-  private authService: AuthService = inject(AuthService);
-  private usersService: UsersService = inject(UsersService);
-  private empresasService: EmpresasService = inject(EmpresasService); // Injetar o serviço de empresas
   
   displayedColumns: string[] = ['id', 'name', 'email', 'action'];
   dataSource: any;
@@ -37,6 +34,8 @@ export class UsersComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(public dialog: MatDialog,
+    private usersService: UsersService,
+    private authService: AuthService,
   ) {
     this.dataSource = new MatTableDataSource<any>(this.listUsers);
   }
@@ -44,7 +43,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.inscreverObservarTenant();
   }
-
 
   inscreverObservarTenant() {
     this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
@@ -75,12 +73,6 @@ export class UsersComponent implements OnInit, OnDestroy {
       error: (err) => {
         console.log('Erro: ', err);
       }
-    });
-  }
-
-  getListEmpresas() {
-    this.empresasService.getEmpresas().subscribe(data => {
-      this.listEmpresas = data;
     });
   }
 

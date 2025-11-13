@@ -7,6 +7,7 @@ import { FornecedoresService } from '../../services/fornecedores.service';
 import { Fornecedor } from '../../interfaces/fornecedor';
 import { AuthService } from '../../services/auth.services';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router'; 
 // IMPORTAÇÃO DOS NOVOS MODAIS
 import { ModalFormFornecedorComponent } from './modal-form/modal-form-fornecedor.component'; 
 import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor.component'; 
@@ -18,33 +19,26 @@ import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor
 })
 export class FornecedoresComponent implements OnInit, OnDestroy {
 
-  displayedColumns: string[] = ['name', 'cnpj', 'email', 'action'];
+  displayedColumns: string[] = ['razaoSocial', 'cnpj', 'email', 'action'];
   dataSource!: MatTableDataSource<Fornecedor>;
   listFornecedores: Fornecedor[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
-  // Injeção de dependências
-  private fornecedoresService: FornecedoresService = inject(FornecedoresService);
-  private authService: AuthService = inject(AuthService);
   
  currentEmpresaId: string | null = null;
  private tenantSubscription!: Subscription;
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog,
+    private authService: AuthService,
+    private fornecedoresService: FornecedoresService,
+    private router: Router
+  ) {
     this.dataSource = new MatTableDataSource<Fornecedor>([]);
   }
 
   ngOnInit(): void {
-    if (this.currentEmpresaId) {
-      this.getListFornecedores(this.currentEmpresaId);
-    } else {
-      // Mensagem de aviso se o ID da empresa não for real (durante o desenvolvimento)
-      console.warn("ID da empresa não definido/mockado. Não foi possível carregar os fornecedores reais.");
-      // Se necessário, você pode carregar dados mockados ou exibir um aviso na interface.
-    }
-
+    this.inscreverObservarTenant();
   }
   inscreverObservarTenant() {
     this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
@@ -57,6 +51,8 @@ export class FornecedoresComponent implements OnInit, OnDestroy {
         // Opcional: Limpar a lista se o ID do tenant for removido (logout)
         this.listFornecedores = [];
         this.dataSource = new MatTableDataSource<any>(this.listFornecedores);
+        
+        this.router.navigate(['home']);
       }
     });
   }

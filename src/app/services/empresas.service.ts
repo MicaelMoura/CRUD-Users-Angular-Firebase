@@ -58,6 +58,7 @@ export class EmpresasService {
         email: empresa.emailAdmin,
         perfilId: '', // Role de administrador
         authUid: authUid, // Vínculo com o usuário de login
+        empresaId: empresaId
     };
     await setDoc(usuarioRef, primeiroAdmin);
 

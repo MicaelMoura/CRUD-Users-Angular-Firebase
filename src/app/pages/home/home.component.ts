@@ -6,16 +6,12 @@ import { Component } from '@angular/core';
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-
-  userName: string | null;
+  userName: string = 'Usuário';
 
   ngOnInit() {
-    if (typeof window !== 'undefined') {
-      this.userName = sessionStorage.getItem('userName');
-    }
-    else {
-      this.userName = 'Usuário';
+    const stored = typeof window !== 'undefined' ? sessionStorage.getItem('userName') : null;
+    if (stored) {
+      this.userName = stored;
     }
   }
-
 }

@@ -36,24 +36,31 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   async onLogin() {
-    this.errorMessage = '';
-    if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor, preencha o formulário corretamente.';
-      return;
-    }
-
-    const businessId = await this.authService.getBusinessId(this.loginForm.value.business);
-    await this.authService.setBusinessId(businessId);
-
     try {
-      const { email, password } = this.loginForm.value;
-      await this.afAuth.signInWithEmailAndPassword(email, password);
-      console.log('Login efetuado com sucesso!');
+      this.errorMessage = '';
+      if (this.loginForm.invalid) {
+        this.snackBar.open('Por favor, preencha o formulário corretamente.', 'Fechar', { duration: 4000 });
+        return;
+      }
 
-      this.router.navigate(['home']); // Redireciona para a home
+      const { business, email, password } = this.loginForm.value;
+
+      if (!business || !email || !password) {
+        this.snackBar.open('Por favor, preencha todos os campos.', 'Fechar', { duration: 4000 });
+        return;
+      }
+
+      // Obtém e define o ID da empresa
+      const businessId = await this.authService.getBusinessId(business);
+      await this.authService.setBusinessId(businessId);
+
+      // Realiza o login do usuário
+      await this.afAuth.signInWithEmailAndPassword(email, password);
+      this.router.navigate(['home']);
+
     } catch (error: any) {
-      console.error('Erro no login:', error.message);
-      this.errorMessage = 'Email ou senha incorretos.';
+      console.error('Erro no login:', error);
+      this.snackBar.open(error, 'Fechar', { duration: 4000 });
     }
   }
 

@@ -1,10 +1,13 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router'; 
-import { Auth, signInWithEmailAndPassword, signOut, onAuthStateChanged, user, UserCredential, createUserWithEmailAndPassword, sendPasswordResetEmail } from '@angular/fire/auth';
-import { Firestore, doc, getDoc} from '@angular/fire/firestore';
-// NOVO IMPORT: toObservable para converter Signals em Observables
+
 import { toObservable } from '@angular/core/rxjs-interop'; 
-import { Observable, from, map, of, catchError, firstValueFrom, filter, take, throwError } from 'rxjs';
+import { Observable, from, map, of, catchError, throwError } from 'rxjs';
+import { Empresas } from '../interfaces/empresas';
+
+import { AngularFireAuth } from '@angular/fire/compat/auth'; 
+import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app';
 
 // Tipagem
 export type UserRole = 'visitante' | 'usuario' | 'administrador' | null;
@@ -13,15 +16,7 @@ export type UserRole = 'visitante' | 'usuario' | 'administrador' | null;
     providedIn: 'root'
 })
 export class AuthService {
-    private auth: Auth = inject(Auth);
-    private firestore: Firestore = inject(Firestore);
-    private router: Router = inject(Router); 
-    public readonly user$ = user(this.auth); 
-    
-    // ====================================================================
-    // SIGNALS DE ESTADO
-    // ====================================================================
-    
+        
     // DADOS DO USUÁRIO AUTHENTICADO
     private _currentUserUid = signal<string | null>(null);
     public userUid = this._currentUserUid.asReadonly();
@@ -33,7 +28,7 @@ export class AuthService {
     
     // DADOS DO TENANT ATIVO
     private _activeTenantId = signal<string | null>(null);
-    public activeTenantId = this._activeTenantId.asReadonly();
+    public activeTenantId = toObservable(this._activeTenantId);
     
     // PAPEL (ROLE) DO USUÁRIO NO TENANT ATIVO
     private _userRole = signal<UserRole>(null);
@@ -43,9 +38,13 @@ export class AuthService {
     // INICIALIZAÇÃO
     // ====================================================================
 
-    constructor() {
+    constructor(
+        private ngAuth: AngularFireAuth, // Use o AngularFireAuth (Compat)
+        private ngFirestore: AngularFirestore, // Use o AngularFirestore (Compat)
+        private router: Router
+    ) {
         // Observa mudanças no estado de autenticação (login/logout)
-        onAuthStateChanged(this.auth, (user) => {
+        this.ngAuth.onAuthStateChanged((user) => {
             if (user) {
                 this._currentUserUid.set(user.uid);
             } else {
@@ -86,10 +85,15 @@ export class AuthService {
      */
     private async _fetchUserRole(tenantId: string, uid: string): Promise<void> {
         try {
-            const docRef = doc(this.firestore, `empresas/${tenantId}/usuarios/${uid}`);
-            const docSnap = await getDoc(docRef);
+            const docRef = this.ngFirestore
+            .collection('business') // Acessa a coleção raiz
+            .doc(tenantId)          // Acessa o documento da empresa
+            .collection('users') // Acessa a sub-coleção de usuários
+            .doc(uid);              // Acessa o documento do usuário (o usuário logado)
 
-            if (docSnap.exists()) {
+            // Obtém o valor do documento como uma Promise (requer .toPromise() no Compat)
+            const docSnap = await docRef.get().toPromise();
+            if (docSnap && docSnap.exists) {
                 const data = docSnap.data();
                 const role = data?.['acesso'] as UserRole;
                 this._userRole.set(role || 'visitante');
@@ -107,10 +111,10 @@ export class AuthService {
      * Retorna o UID.
      */
     login(email: string, password: string): Observable<string> {
-        const loginPromise = signInWithEmailAndPassword(this.auth, email, password);
+        const loginPromise = this.ngAuth.signInWithEmailAndPassword(email, password);
         
         return from(loginPromise).pipe(
-            map(userCredential => userCredential.user.uid), 
+            map(userCredential => userCredential.user!.uid), 
             catchError((error: any) => {
                 console.error('Erro de Autenticação do Firebase:', error.code, error.message);
 
@@ -129,8 +133,8 @@ export class AuthService {
     /**
      * Cria um novo usuário no Firebase Auth. Usado pelo gerenciamento de usuários.
      */
-    registerUser(email: string, password: string): Promise<UserCredential> {
-        return createUserWithEmailAndPassword(this.auth, email, password);
+    registerUser(email: string, password: string): Promise<firebase.auth.UserCredential> {
+        return this.ngAuth.createUserWithEmailAndPassword(email, password);
     }
 
     /**
@@ -138,12 +142,12 @@ export class AuthService {
      */
     logout(): Promise<void> {
         this._resetState();
-        return signOut(this.auth);
+        return this.ngAuth.signOut();
     }
 
     async sendPasswordResetEmail(email: string): Promise<void> {
         try {
-        await sendPasswordResetEmail(this.auth, email);
+        await this.ngAuth.sendPasswordResetEmail(email);
         } catch (error) {
         throw error;
         }
@@ -152,5 +156,34 @@ export class AuthService {
     public setPreLoginTenantId(tenantId: string | null): void {
     // Apenas define o ID. Não carrega a role, pois o usuário ainda não está logado.
         this._activeTenantId.set(tenantId);
+    }
+
+    public async getBusinessId(businessInput: string): Promise<string> {
+        const docRef = this.ngFirestore
+        .collection('business')
+        .doc<Empresas>(businessInput); 
+
+        // 💡 Acessa o documento e espera a Promise
+        const docSnap = await docRef.get().toPromise(); 
+
+        if (docSnap && docSnap.exists) {
+            // Retorna o ID do documento que foi encontrado no Firestore
+            return docSnap.id; 
+        } else {
+            // Caso o documento não exista
+            throw new Error(`Empresa com ID ${businessInput} não encontrada.`);
+        }
+    }
+
+    public async setBusinessId(tenantId: string): Promise<void> {
+        this._activeTenantId.set(tenantId);
+        
+        const uid = this.userUid();
+        if (uid) {
+            await this._fetchUserRole(tenantId, uid);
+            //await this.loadTenantConfig();
+        } else {
+            this._userRole.set(null);
+        }
     }
 }

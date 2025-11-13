@@ -26,7 +26,7 @@ export class EmpresasService {
   async addEmpresa(empresa: Empresas): Promise<string> {
     // 1. CRIA O USUÁRIO DE LOGIN NO FIREBASE AUTH (ANTES DO FIRESTORE)
     const authResult = await this.authService.registerUser(empresa.emailAdmin, empresa.senhaAdmin);
-    const authUid = authResult.user.uid;
+    const authUid = authResult.user!.uid;
 
     // 2. Obtém uma referência de documento com um ID gerado automaticamente
     const newDocRef = doc(collection(this.firestore, 'business'));
@@ -73,7 +73,7 @@ export class EmpresasService {
 
   // Método para atualizar uma empresa
   async updateEmpresa(empresaId: string, empresa: Empresas): Promise<void> {
-    const empresaRef = doc(this.firestore, `empresas`, empresaId);
+    const empresaRef = doc(this.firestore, `business`, empresaId);
     const businessPayload: any = {
       razaoSocial: empresa.razaoSocial,
       nomeFantasia: empresa.nomeFantasia,

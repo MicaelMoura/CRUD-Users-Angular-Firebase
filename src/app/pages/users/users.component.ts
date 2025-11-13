@@ -1,9 +1,10 @@
-import { Component, ViewChild, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, inject, OnDestroy } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { User } from '../../interfaces/user';
 import { AuthService } from '../../services/auth.services';
+import { Subscription } from 'rxjs'; 
 
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
@@ -18,8 +19,10 @@ import { Empresas } from '../../interfaces/empresas'; // Importar a interface de
   styleUrl: './users.component.scss'
 })
 
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
   private authService: AuthService = inject(AuthService);
+  private usersService: UsersService = inject(UsersService);
+  private empresasService: EmpresasService = inject(EmpresasService); // Injetar o serviço de empresas
   
   displayedColumns: string[] = ['id', 'name', 'email', 'action'];
   dataSource: any;
@@ -27,27 +30,39 @@ export class UsersComponent implements OnInit {
   listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
-  private currentEmpresaId: string = this.authService.activeTenantId() ?? ''; 
+  currentEmpresaId: string | null = null;
+  private tenantSubscription!: Subscription; 
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(
-    private usersService: UsersService,
-    public dialog: MatDialog,
-    private empresasService: EmpresasService // Injetar o serviço de empresas
+  constructor(public dialog: MatDialog,
   ) {
     this.dataSource = new MatTableDataSource<any>(this.listUsers);
   }
 
   ngOnInit() {
-    this.gelListUsers(this.currentEmpresaId); 
-    
-    this.getListEmpresas(); // Chamar o método para buscar a lista de empresas
+    this.inscreverObservarTenant();
+  }
+
+
+  inscreverObservarTenant() {
+    this.tenantSubscription = this.authService.activeTenantId.subscribe(tenantId => {
+      this.currentEmpresaId = tenantId;
+      
+      // Chama a listagem de usuários APENAS se o ID da empresa estiver disponível
+      if (this.currentEmpresaId) {
+        this.getListUsers(this.currentEmpresaId); 
+      } else {
+        // Opcional: Limpar a lista se o ID do tenant for removido (logout)
+        this.listUsers = [];
+        this.dataSource = new MatTableDataSource<any>(this.listUsers);
+      }
+    });
   }
 
   // MÉTODO AGORA RECEBE O ID DA EMPRESA
-  gelListUsers(empresaId: string) {
+  getListUsers(empresaId: string) {
     // Passar o ID da empresa para o serviço
     this.usersService.getAllUsers(empresaId).subscribe({
       next: (response: any) => {
@@ -95,6 +110,12 @@ export class UsersComponent implements OnInit {
     })
   }
 
+  ngOnDestroy(): void {
+    if (this.tenantSubscription) {
+      this.tenantSubscription.unsubscribe();
+    }
+  }
+
   // MÉTODO AGORA EXIGE O ID DA EMPRESA PARA EXCLUSÃO
   deleteUser(firebaseId: string) {
     if (!this.currentEmpresaId || this.currentEmpresaId === 'ID_DA_EMPRESA_ATUAL_MOCK') {
@@ -114,7 +135,7 @@ export class UsersComponent implements OnInit {
     .afterClosed().subscribe(() => {
       // Recarregar a lista após o fechamento do modal
       if (this.currentEmpresaId && this.currentEmpresaId !== 'ID_DA_EMPRESA_ATUAL_MOCK') {
-        this.gelListUsers(this.currentEmpresaId);
+        this.getListUsers(this.currentEmpresaId);
       }
     });
   }

@@ -6,6 +6,11 @@
     <h2 class="subtitulo">{{ slogan }}</h2>
 
     <mat-form-field class="full-width-input">
+      <mat-label>Business</mat-label>
+      <input matInput formControlName="business" type="text" placeholder="Digite o Business Id">
+    </mat-form-field>
+
+    <mat-form-field class="full-width-input">
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" placeholder="Digite seu email">
       <mat-error *ngIf="loginForm.get('email')?.hasError('required')">

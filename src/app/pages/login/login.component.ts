@@ -4,6 +4,7 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { NAME_SOFTWARE, SLOGAN } from '../../../constants'
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../../services/auth.services';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
   slogan: string = SLOGAN;
 
   private snackBar: MatSnackBar = inject(MatSnackBar);
+  private authService: AuthService = inject(AuthService);
   hidePassword = signal(true);
 
   constructor(
@@ -25,6 +27,7 @@ export class LoginComponent implements OnInit {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
+      business: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
@@ -39,10 +42,14 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    const businessId = await this.authService.getBusinessId(this.loginForm.value.business);
+    await this.authService.setBusinessId(businessId);
+
     try {
       const { email, password } = this.loginForm.value;
       await this.afAuth.signInWithEmailAndPassword(email, password);
       console.log('Login efetuado com sucesso!');
+
       this.router.navigate(['home']); // Redireciona para a home
     } catch (error: any) {
       console.error('Erro no login:', error.message);

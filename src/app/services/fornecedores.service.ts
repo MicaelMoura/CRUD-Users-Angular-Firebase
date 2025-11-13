@@ -16,7 +16,7 @@ export class FornecedoresService {
    */
   private getCompanyFornecedoresCollection(empresaId: string): AngularFirestoreCollection<Fornecedor> {
     return this.firestore
-      .collection('empresas')
+      .collection('business')
       .doc(empresaId)
       .collection<Fornecedor>('fornecedores');
   }

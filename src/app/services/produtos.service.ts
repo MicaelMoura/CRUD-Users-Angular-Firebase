@@ -16,9 +16,9 @@ export class ProdutosService {
    */
   private getCompanyProductsCollection(empresaId: string): AngularFirestoreCollection<Produto> {
     return this.dataBaseStore
-      .collection('empresas')
+      .collection('business')
       .doc(empresaId)
-      .collection<Produto>('produtos');
+      .collection<Produto>('products');
   }
 
   // --- MÉTODOS CRUD ---

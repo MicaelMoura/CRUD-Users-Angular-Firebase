@@ -7,13 +7,6 @@
     <form class="row" [formGroup]="formFornecedor" (ngSubmit)="saveFornecedor()">
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
-                <mat-label>Nome Fantasia</mat-label>
-                <input type="text" matInput formControlName="name" placeholder="Digite o nome fantasia">
-                <mat-error *ngIf="formFornecedor.controls['name'].invalid">Preencha o nome fantasia</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
                 <mat-label>Razão Social</mat-label>
                 <input type="text" matInput formControlName="razaoSocial" placeholder="Digite a razão social">
                 <mat-error *ngIf="formFornecedor.controls['razaoSocial'].invalid">Preencha a razão social</mat-error>

@@ -3,6 +3,5 @@ export interface User {
     nome: string,
     email: string,
     perfilId: string,
-    authUid: string,
     empresaId: string
 }

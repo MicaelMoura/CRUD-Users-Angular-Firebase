@@ -10,7 +10,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { AngularFireModule } from '@angular/fire/compat'; 
 import { environment } from '../environments/environment';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { UsersComponent } from './pages/users/users.component';
@@ -21,6 +20,16 @@ import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
 import { ModalViewEmpresasComponent} from './pages/empresas/modal-view-empresas/modal-view-empresas.component';
+import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
+import { ModalFormFornecedorComponent } from './pages/fornecedores/modal-form/modal-form-fornecedor.component';
+import { ModalViewFornecedorComponent } from './pages/fornecedores/modal-view/modal-view-fornecedor.component';
+import { ProdutosComponent } from './pages/produtos/produtos.component';
+import { ModalFormProdutoComponent } from './pages/produtos/modal-form/modal-form-produto.component';
+import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-view-produto.component';
+import { AngularFireModule } from '@angular/fire/compat'; 
+import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
+import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
+
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -46,7 +55,13 @@ import {MatCardModule} from '@angular/material/card';
     ModalFormUserComponent,
     EmpresasComponent,
     ModalEmpresasFormComponent,
-    ModalViewEmpresasComponent
+    ModalViewEmpresasComponent,
+    FornecedoresComponent,
+    ModalFormFornecedorComponent,
+    ModalViewFornecedorComponent,
+    ProdutosComponent,
+    ModalFormProdutoComponent,
+    ModalViewProdutoComponent
   ],
   imports: [
     BrowserModule,
@@ -64,23 +79,14 @@ import {MatCardModule} from '@angular/material/card';
     MatSelectModule,
     MatIcon,
     MatCardModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
     NoopAnimationsModule,
     NgxMaskDirective, 
     NgxMaskPipe, 
+    AngularFireAuthModule, 
+    AngularFirestoreModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [
-    provideFirebaseApp(() => initializeApp(
-      {
-        "projectId":"curso-angular-8e009",
-        "appId":"1:1030430354633:web:4406e95e86574a7496f118",
-        "storageBucket":"curso-angular-8e009.appspot.com",
-        "apiKey":"AIzaSyBe5ZFIlFEbUqcIPDWLD8YKFozSEP4oAOM",
-        "authDomain":"curso-angular-8e009.firebaseapp.com",
-        "messagingSenderId":"1030430354633"
-      }
-    )),
-    provideFirestore(() => getFirestore()),
     provideNgxMask(),
   ],
   bootstrap: [AppComponent]

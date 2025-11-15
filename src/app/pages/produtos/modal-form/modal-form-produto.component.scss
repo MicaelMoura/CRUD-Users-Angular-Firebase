@@ -1,0 +1,67 @@
+// Estilos gerais para o modal
+:host {
+    display: block;
+    padding: 10px;
+}
+
+.titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: #6c757d; 
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef; 
+    padding-bottom: 5px;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color, #007bff); // Cor primária como base
+    margin-top: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e9ecef; 
+    width: 100%;
+}
+
+// Estilo para o ícone de fechar (X)
+.hover {
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #dc3545;
+    }
+}
+
+// Estilo do botão primário (adaptado do seu uso anterior)
+.botao-primario {
+    width: auto;
+    outline: none;
+    border: 0;
+    background: var(--primary-color, #007bff);
+    color: var(--text-button-color, white);
+    font-weight: 400;
+    font-size: 16px;
+    padding: 6px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 1px var(--shadow-color);
+    transition: 0.1s linear all;    
+    
+    &:hover:not([disabled]) {
+        box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
+        background: var(--primary-color, #007bff);
+        filter: brightness(90%);
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+        opacity: 0.7;
+        background: #adb5bd;
+    }
+}

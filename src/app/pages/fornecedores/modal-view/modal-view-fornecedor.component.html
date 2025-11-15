@@ -1,0 +1,35 @@
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">Detalhes do Fornecedor</h1>
+    <h2 class="subtitulo">{{ fornecedor.corporate }} ({{ fornecedor.corporate }})</h2>
+
+    <div class="details-grid">
+        <div class="detail-item">
+            <span class="label">CNPJ:</span>
+            <span class="value">{{ fornecedor.cnpj }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">E-mail:</span>
+            <span class="value">{{ fornecedor.email }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="label">Telefone:</span>
+            <span class="value">{{ fornecedor.phone }}</span>
+        </div>
+
+        <div class="detail-group-header">Observações</div>
+        <div class="detail-item full-width">
+            <p class="value-observacoes">{{ fornecedor.observations || 'Nenhuma observação registrada.' }}</p>
+        </div>
+        
+        <div class="detail-group-header">Representante</div>
+        <div class="detail-item full-width">
+            <p class="value-observacoes">{{ fornecedor.salesRep }}</p>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-end mt-4">
+        <button mat-flat-button (click)="closeModal()">Fechar</button>
+    </div>
+</div>

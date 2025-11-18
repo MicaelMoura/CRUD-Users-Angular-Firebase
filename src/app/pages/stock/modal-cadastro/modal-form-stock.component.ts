@@ -172,16 +172,16 @@ export class ModalFormStockComponent implements OnInit {
     const names = this.getNamesFromIds(formData);
     
     // Converte a quantidade para negativo se for um AJUSTE (Saída)
-    let finalQuantity = formData.quantidade;
-    if (formData.tipoMovimento === 'AJUSTE') {
-        finalQuantity = -Math.abs(formData.quantidade);
-    }
+    // let finalQuantity = formData.quantidade;
+    // if (formData.tipoMovimento === 'AJUSTE') {
+    //     finalQuantity = -Math.abs(formData.quantidade);
+    // }
     
     const stockEntry: Omit<Stock, 'id'> = {
       ...names,
       produtoId: formData.produtoId,
       fornecedorId: formData.fornecedorId,
-      quantidade: finalQuantity,
+      quantidade: formData.quantidade,
       validade: formData.validade,
       tipoMovimento: formData.tipoMovimento,
       motivoAjuste: formData.motivoAjuste,

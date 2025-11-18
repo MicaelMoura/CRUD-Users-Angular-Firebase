@@ -41,7 +41,6 @@ export class AuthService {
     constructor(
         private ngAuth: AngularFireAuth, // Use o AngularFireAuth (Compat)
         private ngFirestore: AngularFirestore, // Use o AngularFirestore (Compat)
-        private router: Router
     ) {
         // Observa mudanças no estado de autenticação (login/logout)
         this.ngAuth.onAuthStateChanged((user) => {

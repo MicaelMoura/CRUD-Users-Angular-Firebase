@@ -1,10 +1,15 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 import { Produto } from '../../../interfaces/produto';
 import { ProdutosService } from '../../../services/produtos.service';
 import { AuthService } from '../../../services/auth.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PlataformService } from '../../../services/plataform.service';
+import { Units } from '../../../interfaces/units';
 
 @Component({
   selector: 'app-modal-form-produto',
@@ -16,6 +21,11 @@ export class ModalFormProdutoComponent implements OnInit {
   formProduto!: FormGroup;
   isEditMode = false;
   currentEmpresaId: string;
+  listUnits: Units[] = [];
+  dataSource!: MatTableDataSource<Units>;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private fb: FormBuilder,
@@ -23,26 +33,37 @@ export class ModalFormProdutoComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalFormProdutoComponent, boolean>, 
     private produtosService: ProdutosService,
     private authService: AuthService, 
+    private plataformService: PlataformService,
     private snackBar: MatSnackBar,
     // Recebe o produto (opcional para edição) e o ID da empresa atual
-    @Inject(MAT_DIALOG_DATA) public data: { produto: Produto | null, empresaId: string }
-  ) {
-    this.currentEmpresaId = data.empresaId;
+    @Inject(MAT_DIALOG_DATA) public data: { produto: Produto | null}
+  ) {  
+    this.dataSource = new MatTableDataSource<Units>([]);
   }
 
   public empresaIdAtual = this.authService.activeTenantId; 
 
   ngOnInit(): void {
+    this.getListUnits();
     this.buildForm();
-    
     // Configura o modo de edição se os dados do produto estiverem presentes
+    this.configurarModoEdicao();
+  }
+  getListUnits() {
+    this.plataformService.getUnits().subscribe(data => {
+      this.listUnits = data;
+      this.dataSource = new MatTableDataSource(this.listUnits);
+      
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      this.paginator._intl.itemsPerPageLabel = "Itens por página";
+    });
+  }
+
+  private configurarModoEdicao() {
     if (this.data.produto) {
       this.isEditMode = true;
       this.formProduto.patchValue(this.data.produto);
-      
-      // Se estiver em edição, desabilita o campo empresaid para que não seja alterado,
-      // mas o valor será recuperado no getRawValue()
-      this.formProduto.get('empresaid')?.disable();
     }
   }
 

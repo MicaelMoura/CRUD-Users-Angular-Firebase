@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Units } from '../interfaces/units';
+import { Unit } from '../interfaces/units';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,11 +13,11 @@ export class PlataformService {
         private ngFirestore: AngularFirestore,
     ) {}
 
-    public getUnits(): Observable<Units[]> {
+    public getUnits(): Observable<Unit[]> {
         return this.ngFirestore
             .collection('plataform')
             .doc('vOyNkQyF32YgFkc1ijyy')
-            .collection<Units>('Units')
+            .collection<Unit>('units')
             .valueChanges({ idField: 'id' }); 
     }
 }

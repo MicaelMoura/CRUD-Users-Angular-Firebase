@@ -9,7 +9,7 @@ import { ProdutosService } from '../../../services/produtos.service';
 import { AuthService } from '../../../services/auth.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlataformService } from '../../../services/plataform.service';
-import { Units } from '../../../interfaces/units';
+import { Unit } from '../../../interfaces/units';
 
 @Component({
   selector: 'app-modal-form-produto',
@@ -21,11 +21,8 @@ export class ModalFormProdutoComponent implements OnInit {
   formProduto!: FormGroup;
   isEditMode = false;
   currentEmpresaId: string;
-  listUnits: Units[] = [];
-  dataSource!: MatTableDataSource<Units>;
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  listUnits: Unit[] = [];
+  dataSource!: MatTableDataSource<Unit>;
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +35,7 @@ export class ModalFormProdutoComponent implements OnInit {
     // Recebe o produto (opcional para edição) e o ID da empresa atual
     @Inject(MAT_DIALOG_DATA) public data: { produto: Produto | null}
   ) {  
-    this.dataSource = new MatTableDataSource<Units>([]);
+    this.dataSource = new MatTableDataSource<Unit>([]);
   }
 
   public empresaIdAtual = this.authService.activeTenantId; 
@@ -53,14 +50,12 @@ export class ModalFormProdutoComponent implements OnInit {
     this.plataformService.getUnits().subscribe(data => {
       this.listUnits = data;
       this.dataSource = new MatTableDataSource(this.listUnits);
-      
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-      this.paginator._intl.itemsPerPageLabel = "Itens por página";
     });
+  
   }
 
   private configurarModoEdicao() {
+    
     if (this.data.produto) {
       this.isEditMode = true;
       this.formProduto.patchValue(this.data.produto);
@@ -74,7 +69,7 @@ export class ModalFormProdutoComponent implements OnInit {
       nome: ['', Validators.required],
       marca: ['', Validators.required],
       codigoDeBarras: [''], // Não é obrigatório
-      unidadeDeMedida: ['', Validators.required],
+      unit: ['', Validators.required],
       
       // VALORES E ESTOQUE
       valorUnitarioCompra: [null, [Validators.required, Validators.min(0)]],

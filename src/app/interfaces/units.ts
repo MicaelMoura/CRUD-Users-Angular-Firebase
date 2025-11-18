@@ -1,4 +1,4 @@
-export interface Units {
+export interface Unit {
     id: string,
     name: string,
     acronym: string,

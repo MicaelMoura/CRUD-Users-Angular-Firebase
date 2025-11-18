@@ -1,0 +1,56 @@
+// src/app/pages/stock/modal-form-stock/modal-form-stock.component.scss
+
+// Reutiliza o SCSS do modal de fornecedores para manter a padronização
+// Como você não forneceu o conteúdo completo, estou usando um placeholder baseado nos seus outros modais.
+
+:host {
+    display: block;
+    padding: 10px;
+}
+
+.titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: var(--gray-color);
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+.hover {
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #dc3545;
+    }
+}
+
+.botao-primario {
+    width: auto;
+    outline: none;
+    border: 0;
+    background: var(--primary-color);
+    color: var(--text-button-color);
+    font-weight: 400;
+    font-size: 16px;
+    padding: 6px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 1px var(--shadow-color);
+    transition: 0.1s linear all;    
+    
+    &:hover:not([disabled]) {
+        box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
+        color: white;
+    }
+    &:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+}

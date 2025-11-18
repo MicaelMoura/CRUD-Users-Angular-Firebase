@@ -1,0 +1,38 @@
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">Detalhes da Movimentação de Estoque</h1>
+    <h2 class="subtitulo">Visão detalhada do registro de estoque</h2>
+
+    <div class="row mt-3">
+        <div class="col-6">
+            <h4 class="titulo-informacao">Produto</h4>
+            <p class="informacao">{{stockData.produtoNome}}</p>
+            
+            <h4 class="titulo-informacao">Fornecedor</h4>
+            <p class="informacao">{{stockData.fornecedorNome}}</p>
+            
+            <h4 class="titulo-informacao">Quantidade</h4>
+            <p class="informacao">{{stockData.quantidade}}</p>
+        </div>
+        
+        <div class="col-6">
+            <h4 class="titulo-informacao">Tipo de Movimento</h4>
+            <p class="informacao">
+                {{stockData.tipoMovimento === 'ENTRADA' ? 'Entrada de Estoque' : 'Ajuste de Estoque (Saída/Perda)'}}
+            </p>
+
+            <h4 class="titulo-informacao">Motivo do Ajuste (Se Aplicável)</h4>
+            <p class="informacao">
+                {{stockData.motivoAjuste || 'N/A'}}
+            </p>
+            
+            <h4 class="titulo-informacao">Validade</h4>
+            <p class="informacao">{{stockData.validade}}</p>
+            
+            <h4 class="titulo-informacao">Data da Movimentação</h4>
+            <p class="informacao">{{stockData.dataMovimento | date: 'dd/MM/yyyy HH:mm'}}</p>
+        </div>
+
+    </div>
+</div>

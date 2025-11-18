@@ -31,8 +31,14 @@
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Unidade de Medida</mat-label>
-                <input type="text" matInput formControlName="unidadeDeMedida" placeholder="Ex: UN, KG, M">
-                <mat-error *ngIf="formProduto.controls['unidadeDeMedida'].invalid">Preencha a unidade (Ex: UN)</mat-error>
+                <mat-select formControlName="units" [required]="true">
+                    @for (unit of listUnits; track unit.id) {
+                        <mat-option [value]="unit.id">{{unit.name}}</mat-option>
+                    }
+                </mat-select>
+                <@if (formProduto.controls['units'].invalid) {
+                    <mat-error>Selecione uma unidade</mat-error>
+                }
             </mat-form-field>
         </div>
         

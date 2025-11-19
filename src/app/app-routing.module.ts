@@ -6,6 +6,7 @@ import { UsersComponent } from './pages/users/users.component';
 import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
+import { StockComponent } from './pages/stock/stock.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -16,6 +17,8 @@ const routes: Routes = [
   {path: 'empresas', component: EmpresasComponent},
   {path: 'produtos', component: ProdutosComponent},
   {path: 'fornecedores', component: FornecedoresComponent},
+  {path: 'stock', component: StockComponent},
+
 ];
 
 @NgModule({

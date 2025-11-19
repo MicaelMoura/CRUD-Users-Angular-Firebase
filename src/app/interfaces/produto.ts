@@ -4,6 +4,9 @@ export interface Produto {
     // Campos do Produto
     nome: string;
     marca: string;
+    fornecedorId: string;
+    fornecedorNome: string;
+
     valorUnitarioCompra: number;
     valorUnitarioVenda: number;
     codigoDeBarras: string; // Pode ser string para lidar com zeros à esquerda

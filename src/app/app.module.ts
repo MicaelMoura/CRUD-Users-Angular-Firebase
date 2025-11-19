@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ButtonComponent } from './components/button/button.component';
@@ -11,11 +10,9 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../environments/environment';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { UsersComponent } from './pages/users/users.component';
 import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
@@ -26,10 +23,12 @@ import { ModalViewFornecedorComponent } from './pages/fornecedores/modal-view/mo
 import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { ModalFormProdutoComponent } from './pages/produtos/modal-form/modal-form-produto.component';
 import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-view-produto.component';
+import { StockComponent } from './pages/stock/stock.component';
+
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-
+import { DatePipe } from '@angular/common';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -41,6 +40,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import {MatCardModule} from '@angular/material/card';
+import { ModalViewStockComponent } from './pages/stock/modal-view/modal-view-stock.component';
+import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form-stock.component';
 
 
 @NgModule({
@@ -61,7 +62,10 @@ import {MatCardModule} from '@angular/material/card';
     ModalViewFornecedorComponent,
     ProdutosComponent,
     ModalFormProdutoComponent,
-    ModalViewProdutoComponent
+    ModalViewProdutoComponent,
+    StockComponent,
+    ModalViewStockComponent,
+    ModalFormStockComponent
   ],
   imports: [
     BrowserModule,
@@ -79,6 +83,7 @@ import {MatCardModule} from '@angular/material/card';
     MatSelectModule,
     MatIcon,
     MatCardModule,
+
     NoopAnimationsModule,
     NgxMaskDirective, 
     NgxMaskPipe, 

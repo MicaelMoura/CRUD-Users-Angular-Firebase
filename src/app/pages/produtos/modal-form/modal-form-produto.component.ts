@@ -1,10 +1,15 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
 import { Produto } from '../../../interfaces/produto';
 import { ProdutosService } from '../../../services/produtos.service';
 import { AuthService } from '../../../services/auth.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { PlataformService } from '../../../services/plataform.service';
+import { Unit } from '../../../interfaces/units';
+import { Fornecedor } from '../../../interfaces/fornecedor';
+import { FornecedoresService } from '../../../services/fornecedores.service';
 
 @Component({
   selector: 'app-modal-form-produto',
@@ -16,6 +21,10 @@ export class ModalFormProdutoComponent implements OnInit {
   formProduto!: FormGroup;
   isEditMode = false;
   currentEmpresaId: string;
+  listUnits: Unit[] = [];
+  listFornecedores: Fornecedor[] = [];
+  dataSource!: MatTableDataSource<Unit>;
+  dataSourceFornecedores!: MatTableDataSource<Fornecedor>;
 
   constructor(
     private fb: FormBuilder,
@@ -23,27 +32,53 @@ export class ModalFormProdutoComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalFormProdutoComponent, boolean>, 
     private produtosService: ProdutosService,
     private authService: AuthService, 
+    private plataformService: PlataformService,
+    private fornecedorService: FornecedoresService, 
     private snackBar: MatSnackBar,
     // Recebe o produto (opcional para edição) e o ID da empresa atual
-    @Inject(MAT_DIALOG_DATA) public data: { produto: Produto | null, empresaId: string }
-  ) {
-    this.currentEmpresaId = data.empresaId;
+    @Inject(MAT_DIALOG_DATA) public data: { produto: Produto | null}
+  ) {  
+    this.dataSource = new MatTableDataSource<Unit>([]);
+    this.dataSourceFornecedores = new MatTableDataSource<Fornecedor>([]);
   }
 
   public empresaIdAtual = this.authService.activeTenantId; 
 
   ngOnInit(): void {
+    this.getListUnits();
+    this.getListFornecedores();
     this.buildForm();
-    
     // Configura o modo de edição se os dados do produto estiverem presentes
+    this.configurarModoEdicao();
+  }
+
+  getListFornecedores() {
+    const empresaId = this.empresaIdAtual();
+    if(empresaId == ''){
+      this.snackBar.open('ID da empresa inválido.', 'Fechar', { duration: 3000 });
+      return;
+    }
+    this.fornecedorService.getAllFornecedores(empresaId!).subscribe(data => {
+      this.listFornecedores = data;
+      this.dataSourceFornecedores = new MatTableDataSource(this.listFornecedores);
+    });
+  }
+
+  getListUnits() {
+    this.plataformService.getUnits().subscribe(data => {
+      this.listUnits = data;
+      this.dataSource = new MatTableDataSource(this.listUnits);
+    });
+  
+  }
+
+  private configurarModoEdicao() {
+    
     if (this.data.produto) {
       this.isEditMode = true;
       this.formProduto.patchValue(this.data.produto);
-      
-      // Se estiver em edição, desabilita o campo empresaid para que não seja alterado,
-      // mas o valor será recuperado no getRawValue()
-      this.formProduto.get('empresaid')?.disable();
     }
+
   }
 
   buildForm() {
@@ -54,10 +89,11 @@ export class ModalFormProdutoComponent implements OnInit {
       marca: ['', Validators.required],
       codigoDeBarras: [''], // Não é obrigatório
       unidadeDeMedida: ['', Validators.required],
+      fornecedorId: ['', Validators.required],
       
       // VALORES E ESTOQUE
-      valorUnitarioCompra: [null, [Validators.required, Validators.min(0)]],
-      valorUnitarioVenda: [null, [Validators.required, Validators.min(0)]],
+      valorUnitarioCompra: [0, [Validators.required, Validators.min(0)]],
+      valorUnitarioVenda: [0, [Validators.required, Validators.min(0)]],
       quantidadeMinima: [0, [Validators.required, Validators.min(0)]],
     });
   }
@@ -75,11 +111,27 @@ export class ModalFormProdutoComponent implements OnInit {
       if(!empresaId){
         return;    
       }
-      if (this.isEditMode && produtoData.firebaseId) {
+      
+      const fornecedor = this.listFornecedores.find(f => f.id === produtoData.fornecedorId);
+
+      const produtoEntry: Omit<Produto, 'id'> = {
+        firebaseId: produtoData.firebaseId,
+        nome: produtoData.nome,
+        fornecedorId: produtoData.fornecedorId,
+        fornecedorNome: fornecedor?.fantasyName || '',
+        codigoDeBarras: produtoData.codigoDeBarras,
+        marca: produtoData.marca,
+        quantidadeMinima: produtoData.quantidadeMinima,
+        unidadeDeMedida: produtoData.unidadeDeMedida,
+        valorUnitarioCompra: produtoData.valorUnitarioCompra,
+        valorUnitarioVenda: produtoData.valorUnitarioVenda  
+      };
+
+      if (this.isEditMode && produtoEntry.firebaseId) {
         // Modo Edição
-        const produtoId = produtoData.firebaseId;
+        const produtoId = produtoEntry.firebaseId;
         
-        this.produtosService.updateProduto(empresaId, produtoId, produtoData)
+        this.produtosService.updateProduto(empresaId, produtoId, produtoEntry)
           .then(() => {
             console.log('Produto atualizado com sucesso!');
             this.snackBar.open('Produto atualizado com sucesso!', 'Fechar', { duration: 3000 });
@@ -91,9 +143,9 @@ export class ModalFormProdutoComponent implements OnInit {
           });
       } else {
         // Modo Criação
-        delete produtoData.firebaseId; // O ID será gerado pelo Firestore
+        delete produtoEntry.firebaseId; // O ID será gerado pelo Firestore
         
-        this.produtosService.addProduto(empresaId, produtoData)
+        this.produtosService.addProduto(empresaId, produtoEntry)
           .then(() => {
             console.log('Produto salvo com sucesso!');
             this.snackBar.open('Produto salvo com sucesso!', 'Fechar', { duration: 3000 });

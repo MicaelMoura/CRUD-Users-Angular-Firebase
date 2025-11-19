@@ -31,13 +31,26 @@
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Unidade de Medida</mat-label>
-                <mat-select formControlName="unit" [required]="true">
+                <mat-select formControlName="unidadeDeMedida" [required]="true">
                     @for (unit of listUnits; track unit.id) {
                         <mat-option [value]="unit.id">{{unit.name}}</mat-option>
                     }
                 </mat-select>
-                @if (formProduto.controls['unit'].invalid) {
+                @if (formProduto.controls['unidadeDeMedida'].invalid) {
                     <mat-error>Selecione uma unidade</mat-error>
+                }
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Fornecedor</mat-label>
+                <mat-select formControlName="fornecedorId" [required]="true">
+                    @for (fornecedor of listFornecedores; track fornecedor.id) {
+                        <mat-option [value]="fornecedor.id">{{fornecedor.fantasyName}}</mat-option>
+                    }
+                </mat-select>
+                @if (formProduto.controls['fornecedorId'].invalid) {
+                    <mat-error>Selecione um fornecedor</mat-error>
                 }
             </mat-form-field>
         </div>

@@ -26,6 +26,9 @@ import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-vie
 import { StockComponent } from './pages/stock/stock.component';
 import { ModalViewStockComponent } from './pages/stock/modal-view/modal-view-stock.component';
 import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form-stock.component';
+import { CashierComponent } from './pages/cashier/cashier.component';
+import { ModalEntradaComponent } from './pages/cashier/entradas/modal-entrada.component';
+import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.component';
 
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
@@ -42,6 +45,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMomentDateModule, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 
 const BR_DATE_FORMATS = {
@@ -78,7 +82,10 @@ const BR_DATE_FORMATS = {
     ModalViewProdutoComponent,
     StockComponent,
     ModalViewStockComponent,
-    ModalFormStockComponent
+    ModalFormStockComponent,
+    CashierComponent,
+    ModalEntradaComponent,
+    ModalSaidaComponent
     
   ],
   imports: [
@@ -97,6 +104,7 @@ const BR_DATE_FORMATS = {
     MatIcon,
     MatCardModule,
     MatMomentDateModule,
+    MatDatepickerModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 

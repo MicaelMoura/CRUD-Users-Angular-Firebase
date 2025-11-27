@@ -35,11 +35,10 @@
         <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Forma de Recebimento</mat-label>
-                <mat-select formControlName="formaPagamento">
-                    <mat-option value="Dinheiro">Dinheiro</mat-option>
-                    <mat-option value="Cartão">Cartão de Crédito/Débito</mat-option>
-                    <mat-option value="Transferência">Transferência Bancária/PIX</mat-option>
-                    <mat-option value="Boleto">Boleto</mat-option>
+                <mat-select formControlName="formaPagamento" [required]="true">
+                    @for (payment of listPayments; track payment.id) {
+                        <mat-option [value]="payment.id">{{payment.description}}</mat-option>
+                    }
                 </mat-select>
                 <mat-error *ngIf="formCashFlow.controls['formaPagamento'].invalid">Selecione a forma de pagamento</mat-error>
             </mat-form-field>

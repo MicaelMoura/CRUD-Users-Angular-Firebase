@@ -1,0 +1,29 @@
+// Estilos gerais para o modal
+:host {
+    display: block;
+    padding: 10px;
+}
+
+.titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: #6c757d; 
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e9ecef; 
+    padding-bottom: 5px;
+}
+
+// Estilo para o ícone de fechar (X)
+.hover {
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &:hover {
+        color: #dc3545; 
+    }
+}

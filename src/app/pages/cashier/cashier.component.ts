@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -8,9 +8,12 @@ import { Subscription } from 'rxjs';
 import { CashFlowService } from '../../services/cashflow.service';
 import { CashFlow } from '../../interfaces/cashflow';
 import { AuthService } from '../../services/auth.services';
+import { FechamentoCaixa } from '../../interfaces/fechamento-caixa';
 // Importar os modais de entrada/saída que criaremos
 import { ModalEntradaComponent } from './entradas/modal-entrada.component';
 import { ModalSaidaComponent } from './saidas/modal-saida.component';
+import { ModalFechamentoCaixaComponent } from './fechamento-caixa/modal-fechamento-caixa.component';
+import { ModalAberturaCaixaComponent } from './abertura-caixa/modal-abertura-caixa.component';
 
 @Component({
   selector: 'app-caixa',
@@ -18,6 +21,9 @@ import { ModalSaidaComponent } from './saidas/modal-saida.component';
   styleUrls: ['./cashier.component.scss']
 })
 export class CashierComponent implements OnInit {
+
+  caixaStatus = signal<'ABERTO' | 'FECHADO'>('FECHADO');
+  lastFechamento = signal<FechamentoCaixa | null>(null);
 
   displayedColumns: string[] = ['data', 'tipo', 'descricao', 'valor', 'action'];
   dataSource!: MatTableDataSource<CashFlow>;
@@ -40,6 +46,105 @@ export class CashierComponent implements OnInit {
 
   ngOnInit(): void {
     this.subscribeToCashFlowData();
+    this.checkCaixaStatus();
+  }
+
+  async checkCaixaStatus() {
+      const empresaId = this.empresaIdAtual();
+      if (!empresaId) return;
+
+      const last = await this.cashFlowService.getLastFechamento(empresaId);
+      this.lastFechamento.set(last);
+      
+      // Atualiza o status
+      this.caixaStatus.set(last?.status === 'ABERTO' ? 'ABERTO' : 'FECHADO');
+  }
+
+  async abrirCaixa(): Promise<void> {
+    const empresaId = this.empresaIdAtual();
+    const operadorUid = this.authService.userUid();
+
+    if (!empresaId || !operadorUid) {
+        this.snackBar.open('ID da empresa ou operador ausente.', 'Fechar', { duration: 3000 });
+        return;
+    }
+    
+    // 1. Abre o modal para obter o troco inicial
+    const dialogRef = this.dialog.open(ModalAberturaCaixaComponent, {
+      width: '400px',
+      disableClose: true // Força o operador a tomar uma decisão
+    });
+
+    dialogRef.afterClosed().subscribe(async (trocoInicial: number | null) => {
+        if (trocoInicial === null || trocoInicial === undefined) {
+            this.snackBar.open('Abertura de caixa cancelada.', 'Fechar', { duration: 3000 });
+            return;
+        }
+
+        // 2. Prepara o registro de abertura
+        const registroAbertura: FechamentoCaixa = {
+            empresaId: empresaId,
+            operadorUid: operadorUid,
+            dataAbertura: new Date(),
+            dataFechamento: new Date(), // A data de fechamento é igual à de abertura para este registro
+            status: 'ABERTO', // 💡 Status de Abertura
+            valorInicialTroco: trocoInicial,
+            totalSuprimentos: trocoInicial, // Suprimento inicial é igual ao troco
+            // Zera todos os outros campos, que serão preenchidos no fechamento
+            totalSangrias: 0,
+            totalVendasDinheiro: 0,
+            totalVendasCartaoDebito: 0,
+            totalVendasCartaoCredito: 0,
+            totalVendasPix: 0,
+            totalOutrasEntradas: 0,
+            totalEntradasLiquidas: 0,
+            totalEsperado: trocoInicial,
+            valorContado: 0,
+            diferenca: 0,
+        };
+
+        try {
+            // 3. Salva o registro no Firestore (Usando o saveFechamento que criamos)
+            await this.cashFlowService.saveFechamento(empresaId, registroAbertura);
+            
+            this.snackBar.open(`Caixa aberto com R$ ${trocoInicial.toFixed(2).replace('.', ',')} de troco.`, 'Fechar', { duration: 4000 });
+            this.checkCaixaStatus(); // 4. Atualiza o status
+        } catch (error) {
+            console.error('Erro ao abrir caixa:', error);
+            this.snackBar.open('Erro ao registrar abertura do caixa.', 'Fechar', { duration: 5000 });
+        }
+    });
+  }
+
+  openFechamentoModal() {
+    const empresaId = this.empresaIdAtual();
+    const lastFechamento = this.lastFechamento();
+
+    if (!empresaId || this.caixaStatus() === 'FECHADO' || !lastFechamento) {
+        this.snackBar.open('Caixa não está aberto ou ID da empresa ausente.', 'Fechar', { duration: 3000 });
+        return;
+    }
+
+    // 1. OBTÉM MOVIMENTAÇÕES E CALCULA O ESPERADO
+    // (A lógica de cálculo de totais deve ser feita no serviço ou no modal)
+    
+    // 2. ABRE O MODAL DE CONFERÊNCIA (Novo componente a ser criado)
+    // Passa o ID da empresa e a data/hora de abertura
+    const dialogRef = this.dialog.open(ModalFechamentoCaixaComponent, {
+        width: '500px',
+        data: {
+            empresaId: empresaId,
+            dataAbertura: lastFechamento.dataFechamento, // O fechamento anterior é o ponto de partida
+            valorTrocoInicial: lastFechamento.valorInicialTroco
+        }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+        if (result && result.fechamentoConcluido) {
+            this.snackBar.open('Caixa fechado com sucesso!', 'Fechar', { duration: 3000 });
+            this.checkCaixaStatus(); // Recarrega o status
+        }
+    });
   }
   
   ngOnDestroy(): void {
@@ -120,13 +225,6 @@ export class CashierComponent implements OnInit {
                 console.error('Erro ao excluir:', error);
             });
     }
-  }
-  
-  // Lógica de fechamento de caixa simplificada (apenas exibição)
-  // O FECHAMENTO REAL precisaria de uma coleção separada 'caixa_fechamentos'
-  fecharCaixa() {
-    this.snackBar.open(`Fechamento de Caixa: Saldo Final R$ ${this.saldoAtual.toFixed(2)}.`, 'OK', { duration: 5000 });
-    // Lógica para registrar o fechamento no banco de dados, se necessário
   }
   
   applyFilter(event: Event) {

@@ -29,6 +29,8 @@ import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form
 import { CashierComponent } from './pages/cashier/cashier.component';
 import { ModalEntradaComponent } from './pages/cashier/entradas/modal-entrada.component';
 import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.component';
+import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/modal-fechamento-caixa.component';
+import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
 
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
@@ -85,7 +87,9 @@ const BR_DATE_FORMATS = {
     ModalFormStockComponent,
     CashierComponent,
     ModalEntradaComponent,
-    ModalSaidaComponent
+    ModalSaidaComponent,
+    ModalFechamentoCaixaComponent,
+    ModalAberturaCaixaComponent
     
   ],
   imports: [

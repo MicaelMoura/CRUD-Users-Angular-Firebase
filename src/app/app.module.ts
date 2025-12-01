@@ -24,13 +24,18 @@ import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { ModalFormProdutoComponent } from './pages/produtos/modal-form/modal-form-produto.component';
 import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-view-produto.component';
 import { StockComponent } from './pages/stock/stock.component';
+import { ModalViewStockComponent } from './pages/stock/modal-view/modal-view-stock.component';
+import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form-stock.component';
+import { CashierComponent } from './pages/cashier/cashier.component';
+import { ModalEntradaComponent } from './pages/cashier/entradas/modal-entrada.component';
+import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.component';
+import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/modal-fechamento-caixa.component';
+import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
 
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { DatePipe } from '@angular/common';
 
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort';
@@ -39,9 +44,23 @@ import { ModalViewUserComponent } from './pages/users/modal-view-user/modal-view
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
-import {MatCardModule} from '@angular/material/card';
-import { ModalViewStockComponent } from './pages/stock/modal-view/modal-view-stock.component';
-import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form-stock.component';
+import { MatCardModule } from '@angular/material/card';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
+
+const BR_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 
 @NgModule({
@@ -65,7 +84,13 @@ import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form
     ModalViewProdutoComponent,
     StockComponent,
     ModalViewStockComponent,
-    ModalFormStockComponent
+    ModalFormStockComponent,
+    CashierComponent,
+    ModalEntradaComponent,
+    ModalSaidaComponent,
+    ModalFechamentoCaixaComponent,
+    ModalAberturaCaixaComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -74,7 +99,6 @@ import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form
     ReactiveFormsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
@@ -83,6 +107,8 @@ import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form
     MatSelectModule,
     MatIcon,
     MatCardModule,
+    MatMomentDateModule,
+    MatDatepickerModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 
@@ -93,7 +119,15 @@ import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form
   ],
   providers: [
     provideNgxMask(),
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_FORMATS, useValue: BR_DATE_FORMATS },
   ],
+  
   bootstrap: [AppComponent]
 })
 export class AppModule { }

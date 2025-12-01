@@ -1,0 +1,58 @@
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">{{ isEditMode ? 'Editar Saída' : 'Nova Saída de Caixa' }}</h1>
+    <h2 class="subtitulo">Preencha os dados da saída financeira.</h2>
+
+    <form class="row" [formGroup]="formCashFlow" (ngSubmit)="saveCashFlow()">
+        
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Descrição</mat-label>
+                <input type="text" matInput formControlName="descricao" placeholder="Ex: Pagamento de Fornecedor">
+                <mat-error *ngIf="formCashFlow.controls['descricao'].invalid">Preencha a descrição (mínimo 3 caracteres)</mat-error>
+            </mat-form-field>
+        </div>
+        
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Valor (R$)</mat-label>
+                <input type="number" matInput formControlName="valor" placeholder="Ex: 50.00">
+                <mat-error *ngIf="formCashFlow.controls['valor'].invalid">Preencha o valor (maior que zero)</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Data da Movimentação</mat-label>
+                <input matInput [matDatepicker]="pickerSaida" formControlName="dataMovimento">
+                <mat-datepicker-toggle matSuffix [for]="pickerSaida"></mat-datepicker-toggle>
+                <mat-datepicker #pickerSaida></mat-datepicker>
+                <mat-error *ngIf="formCashFlow.controls['dataMovimento'].invalid">Selecione a data</mat-error>
+            </mat-form-field>
+        </div>
+        
+        <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="example-full-width w-100">
+                <mat-label>Forma de Pagamento</mat-label>
+                <mat-select formControlName="formaPagamento" [required]="true">
+                    @for (payment of listPayments; track payment.id) {
+                        <mat-option [value]="payment.id">{{payment.description}}</mat-option>
+                    }
+                </mat-select>
+                <mat-error *ngIf="formCashFlow.controls['formaPagamento'].invalid">Selecione a forma de pagamento</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="col-12 mt-4 text-end">
+            <button type="button" class="botao-secundario me-2" (click)="closeModal()">Cancelar</button>
+            <button 
+                type="submit" 
+                class="botao-primario"
+                [disabled]="formCashFlow.invalid"
+            >
+                {{ isEditMode ? 'Salvar Edição' : 'Registrar Saída' }}
+            </button>
+        </div>
+    </form>
+</div>

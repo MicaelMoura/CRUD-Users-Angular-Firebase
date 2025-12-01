@@ -1,0 +1,102 @@
+<div class="container-fluid p-3">
+    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+    <h1 class="titulo">Fechamento de Caixa</h1>
+    <h2 class="subtitulo">Apurar e conferir o valor do caixa no final do turno.</h2>
+
+    <div *ngIf="carregando" class="text-center p-5">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Calculando totais...</p>
+    </div>
+
+    <div *ngIf="!carregando">
+        <mat-card class="mb-3">
+            <mat-card-header>
+                <mat-card-title>Totais do Período</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="row info-row">
+                    <div class="col-6">Troco Inicial:</div>
+                    <div class="col-6 text-end valor-troco">{{ data.valorTrocoInicial | currency: 'BRL' }}</div>
+                </div>
+                <div class="row info-row">
+                    <div class="col-6">Total Entradas (Dinheiro):</div>
+                    <div class="col-6 text-end valor-positivo">{{ resumoCaixa.totalVendasDinheiro | currency: 'BRL' }}</div>
+                </div>
+                <div class="row info-row">
+                    <div class="col-6">Total Suprimentos:</div>
+                    <div class="col-6 text-end valor-positivo">{{ resumoCaixa.totalSuprimentos | currency: 'BRL' }}</div>
+                </div>
+                <div class="row info-row">
+                    <div class="col-6">Total Sangrias:</div>
+                    <div class="col-6 text-end valor-negativo">{{ resumoCaixa.totalSangrias | currency: 'BRL' }}</div>
+                </div>
+                
+                <hr>
+
+                <div class="row info-row total-esperado">
+                    <div class="col-6">
+                        <strong>TOTAL ESPERADO (Dinheiro):</strong>
+                    </div>
+                    <div class="col-6 text-end">
+                        <strong>{{ valorEsperado | currency: 'BRL' }}</strong>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+
+        <form [formGroup]="fechamentoForm" (ngSubmit)="finalizeFechamento()">
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <mat-form-field class="w-100">
+                        <mat-label>Valor Contado no Caixa (R$)</mat-label>
+                        <input 
+                            type="number" 
+                            matInput 
+                            formControlName="valorContado" 
+                            placeholder="0,00"
+                            required
+                        >
+                        <mat-error *ngIf="fechamentoForm.controls['valorContado'].invalid">Valor contado é obrigatório e não pode ser negativo.</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row info-row total-diferenca">
+                <div class="col-6">
+                    <strong [ngClass]="{'sobra': diferenca > 0, 'falta': diferenca < 0}">{{ diferenca >= 0 ? 'SOBRA:' : 'FALTA:' }}</strong>
+                </div>
+                <div class="col-6 text-end">
+                    <strong [ngClass]="{'sobra': diferenca > 0, 'falta': diferenca < 0}">{{ diferenca | currency: 'BRL' }}</strong>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-12 mb-4">
+                    <mat-form-field class="w-100">
+                        <mat-label>Observações (Opcional)</mat-label>
+                        <textarea matInput formControlName="observacoes" placeholder="Motivo da diferença, etc."></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="col-12 text-end">
+                <button 
+                    type="button" 
+                    mat-button 
+                    (click)="closeModal()" 
+                    class="me-2"
+                >Cancelar</button>
+                <button 
+                    type="submit" 
+                    mat-raised-button 
+                    color="primary" 
+                    [disabled]="fechamentoForm.invalid || carregando"
+                >
+                    <mat-icon>lock</mat-icon>
+                    {{ carregando ? 'Fechando...' : 'Finalizar Fechamento' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

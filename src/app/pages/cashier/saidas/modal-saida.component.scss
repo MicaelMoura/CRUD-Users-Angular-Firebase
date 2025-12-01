@@ -1,0 +1,55 @@
+/* Reutilizando os estilos que você já usa nos modais */
+
+.titulo {
+    font-size: 26px;
+    font-weight: 500;
+    padding: 0;
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.subtitulo {
+    font-size: 16px;
+    font-weight: 300;
+    margin: 0;
+    padding: 0 0 10px 0;
+    color: var(--gray-color);
+}
+
+.hover {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.botao-primario {
+    width: auto;
+    outline: none;
+    border: 0;
+    background: var(--primary-color); // Cor principal do tema
+    color: white; 
+    font-weight: 400;
+    font-size: 16px;
+    padding: 6px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 1px var(--shadow-color);
+    transition: 0.1s linear all;
+    
+    &:hover:not([disabled]) {
+        box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
+    }
+    &:disabled {
+        cursor: default;
+        opacity: 0.7;
+    }
+}
+
+.botao-secundario {
+    @extend .botao-primario;
+    background: #ccc;
+    color: #333;
+
+    &:hover:not([disabled]) {
+        box-shadow: 0px 0px 5px 3px var(--shadow-color-hover);
+        background: #bbb;
+    }
+}

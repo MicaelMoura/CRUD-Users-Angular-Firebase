@@ -8,6 +8,7 @@ import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { FornecedoresComponent } from './pages/fornecedores/fornecedores.component';
 import { StockComponent } from './pages/stock/stock.component';
 import { CashierComponent } from './pages/cashier/cashier.component';
+import { SalesComponent } from './pages/sales/sales.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
   {path: 'fornecedores', component: FornecedoresComponent},
   {path: 'stock', component: StockComponent},
   {path: 'cashier', component: CashierComponent},
+  {path: 'vendas', component: SalesComponent},
 
 ];
 

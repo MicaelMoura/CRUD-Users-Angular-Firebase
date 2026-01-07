@@ -1,0 +1,85 @@
+// src/app/pages/vendas/vendas.component.scss
+
+.pdv-container {
+  padding: 0 20px;
+}
+
+.titulo {
+  font-weight: 800;
+  color: #2c3e50;
+  text-transform: uppercase;
+  border-left: 5px solid #3f51b5;
+  padding-left: 15px;
+}
+
+// Display de valores grandes
+.display-valores {
+  display: flex;
+  gap: 20px;
+  
+  .valor-box {
+    flex: 1;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    
+    .label { font-size: 0.8rem; color: #666; font-weight: bold; }
+    .value { font-size: 2.5rem; font-weight: 900; color: #2c3e50; }
+
+    &.total {
+      background: #3f51b5;
+      .label { color: rgba(255,255,255,0.8); }
+      .value { color: #fff; }
+    }
+  }
+}
+
+// Estética do Cupom Fiscal
+.cupom-fiscal {
+  background: #fefefe;
+  color: #333;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 20px;
+  min-height: 500px;
+  border: 1px solid #ddd;
+
+  .cupom-header { text-align: center; h3 { margin: 0; font-weight: bold; } }
+
+  .item-linha {
+    display: flex;
+    font-size: 0.85rem;
+    padding: 5px 0;
+    border-bottom: 1px dashed #eee;
+    align-items: center;
+
+    span { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .desc { flex: 3; }
+    .qtd, .vlr, .sub { text-align: right; }
+    
+    &.header { font-weight: bold; border-bottom: 1px solid #000; }
+    
+    .btn-del {
+      font-size: 16px;
+      cursor: pointer;
+      color: #e74c3c;
+      margin-left: 5px;
+    }
+  }
+
+  .cupom-scroll {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .cupom-footer {
+    margin-top: 20px;
+    .total-venda {
+      display: flex;
+      justify-content: space-between;
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+  }
+}

@@ -69,11 +69,12 @@ export class LoginComponent implements OnInit {
 
       // Obtém e define o ID da empresa
       const businessId = await this.authService.getBusinessId(this.nameBusiness.toLowerCase());
+      console.log('Business ID definido como:', businessId);
       await this.authService.setBusinessId(businessId);
-
+      
       // Realiza o login do usuário
       await this.afAuth.signInWithEmailAndPassword(email, password);
-      this.router.navigate(['home']);
+      this.router.navigate(['vendas']);
 
     } catch (error: any) {
       console.error('Erro no login:', error);

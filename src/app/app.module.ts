@@ -31,6 +31,7 @@ import { ModalEntradaComponent } from './pages/cashier/entradas/modal-entrada.co
 import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.component';
 import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/modal-fechamento-caixa.component';
 import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
+import { SalesComponent } from './pages/sales/sales.component';
 
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
@@ -48,6 +49,7 @@ import { MatCardModule } from '@angular/material/card';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatMomentDateModule, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 const BR_DATE_FORMATS = {
@@ -89,8 +91,8 @@ const BR_DATE_FORMATS = {
     ModalEntradaComponent,
     ModalSaidaComponent,
     ModalFechamentoCaixaComponent,
-    ModalAberturaCaixaComponent
-    
+    ModalAberturaCaixaComponent,
+    SalesComponent
   ],
   imports: [
     BrowserModule,
@@ -109,6 +111,7 @@ const BR_DATE_FORMATS = {
     MatCardModule,
     MatMomentDateModule,
     MatDatepickerModule,
+    MatProgressBarModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 

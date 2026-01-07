@@ -52,4 +52,19 @@ export class ProdutosService {
   deleteProduto(empresaId: string, produtoId: string): Promise<void> {
     return this.getCompanyProductsCollection(empresaId).doc(produtoId).delete();
   }
+
+  async getProdutoByBarcode(empresaId: string, barcode: string): Promise<Produto | null> {
+    const snapshot = await this.getCompanyProductsCollection(empresaId).ref
+      .where('codigoDeBarras', '==', barcode) // Certifique-se que o campo no Firestore é 'codigoBarras'
+      .limit(1)
+      .get();
+
+    if (snapshot.empty) {
+      return null;
+    }
+
+    const doc = snapshot.docs[0];
+    const data = doc.data() as Produto;
+    return { ...data, firebaseId: doc.id };
+  }
 }

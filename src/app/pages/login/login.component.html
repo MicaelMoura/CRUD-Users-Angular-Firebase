@@ -24,9 +24,9 @@
     <mat-form-field class="full-width-input">
       <mat-label>Senha</mat-label>
       <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'" placeholder="Digite sua senha">
-      <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
-        <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
-      </button>
+      <mat-icon matSuffix class="password-toggle-icon" (click)="togglePasswordVisibility()" [class.visible]="!hidePassword()">
+        {{ hidePassword() ? 'visibility_off' : 'visibility' }}
+      </mat-icon>
       <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
         Senha é obrigatória.
       </mat-error>

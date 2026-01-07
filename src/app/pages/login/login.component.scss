@@ -92,3 +92,17 @@
         color: var(--gray-color);
     }
 }
+
+.password-toggle-icon {
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s ease;
+}
+
+.password-toggle-icon:hover {
+  color: #374151;
+}
+
+.password-toggle-icon.visible {
+  color: var(--primary-color);
+}

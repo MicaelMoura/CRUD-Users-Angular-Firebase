@@ -1,0 +1,58 @@
+// Estilos para o texto de Sobra/Falta
+.sobra {
+    color: green;
+    font-weight: bold;
+}
+
+.falta {
+    color: red;
+    font-weight: bold;
+}
+
+// Estilos para valores positivos/negativos no resumo
+.valor-positivo {
+    color: green;
+}
+
+.valor-negativo {
+    color: red;
+}
+
+.valor-troco {
+    color: #007bff; // Azul primário para troco
+}
+
+// Linhas de informação e total
+.info-row {
+    padding: 3px 0;
+    font-size: 0.95rem;
+}
+
+.total-esperado {
+    font-size: 1.1rem;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
+.total-diferenca {
+    font-size: 1.2rem;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 2px solid #333;
+}
+
+// O restante dos estilos (títulos e botões) pode seguir seu padrão global.
+.titulo {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.subtitulo {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.hover {
+    cursor: pointer;
+}

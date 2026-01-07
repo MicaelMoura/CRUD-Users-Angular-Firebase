@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ButtonComponent } from './components/button/button.component';
@@ -11,11 +10,9 @@ import { MenuComponent } from './components/menu/menu.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { environment } from '../environments/environment';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { UsersComponent } from './pages/users/users.component';
 import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { EmpresasComponent } from './pages/empresas/empresas.component';
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask  } from 'ngx-mask';
 import { ModalEmpresasFormComponent} from './pages/empresas/modal-form-empresas/modal-form-empresas.component';
@@ -26,12 +23,19 @@ import { ModalViewFornecedorComponent } from './pages/fornecedores/modal-view/mo
 import { ProdutosComponent } from './pages/produtos/produtos.component';
 import { ModalFormProdutoComponent } from './pages/produtos/modal-form/modal-form-produto.component';
 import { ModalViewProdutoComponent } from './pages/produtos/modal-view/modal-view-produto.component';
+import { StockComponent } from './pages/stock/stock.component';
+import { ModalViewStockComponent } from './pages/stock/modal-view/modal-view-stock.component';
+import { ModalFormStockComponent } from './pages/stock/modal-cadastro/modal-form-stock.component';
+import { CashierComponent } from './pages/cashier/cashier.component';
+import { ModalEntradaComponent } from './pages/cashier/entradas/modal-entrada.component';
+import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.component';
+import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/modal-fechamento-caixa.component';
+import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
+
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
-
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort';
@@ -40,7 +44,23 @@ import { ModalViewUserComponent } from './pages/users/modal-view-user/modal-view
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
-import {MatCardModule} from '@angular/material/card';
+import { MatCardModule } from '@angular/material/card';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatMomentDateModule, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
+
+const BR_DATE_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 
 @NgModule({
@@ -61,7 +81,16 @@ import {MatCardModule} from '@angular/material/card';
     ModalViewFornecedorComponent,
     ProdutosComponent,
     ModalFormProdutoComponent,
-    ModalViewProdutoComponent
+    ModalViewProdutoComponent,
+    StockComponent,
+    ModalViewStockComponent,
+    ModalFormStockComponent,
+    CashierComponent,
+    ModalEntradaComponent,
+    ModalSaidaComponent,
+    ModalFechamentoCaixaComponent,
+    ModalAberturaCaixaComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -70,7 +99,6 @@ import {MatCardModule} from '@angular/material/card';
     ReactiveFormsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
@@ -79,6 +107,9 @@ import {MatCardModule} from '@angular/material/card';
     MatSelectModule,
     MatIcon,
     MatCardModule,
+    MatMomentDateModule,
+    MatDatepickerModule,
+
     NoopAnimationsModule,
     NgxMaskDirective, 
     NgxMaskPipe, 
@@ -88,7 +119,15 @@ import {MatCardModule} from '@angular/material/card';
   ],
   providers: [
     provideNgxMask(),
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    {
+      provide: DateAdapter,
+      useClass: MomentDateAdapter,
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
+    { provide: MAT_DATE_FORMATS, useValue: BR_DATE_FORMATS },
   ],
+  
   bootstrap: [AppComponent]
 })
 export class AppModule { }

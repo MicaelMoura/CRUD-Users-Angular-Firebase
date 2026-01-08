@@ -3,5 +3,4 @@ export interface User {
     nome: string,
     email: string,
     perfilId: string,
-    empresaId: string
 }

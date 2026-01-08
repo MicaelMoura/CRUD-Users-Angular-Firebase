@@ -124,7 +124,8 @@ export class ModalFormProdutoComponent implements OnInit {
         quantidadeMinima: produtoData.quantidadeMinima,
         unidadeDeMedida: produtoData.unidadeDeMedida,
         valorUnitarioCompra: produtoData.valorUnitarioCompra,
-        valorUnitarioVenda: produtoData.valorUnitarioVenda  
+        valorUnitarioVenda: produtoData.valorUnitarioVenda,
+        estoque: 0 // Inicializa o estoque como 0 ou ajuste conforme necessário  
       };
 
       if (this.isEditMode && produtoEntry.firebaseId) {

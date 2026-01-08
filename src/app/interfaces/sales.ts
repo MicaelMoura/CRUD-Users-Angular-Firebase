@@ -1,3 +1,5 @@
+export type FormaPagamento = 'dinheiro' | 'pix' | 'debito' | 'credito';
+
 export interface ItemVenda {
   id?: string;
   produtoId: string;
@@ -14,4 +16,5 @@ export interface Venda {
   itens: ItemVenda[];
   total: number;
   status: 'ABERTA' | 'CONCLUIDA' | 'CANCELADA';
+  formaPagamento: FormaPagamento;
 }

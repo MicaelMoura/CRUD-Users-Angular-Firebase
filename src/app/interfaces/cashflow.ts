@@ -1,6 +1,5 @@
 export interface CashFlow {
     id?: string; 
-    empresaid: string;
     tipo: 'ENTRADA' | 'SAÍDA';
     descricao: string;
     valor: number;

@@ -20,12 +20,7 @@
         </div>
 
         <div class="col-12 shadow-lg">
-            <table mat-table [dataSource]="dataSource" matSort>
-                <ng-container matColumnDef="id">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Id Empresa </th>
-                  <td mat-cell class="td-table" *matCellDef="let user"> {{user.empresaid}} </td>
-                </ng-container>
-            
+            <table mat-table [dataSource]="dataSource" matSort>           
                 <ng-container matColumnDef="name">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Nome </th>
                   <td mat-cell class="td-table" *matCellDef="let user"> {{user.nome}} </td>

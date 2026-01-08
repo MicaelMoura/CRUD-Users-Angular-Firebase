@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { Produto } from '../interfaces/produto';
+import firebase from 'firebase/compat/app';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,6 @@ export class ProdutosService {
       .doc(empresaId)
       .collection<Produto>('products');
   }
-
-  // --- MÉTODOS CRUD ---
 
   /**
    * Busca todos os produtos de uma empresa específica.
@@ -66,5 +65,12 @@ export class ProdutosService {
     const doc = snapshot.docs[0];
     const data = doc.data() as Produto;
     return { ...data, firebaseId: doc.id };
+  }
+
+  async diminuirEstoque(empresaId: string, produtoId: string, quantidade: number): Promise<void> {
+    const dec = -1 * quantidade;
+    return this.getCompanyProductsCollection(empresaId).doc(produtoId).update({
+      estoque: firebase.firestore.FieldValue.increment(dec)
+    } as any);
   }
 }

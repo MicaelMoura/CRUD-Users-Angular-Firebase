@@ -12,4 +12,5 @@ export interface Produto {
     codigoDeBarras: string; // Pode ser string para lidar com zeros à esquerda
     quantidadeMinima: number;
     unidadeDeMedida: string; // Ex: UN, KG, L
+    estoque: number;
 }

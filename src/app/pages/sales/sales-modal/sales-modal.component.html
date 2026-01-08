@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Finalizar Venda</h2>
+
+<mat-dialog-content>
+  <div class="total-box mb-4">
+    <span class="label">TOTAL A PAGAR</span>
+    <strong class="valor">{{ data.total | currency:'BRL' }}</strong>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Forma de Pagamento</mat-label>
+    <mat-select [value]="formaPagamento()" (selectionChange)="formaPagamento.set($event.value)">
+      <mat-option value="dinheiro">Dinheiro</mat-option>
+      <mat-option value="pix">PIX</mat-option>
+      <mat-option value="debito">Cartão Débito</mat-option>
+      <mat-option value="credito">Cartão Crédito</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div *ngIf="formaPagamento() === 'dinheiro'" class="dinheiro-section mt-2">
+    <mat-form-field appearance="outline" class="w-100">
+      <mat-label>Valor Recebido (R$)</mat-label>
+      <input matInput type="number" 
+             (input)="valorRecebido.set($any($event.target).value)" 
+             placeholder="0,00"
+             step="0.01">
+    </mat-form-field>
+
+    <div class="troco-display p-3 mb-3" *ngIf="valorRecebido() >= data.total">
+      <span class="label">TROCO: </span>
+      <strong class="valor">{{ troco() | currency:'BRL' }}</strong>
+    </div>
+
+    <div class="alert alert-warning" *ngIf="valorRecebido() < data.total && valorRecebido() > 0">
+      <small>O valor recebido é menor que o total da venda.</small>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">CANCELAR (Esc)</button>
+  
+  <button mat-raised-button 
+          color="primary" 
+          class="px-4 py-2"
+          (click)="confirmar()" 
+          [disabled]="!podeConfirmar()">
+    CONFIRMAR VENDA (Enter)
+  </button>
+</mat-dialog-actions>

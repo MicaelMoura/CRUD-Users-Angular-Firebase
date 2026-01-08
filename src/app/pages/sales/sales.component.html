@@ -62,11 +62,16 @@
         </div>
 
         <div class="cupom-footer">
-          <p>------------------------------------------</p>
-          <div class="total-venda">
+          <div class="total-venda py-3">
             <span>TOTAL R$</span>
-            <span class="total-numero">{{ subtotalGeral() | number:'1.2-2' }}</span>
+            <span class="total-numero">{{ totalVenda() | number:'1.2-2' }}</span>
           </div>
+
+          <button mat-raised-button color="primary" class="w-100 p-4 btn-finalizar" 
+                  (click)="exibirPagamentoModal()">
+            <mat-icon>payments</mat-icon>
+            FINALIZAR VENDA (F2)
+          </button>
         </div>
       </div>
     </div>

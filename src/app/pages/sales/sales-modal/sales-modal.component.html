@@ -37,13 +37,13 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="cancelar()">CANCELAR (Esc)</button>
-  
+  <button mat-button class="botao" (click)="cancelar()" >Cancelar (Esc)</button>
+  <span class="spacer"></span>
   <button mat-raised-button 
           color="primary" 
-          class="px-4 py-2"
+          class="botao"
           (click)="confirmar()" 
           [disabled]="!podeConfirmar()">
-    CONFIRMAR VENDA (Enter)
+    Confirmar Venda (Enter)
   </button>
 </mat-dialog-actions>

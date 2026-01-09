@@ -6,6 +6,36 @@
     <div class="col-md-7">
       <div class="card p-4 shadow-sm h-100">
         <h1 class="titulo">Frente de Caixa</h1>
+        <div class="pesquisa-container mb-3">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Pesquisar Produto (Nome)</mat-label>
+            <input type="text"
+                  placeholder="Digite o nome do produto..."
+                  matInput
+                  [formControl]="searchControl"
+                  [matAutocomplete]="auto">
+            <mat-icon matSuffix>search</mat-icon>
+            
+            <mat-autocomplete #auto="matAutocomplete" 
+                              (optionSelected)="onProdutoSelecionado($event.option.value)">
+              <mat-option *ngFor="let produto of produtosFiltrados$ | async" [value]="produto">
+                <div class="produto-option">
+                  <strong>{{ produto.nome }}</strong>
+                  <span class="spacer"></span>
+                  <small> {{ produto.valorUnitarioVenda | currency:'BRL' }}</small>
+                  <span class="estoque-tag">Estoque: {{ produto.estoque }}</span>
+                </div>
+              </mat-option>
+
+              <mat-option *ngIf="(produtosFiltrados$ | async)?.length === 0 && searchControl.value" disabled>
+                <div class="no-result">
+                  <mat-icon>error_outline</mat-icon>
+                  <span>Produto não encontrado</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
         
         <form [formGroup]="vendaForm" (submit)="onBarcodeRead()">
           <div class="row mt-4">

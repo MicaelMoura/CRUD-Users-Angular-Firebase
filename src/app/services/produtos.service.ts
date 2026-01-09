@@ -2,14 +2,33 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Observable } from 'rxjs';
 import { Produto } from '../interfaces/produto';
-import firebase from 'firebase/compat/app';
+import { AuthService } from './auth.services';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProdutosService {
+  
+  constructor(
+    private dataBaseStore: AngularFirestore,
+    private firestore: AngularFirestore,
+    private authService: AuthService
+  ) {}
+  
+  buscarProdutosPorNome(termo: string): Observable<Produto[]> {
+    const empresaId = this.authService.activeTenantId();
+    
+    // Convertemos para maiúsculas se os seus produtos estiverem salvos assim,
+    // pois o Firestore é case-sensitive.
+    const busca = termo.toUpperCase();
 
-  constructor(private dataBaseStore: AngularFirestore) {}
+    return this.firestore.collection<Produto>(`business/${empresaId}/products`, ref => 
+      ref.orderBy('nome')
+         .startAt(termo)
+         .endAt(termo + '\uf8ff')
+         .limit(10) // Limitamos para não sobrecarregar a interface
+    ).valueChanges({ idField: 'id' });
+  }
 
   /**
    * Obtém a referência da sub-coleção 'produtos' para a empresa fornecida.
@@ -65,12 +84,5 @@ export class ProdutosService {
     const doc = snapshot.docs[0];
     const data = doc.data() as Produto;
     return { ...data, firebaseId: doc.id };
-  }
-
-  async diminuirEstoque(empresaId: string, produtoId: string, quantidade: number): Promise<void> {
-    const dec = -1 * quantidade;
-    return this.getCompanyProductsCollection(empresaId).doc(produtoId).update({
-      estoque: firebase.firestore.FieldValue.increment(dec)
-    } as any);
   }
 }

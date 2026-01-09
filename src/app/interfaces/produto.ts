@@ -16,7 +16,6 @@ export interface Produto {
 
     // Nota fiscal
     ncm: string;
-    cest?: string;
     cfop: string;
     origem: number;
     csosn: string;

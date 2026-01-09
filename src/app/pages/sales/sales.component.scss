@@ -109,3 +109,30 @@
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
+
+.produto-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  strong { color: #2c3e50; }
+  
+  .estoque-tag {
+    font-size: 0.75rem;
+    background: #e0e0e0;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: #666;
+  }
+}
+
+// Garante que o dropdown apareça acima de outros elementos se necessário
+.mat-autocomplete-panel {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.spacer {
+  padding: 2px 3px;
+}

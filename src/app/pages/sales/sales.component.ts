@@ -101,14 +101,28 @@ export class SalesComponent {
       };
 
       // 1. Gerar Registro da Venda
-      await this.vendasService.salvarVenda(empresaId, novaVenda);
+      const vendaId = await this.vendasService.salvarVenda(empresaId, novaVenda);
 
-      // 2. Retirar do Estoque (Loop nos itens)
+      // 2. Pergunta ao usuário se deseja emitir NFC-e (ou faz automático)
+      const emitirNf = confirm("Deseja emitir o Cupom Fiscal (NFC-e)?");
+
+      if (emitirNf) {
+        this.snackBar.open('Comunicando com a SEFAZ...', 'Aguarde');
+        
+        // Aqui você chamaria sua API de emissão (Ex: FocusNFe, PlugNotas, etc)
+        const retornoSefaz = await this.vendasService.emitirNfce(empresaId, vendaId, novaVenda);
+        
+        if (retornoSefaz.sucesso) {
+          this.perguntarImpressao(retornoSefaz.urlDanfe);
+        }
+      }
+
+      // 3. Retirar do Estoque (Loop nos itens)
       for (const item of this.itensVenda()) {
         await this.produtosService.diminuirEstoque(empresaId, item.produtoId, item.quantidade);
       }
 
-      // 3. Gerar entrada no CashFlow
+      // 4. Gerar entrada no CashFlow
       await this.cashFlowService.addCashFlow(empresaId, {
         dataMovimento: new Date(),
         tipo: 'ENTRADA',
@@ -205,5 +219,14 @@ export class SalesComponent {
     console.log('Evento disparado no TS:', valor); 
     // Forçamos o tipo para garantir que o Signal aceite
     this.formaPagamento.set(valor as FormaPagamento);
+  }
+
+  private perguntarImpressao(urlDanfe: string) {
+    const snak = this.snackBar.open('NFC-e Autorizada!', 'IMPRIMIR', { duration: 10000 });
+    
+    snak.onAction().subscribe(() => {
+      // Abre o PDF da SEFAZ em uma nova aba para impressão
+      window.open(urlDanfe, '_blank');
+    });
   }
 }

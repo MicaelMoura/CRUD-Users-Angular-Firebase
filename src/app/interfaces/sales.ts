@@ -17,4 +17,12 @@ export interface Venda {
   total: number;
   status: 'ABERTA' | 'CONCLUIDA' | 'CANCELADA';
   formaPagamento: FormaPagamento;
+
+  nfeSefaz?: {
+    chaveAcesso: string;
+    protocolo: string;
+    urlDanfe: string; 
+    xmlString?: string;
+    statusSefaz: 'AUTORIZADA' | 'REJEITADA' | 'PENDENTE';
+  };
 }

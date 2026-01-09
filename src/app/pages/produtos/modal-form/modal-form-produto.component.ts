@@ -125,7 +125,14 @@ export class ModalFormProdutoComponent implements OnInit {
         unidadeDeMedida: produtoData.unidadeDeMedida,
         valorUnitarioCompra: produtoData.valorUnitarioCompra,
         valorUnitarioVenda: produtoData.valorUnitarioVenda,
-        estoque: 0 // Inicializa o estoque como 0 ou ajuste conforme necessário  
+        estoque: 0, 
+        
+        // Nota fiscal
+        ncm: produtoData.ncm || '00000000',
+        cfop: produtoData.cfop || '5102',
+        origem: produtoData.origem || 0,
+        csosn: produtoData.csosn || '102', // Padrão para Simples Nacional
+        cest: produtoData.cest || '',
       };
 
       if (this.isEditMode && produtoEntry.firebaseId) {

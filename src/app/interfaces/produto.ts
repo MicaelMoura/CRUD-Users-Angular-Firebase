@@ -13,4 +13,11 @@ export interface Produto {
     quantidadeMinima: number;
     unidadeDeMedida: string; // Ex: UN, KG, L
     estoque: number;
+
+    // Nota fiscal
+    ncm: string;
+    cest?: string;
+    cfop: string;
+    origem: number;
+    csosn: string;
 }

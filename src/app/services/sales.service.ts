@@ -14,4 +14,9 @@ export class VendasService {
       .add(venda);
     return ref.id;
   }
+
+  async emitirNfce(empresaId: string, vendaId: string, venda: Venda) {
+    
+    return { sucesso: true, urlDanfe: 'https://example.com/danfe.pdf' };
+  }
 }

@@ -78,6 +78,36 @@
             </mat-form-field>
         </div>
 
+        <div class="row fiscal-section">
+            <h2>Dados Fiscais (Obrigatório para NF-e)</h2>
+            
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>NCM</mat-label>
+                <input matInput formControlName="ncm" placeholder="Ex: 61091000">
+                <mat-hint>8 dígitos numéricos</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CFOP Padrão</mat-label>
+                <input matInput formControlName="cfop" placeholder="Ex: 5102">
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CSOSN</mat-label>
+                <mat-select formControlName="csosn">
+                    <mat-option value="102">102 - Simples Nacional</mat-option>
+                    <mat-option value="500">500 - ICMS Pago Ant.</mat-option>
+                    <mat-option value="400">400 - Não tributada</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
         <div class="col-12">
             <button 
                 class="botao-primario float-end" 

@@ -1,5 +1,5 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, signal, computed } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormaPagamento, ItemVenda, Venda } from '../../interfaces/sales';
 import { ProdutosService } from '../../services/produtos.service';
@@ -9,6 +9,9 @@ import { CashFlowService } from '../../services/cashflow.service';
 import { HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SalesModalComponent } from './sales-modal/sales-modal.component';
+import { debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
+import { Produto } from '../../interfaces/produto';
+import { StockService } from '../../services/stock.service';
 
 
 @Component({
@@ -26,6 +29,9 @@ export class SalesComponent {
       this.exibirPagamentoModal();
     }
   }
+
+  searchControl = new FormControl('');
+  produtosFiltrados$: Observable<Produto[]>;  
   
   vendaForm!: FormGroup;
   itensVenda = signal<ItemVenda[]>([]); // Lista de itens no cupom
@@ -51,11 +57,27 @@ export class SalesComponent {
     private vendasService: VendasService,
     private cashFlowService: CashFlowService,
     private dialog: MatDialog,
+    private estoqueService: StockService
   ) {
     this.vendaForm = this.fb.group({
       barcode: ['', [Validators.required]],
       quantidade: [1, [Validators.required, Validators.min(1)]]
     });
+    this.filtraggemProdutos();
+  }
+  filtraggemProdutos() {
+      this.produtosFiltrados$ = this.searchControl.valueChanges.pipe(
+      debounceTime(300), // Aguarda 300ms após o utilizador parar de digitar
+      distinctUntilChanged(),
+      
+      switchMap(valor => {
+        if (typeof valor === 'string' && valor.length > 2) {
+          return this.produtosService.buscarProdutosPorNome(valor);
+        } else {
+          return [];
+        }
+      })
+    );
   }
 
   exibirPagamentoModal(): void {
@@ -119,7 +141,7 @@ export class SalesComponent {
 
       // 3. Retirar do Estoque (Loop nos itens)
       for (const item of this.itensVenda()) {
-        await this.produtosService.diminuirEstoque(empresaId, item.produtoId, item.quantidade);
+        await this.estoqueService.diminuirEstoque(empresaId, item.produtoId, item.quantidade);
       }
 
       // 4. Gerar entrada no CashFlow
@@ -228,5 +250,10 @@ export class SalesComponent {
       // Abre o PDF da SEFAZ em uma nova aba para impressão
       window.open(urlDanfe, '_blank');
     });
+  }
+
+  onProdutoSelecionado(produto: Produto): void {
+    this.adicionarItemAoCupom(produto, 1);
+    this.searchControl.setValue(''); // Limpa a pesquisa após adicionar
   }
 }

@@ -51,6 +51,8 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MatMomentDateModule, MomentDateAdapter, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 
 const BR_DATE_FORMATS = {
@@ -114,6 +116,8 @@ const BR_DATE_FORMATS = {
     MatMomentDateModule,
     MatDatepickerModule,
     MatProgressBarModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 

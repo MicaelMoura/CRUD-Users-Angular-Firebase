@@ -85,8 +85,8 @@ export class ProdutosComponent implements OnInit {
 
   openModalViewProduto(produto: Produto) {
     this.dialog.open(ModalViewProdutoComponent, {
-      width: '1000px',
-      height: '750px',
+      width: '1200px',
+      height: '900px',
       data: produto
     });
   }

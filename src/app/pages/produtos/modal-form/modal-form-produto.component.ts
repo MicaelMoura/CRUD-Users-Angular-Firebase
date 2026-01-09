@@ -95,6 +95,12 @@ export class ModalFormProdutoComponent implements OnInit {
       valorUnitarioCompra: [0, [Validators.required, Validators.min(0)]],
       valorUnitarioVenda: [0, [Validators.required, Validators.min(0)]],
       quantidadeMinima: [0, [Validators.required, Validators.min(0)]],
+
+      // NOTA FISCAL
+      ncm: ['00000000', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
+      cfop: ['5102', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+      origem: [0, [Validators.required, Validators.min(0), Validators.max(7)]],
+      csosn: ['102', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     });
   }
 
@@ -132,7 +138,6 @@ export class ModalFormProdutoComponent implements OnInit {
         cfop: produtoData.cfop || '5102',
         origem: produtoData.origem || 0,
         csosn: produtoData.csosn || '102', // Padrão para Simples Nacional
-        cest: produtoData.cest || '',
       };
 
       if (this.isEditMode && produtoEntry.firebaseId) {

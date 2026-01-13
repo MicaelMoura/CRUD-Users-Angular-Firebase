@@ -12,7 +12,7 @@ export interface Produto {
     codigoDeBarras: string; // Pode ser string para lidar com zeros à esquerda
     quantidadeMinima: number;
     unidadeDeMedida: string; // Ex: UN, KG, L
-    estoque: number;
+    estoqueQtd?: number; // Quantidade em estoque (opcional, pode ser calculada)
 
     // Nota fiscal
     ncm: string;

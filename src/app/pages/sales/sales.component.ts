@@ -9,7 +9,7 @@ import { CashFlowService } from '../../services/cashflow.service';
 import { HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SalesModalComponent } from './sales-modal/sales-modal.component';
-import { debounceTime, distinctUntilChanged, Observable, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, switchMap, take } from 'rxjs';
 import { Produto } from '../../interfaces/produto';
 import { StockService } from '../../services/stock.service';
 
@@ -72,7 +72,7 @@ export class SalesComponent {
       
       switchMap(valor => {
         if (typeof valor === 'string' && valor.length > 2) {
-          return this.produtosService.buscarProdutosPorNome(valor);
+          return this.produtosService.buscarProdutosComEstoque(valor);
         } else {
           return [];
         }
@@ -125,19 +125,19 @@ export class SalesComponent {
       // 1. Gerar Registro da Venda
       const vendaId = await this.vendasService.salvarVenda(empresaId, novaVenda);
 
-      // 2. Pergunta ao usuário se deseja emitir NFC-e (ou faz automático)
-      const emitirNf = confirm("Deseja emitir o Cupom Fiscal (NFC-e)?");
+      // // 2. Pergunta ao usuário se deseja emitir NFC-e (ou faz automático)
+      // const emitirNf = confirm("Deseja emitir o Cupom Fiscal (NFC-e)?");
 
-      if (emitirNf) {
-        this.snackBar.open('Comunicando com a SEFAZ...', 'Aguarde');
+      // if (emitirNf) {
+      //   this.snackBar.open('Comunicando com a SEFAZ...', 'Aguarde');
         
-        // Aqui você chamaria sua API de emissão (Ex: FocusNFe, PlugNotas, etc)
-        const retornoSefaz = await this.vendasService.emitirNfce(empresaId, vendaId, novaVenda);
+      //   // Aqui você chamaria sua API de emissão (Ex: FocusNFe, PlugNotas, etc)
+      //   const retornoSefaz = await this.vendasService.emitirNfce(empresaId, vendaId, novaVenda);
         
-        if (retornoSefaz.sucesso) {
-          this.perguntarImpressao(retornoSefaz.urlDanfe);
-        }
-      }
+      //   if (retornoSefaz.sucesso) {
+      //     this.perguntarImpressao(retornoSefaz.urlDanfe);
+      //   }
+      // }
 
       // 3. Retirar do Estoque (Loop nos itens)
       for (const item of this.itensVenda()) {
@@ -253,6 +253,7 @@ export class SalesComponent {
   }
 
   onProdutoSelecionado(produto: Produto): void {
+    if(!produto.firebaseId) return;
     this.adicionarItemAoCupom(produto, 1);
     this.searchControl.setValue(''); // Limpa a pesquisa após adicionar
   }

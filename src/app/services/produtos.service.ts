@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Observable } from 'rxjs';
+import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
 import { Produto } from '../interfaces/produto';
 import { AuthService } from './auth.services';
 
@@ -15,19 +15,33 @@ export class ProdutosService {
     private authService: AuthService
   ) {}
   
-  buscarProdutosPorNome(termo: string): Observable<Produto[]> {
+  buscarProdutosComEstoque(termo: string): Observable<any[]> {
     const empresaId = this.authService.activeTenantId();
-    
-    // Convertemos para maiúsculas se os seus produtos estiverem salvos assim,
-    // pois o Firestore é case-sensitive.
-    const busca = termo.toUpperCase();
+    //const busca = termo.toUpperCase();
 
     return this.firestore.collection<Produto>(`business/${empresaId}/products`, ref => 
-      ref.orderBy('nome')
-         .startAt(termo)
-         .endAt(termo + '\uf8ff')
-         .limit(10) // Limitamos para não sobrecarregar a interface
-    ).valueChanges({ idField: 'id' });
+      ref.orderBy('nome').startAt(termo).endAt(termo + '\uf8ff').limit(5)
+    ).valueChanges({ idField: 'id' }).pipe(
+      switchMap(produtos => {
+        if (produtos.length === 0) return of([]);
+
+        // Para cada produto, criamos uma busca na coleção stock
+        const buscasEstoque = produtos.map(produto => 
+          this.firestore.collection(`business/${empresaId}/stock`, ref => 
+            ref.where('produtoId', '==', produto.id).limit(1)
+          ).valueChanges().pipe(
+            map(stocks => ({
+              ...produto,
+              estoqueQtd: stocks.length > 0 ? (stocks[0] as any).quantidade : 0,
+              stockId: stocks.length > 0 ? (stocks[0] as any).id : null
+            }))
+          )
+        );
+
+        // combinaLatest junta todos os resultados das buscas de estoque em um único array
+        return combineLatest(buscasEstoque);
+      })
+    );
   }
 
   /**

@@ -131,7 +131,6 @@ export class ModalFormProdutoComponent implements OnInit {
         unidadeDeMedida: produtoData.unidadeDeMedida,
         valorUnitarioCompra: produtoData.valorUnitarioCompra,
         valorUnitarioVenda: produtoData.valorUnitarioVenda,
-        estoque: 0, 
         
         // Nota fiscal
         ncm: produtoData.ncm || '00000000',

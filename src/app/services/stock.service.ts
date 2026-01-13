@@ -65,4 +65,14 @@ export class StockService {
       estoque: firebase.firestore.FieldValue.increment(dec)
     } as any);
   }
+
+  async getQuantidadeEmEstoque(empresaId: string, produtoId: string): Promise<number> {
+    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
+      ref.where('produtoId', '==', produtoId).limit(1)
+    );
+    const snapshot = await firstValueFrom(query.get());
+    this.getCompanyStockCollection(empresaId).doc(snapshot.docs[0].id);
+    const data = snapshot.docs[0].data() as Stock;
+    return data.quantidade;
+  }
 }

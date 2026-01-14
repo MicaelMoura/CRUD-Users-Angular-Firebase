@@ -32,6 +32,11 @@
                     <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.marca}} </td>
                 </ng-container>
                 
+                <ng-container matColumnDef="unidadeMedida">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Unidade de Medida </th>
+                    <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.nomeUnidadeMedida}} </td>
+                </ng-container>
+
                 <ng-container matColumnDef="venda">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Valor Venda </th>
                     <td mat-cell class="td-table" *matCellDef="let produto"> {{produto.valorUnitarioVenda | currency:'BRL'}} </td>

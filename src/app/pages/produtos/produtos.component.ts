@@ -10,6 +10,7 @@ import { ModalViewProdutoComponent } from './modal-view/modal-view-produto.compo
 import { ModalFormProdutoComponent } from './modal-form/modal-form-produto.component';
 import { Router } from '@angular/router'; 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-produtos',
@@ -20,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ProdutosComponent implements OnInit {
   
   // Colunas da tabela. 'compra' e 'venda' para valores.
-  displayedColumns: string[] = ['nome', 'marca', 'venda', 'action'];
+  displayedColumns: string[] = ['nome', 'marca', 'unidadeMedida', 'venda', 'action'];
   dataSource: any;
   listProdutos: Produto[] = [];
 
@@ -58,6 +59,9 @@ export class ProdutosComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.paginator._intl.itemsPerPageLabel = "Itens por página";
+        response.forEach(async produto => {
+          produto.nomeUnidadeMedida = await this.produtosService.getNomeUnidadeMedida(produto.unidadeDeMedida);
+        });
       },
       error: (err) => {
         console.log('Erro ao carregar produtos: ', err);

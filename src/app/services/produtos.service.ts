@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { Produto } from '../interfaces/produto';
 import { AuthService } from './auth.services';
+import { PlataformService } from './plataform.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class ProdutosService {
   constructor(
     private dataBaseStore: AngularFirestore,
     private firestore: AngularFirestore,
-    private authService: AuthService
+    private authService: AuthService,
+    private plataformService: PlataformService,
   ) {}
   
   buscarProdutosComEstoque(termo: string): Observable<any[]> {
@@ -67,7 +69,8 @@ export class ProdutosService {
    * Adiciona um novo produto à sub-coleção da empresa.
    */
   addProduto(empresaId: string, produto: Produto) {
-    console.log('produto a salvar e empresa', produto, empresaId);
+    //console.log('produto a salvar e empresa', produto, empresaId);
+    produto.nome = produto.nome.toUpperCase(); // Garantir que o nome esteja em maiúsculas
     return this.getCompanyProductsCollection(empresaId).add(produto);
   }
 
@@ -75,6 +78,7 @@ export class ProdutosService {
    * Atualiza um produto específico em uma empresa específica.
    */
   updateProduto(empresaId: string, produtoId: string, data: Partial<Produto>): Promise<void> {
+    data.nome = data.nome?.toUpperCase(); // Garantir que o nome esteja em maiúsculas
     return this.getCompanyProductsCollection(empresaId).doc(produtoId).update(data);
   }
 
@@ -98,5 +102,11 @@ export class ProdutosService {
     const doc = snapshot.docs[0];
     const data = doc.data() as Produto;
     return { ...data, firebaseId: doc.id };
+  }
+
+  async getNomeUnidadeMedida(codigo: string): Promise<string> {
+    const units = await firstValueFrom(this.plataformService.getUnits());
+    const unidade = units.find(u => u.id === codigo);
+    return unidade?.name || 'Desconhecida';
   }
 }

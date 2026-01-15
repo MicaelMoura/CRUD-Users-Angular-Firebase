@@ -32,7 +32,7 @@ import { ModalSaidaComponent } from './pages/cashier/saidas/modal-saida.componen
 import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/modal-fechamento-caixa.component';
 import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
 import { SalesComponent } from './pages/sales/sales.component';
-import { SalesModalComponent } from './pages/sales/sales-modal/sales-modal.component';
+import { SalesModalComponent } from './pages/sales/sales-modal-finalizar-venda/sales-modal-finalizar.component';
 
 import { AngularFireModule } from '@angular/fire/compat'; 
 import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 

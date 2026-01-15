@@ -4,8 +4,8 @@ import { FormaPagamento, ItemVenda } from '../../../interfaces/sales';
 
 @Component({
   selector: 'app-sales-modal',
-  templateUrl: './sales-modal.component.html',
-  styleUrls: ['./sales-modal.component.scss']
+  templateUrl: './sales-modal-finalizar.component.html',
+  styleUrls: ['./sales-modal-finalizar.component.scss']
 })
 export class SalesModalComponent {
   formaPagamento = signal<FormaPagamento>('dinheiro');

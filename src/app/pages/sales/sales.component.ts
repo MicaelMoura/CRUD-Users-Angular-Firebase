@@ -8,10 +8,11 @@ import { VendasService } from '../../services/sales.service';
 import { CashFlowService } from '../../services/cashflow.service';
 import { HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { SalesModalComponent } from './sales-modal/sales-modal.component';
+import { SalesModalComponent } from './sales-modal-finalizar-venda/sales-modal-finalizar.component';
 import { debounceTime, distinctUntilChanged, Observable, switchMap, take } from 'rxjs';
 import { Produto } from '../../interfaces/produto';
 import { StockService } from '../../services/stock.service';
+import { SalesModalCupomComponent } from './sales-modal-cupom/sales-modal-cupom.component';
 
 
 @Component({
@@ -161,9 +162,22 @@ export class SalesComponent {
         formaPagamento: this.formaPagamento()
       });
 
-      setTimeout(() => {
-        window.print();
-      }, 500);
+      const dadosParaCupom = {
+        empresaNome: 'Sua Loja LTDA',
+        empresaEndereco: 'Rua das Flores, 123',
+        itens: this.itensVenda(), // Pegando do seu Signal
+        valorTotal: this.totalVenda(),
+        formaPagamento: '' + this.formaPagamento(),
+        dataHora: new Date()
+      };
+
+      this.dialog.open(SalesModalCupomComponent, {
+        data: dadosParaCupom,
+        width: '350px',
+        disableClose: true // Obriga o usuário a interagir ou fechar no botão
+      }).afterClosed().subscribe(() => {
+        this.limparPDV(); // Só limpa após fechar o cupom
+      });
 
       this.snackBar.open('Venda finalizada com sucesso!', 'OK', { duration: 3000 });
       this.limparPDV();

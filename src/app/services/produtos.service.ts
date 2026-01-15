@@ -19,10 +19,10 @@ export class ProdutosService {
   
   buscarProdutosComEstoque(termo: string): Observable<any[]> {
     const empresaId = this.authService.activeTenantId();
-    //const busca = termo.toUpperCase();
+    const busca = termo.toUpperCase();
 
     return this.firestore.collection<Produto>(`business/${empresaId}/products`, ref => 
-      ref.orderBy('nome').startAt(termo).endAt(termo + '\uf8ff').limit(5)
+      ref.orderBy('nome').startAt(busca).endAt(busca + '\uf8ff').limit(5)
     ).valueChanges({ idField: 'id' }).pipe(
       switchMap(produtos => {
         if (produtos.length === 0) return of([]);

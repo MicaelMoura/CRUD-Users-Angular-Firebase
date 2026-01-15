@@ -136,3 +136,42 @@
 .spacer {
   padding: 2px 3px;
 }
+
+.print-container {
+  display: none;
+}
+
+@media print {
+  /* 1. Esconde ABSOLUTAMENTE TUDO na página */
+  html, body, app-root, .no-print {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 2. Exibe apenas o container do cupom */
+  #cupom-nao-fiscal, 
+  #cupom-nao-fiscal * {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  /* 3. Posiciona o cupom no topo para não sair em branco */
+  #cupom-nao-fiscal {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 80mm !important; /* Largura da bobina */
+    margin: 0 !important;
+    padding: 5mm !important;
+    background-color: white !important;
+  }
+
+  /* Remove cabeçalhos e rodapés do navegador (data, url) */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+}

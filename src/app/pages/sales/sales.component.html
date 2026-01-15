@@ -106,5 +106,42 @@
       </div>
     </div>
 
+    <div id="cupom-nao-fiscal" class="print-container" *ngIf="exibirCupomImpressao()">
+    <div class="ticket-header">
+      <h2>{{ nomeEmpresa }}</h2>
+      <p>{{ enderecoEmpresa }}</p>
+      <p>Tel: {{ telefoneEmpresa }}</p>
+      <p>------------------------------------------</p>
+      <p><strong>CUPOM NÃO FISCAL</strong></p>
+      <p>------------------------------------------</p>
+    </div>
+
+    <div class="ticket-body">
+      <div class="item-header">
+        <span class="col-nome">ITEM</span>
+        <span class="col-qtd">QTD</span>
+        <span class="col-total">TOTAL</span>
+      </div>
+      
+      <div *ngFor="let item of itensVenda()" class="item-linha">
+        <span class="col-nome">{{ item.descricao | slice:0:22 }}</span>
+        <span class="col-qtd">{{ item.quantidade }}</span>
+        <span class="col-total">{{ item.subtotal * item.quantidade | currency:'BRL' }}</span>
+      </div>
+    </div>
+
+    <div class="ticket-footer">
+      <p>------------------------------------------</p>
+      <div class="total-row">
+        <span><strong>TOTAL:</strong></span>
+        <span><strong>{{ totalVenda() | currency:'BRL' }}</strong></span>
+      </div>
+      <p>------------------------------------------</p>
+      <p>Vendedor: {{ nomeOperador }}</p>
+      <p>{{ dataAtual | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+      <br>
+      <p>Obrigado pela preferência!</p>
+    </div>
+  </div>
   </div>
 </div>

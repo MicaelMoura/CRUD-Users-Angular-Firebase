@@ -39,6 +39,12 @@ export class SalesComponent {
   formaPagamento = signal<FormaPagamento>('dinheiro');
   valorRecebido = signal(0);
   exibirPagamento = signal(false);
+  exibirCupomImpressao = signal(false);
+  nomeEmpresa = 'Minha Empresa Ltda';
+  enderecoEmpresa = 'Rua Exemplo, 123 - Cidade - Estado';
+  telefoneEmpresa = '(00) 0000-0000';
+  dataAtual = new Date();
+  nomeOperador = 'Operador PDV';
 
   totalVenda = computed(() => {
     return this.itensVenda().reduce((acc, item) => acc + item.subtotal, 0);
@@ -139,8 +145,10 @@ export class SalesComponent {
       //   }
       // }
 
-      // 3. Retirar do Estoque (Loop nos itens)
+      //
+      //3. Retirar do Estoque (Loop nos itens)
       for (const item of this.itensVenda()) {
+        console.log('idProduto', item.produtoId);
         await this.estoqueService.diminuirEstoque(empresaId, item.produtoId, item.quantidade);
       }
 
@@ -152,6 +160,10 @@ export class SalesComponent {
         valor: this.subtotalGeral(),
         formaPagamento: this.formaPagamento()
       });
+
+      setTimeout(() => {
+        window.print();
+      }, 500);
 
       this.snackBar.open('Venda finalizada com sucesso!', 'OK', { duration: 3000 });
       this.limparPDV();
@@ -167,6 +179,14 @@ export class SalesComponent {
     this.itensVenda.set([]);
     this.exibirPagamento.set(false);
     this.valorRecebido.set(0);
+
+    this.searchControl.setValue('');
+    this.itensVenda.set([]); // Lista de itens no cupom
+    this.carregando.set(false); 
+    this.formaPagamento.set('dinheiro');
+    this.valorRecebido.set(0);
+    this.exibirPagamento.set(false);
+
   }
 
   /**
@@ -243,6 +263,13 @@ export class SalesComponent {
     this.formaPagamento.set(valor as FormaPagamento);
   }
 
+  onProdutoSelecionado(produto: Produto): void {
+    if(!produto.firebaseId) return;
+    console.log('Produto selecionado:', produto);
+    this.adicionarItemAoCupom(produto, 1);
+    this.searchControl.setValue(''); // Limpa a pesquisa após adicionar
+  }
+
   private perguntarImpressao(urlDanfe: string) {
     const snak = this.snackBar.open('NFC-e Autorizada!', 'IMPRIMIR', { duration: 10000 });
     
@@ -250,11 +277,5 @@ export class SalesComponent {
       // Abre o PDF da SEFAZ em uma nova aba para impressão
       window.open(urlDanfe, '_blank');
     });
-  }
-
-  onProdutoSelecionado(produto: Produto): void {
-    if(!produto.firebaseId) return;
-    this.adicionarItemAoCupom(produto, 1);
-    this.searchControl.setValue(''); // Limpa a pesquisa após adicionar
   }
 }

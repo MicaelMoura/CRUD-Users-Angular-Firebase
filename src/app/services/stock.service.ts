@@ -56,10 +56,15 @@ export class StockService {
 
   async diminuirEstoque(empresaId: string, produtoId: string, quantidade: number): Promise<void> {
     const dec = -1 * quantidade;
-    const query = this.firestore.collection(`empresas/${empresaId}/stock`, ref => 
+    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
       ref.where('produtoId', '==', produtoId).limit(1)
     );
     const snapshot = await firstValueFrom(query.get());
+    if (snapshot.empty) {
+      console.error(`Registro de estoque não encontrado para o produto: ${produtoId}`);
+      // Você pode optar por lançar um erro ou criar o registro de estoque aqui
+      throw new Error('Estoque não localizado.');
+    }
     const stockId = snapshot.docs[0].id;
     return this.getCompanyStockCollection(empresaId).doc(stockId).update({
       estoque: firebase.firestore.FieldValue.increment(dec)

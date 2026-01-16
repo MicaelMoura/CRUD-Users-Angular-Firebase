@@ -10,6 +10,7 @@ import { FormaPagamento, ItemVenda } from '../../../interfaces/sales';
 export class SalesModalComponent {
   formaPagamento = signal<FormaPagamento>('dinheiro');
   valorRecebido = signal<number>(0);
+  pagamentosRealizados = signal<{ forma: string, valor: number }[]>([]);
 
   @HostListener('window:keydown', ['$event'])
   handleModalKeyDown(event: KeyboardEvent) {
@@ -27,24 +28,32 @@ export class SalesModalComponent {
     }
   }
 
-  podeConfirmar = computed(() => {
-    if (this.formaPagamento() === 'dinheiro') {
-      // Se for dinheiro, exige valor igual ou maior que o total
-      return this.valorRecebido() >= this.data.total;
-    }
-    // Se for PIX, Débito ou Crédito, habilita automaticamente
-    return true; 
-  });
-  
-  troco = computed(() => {
-    const diff = this.valorRecebido() - this.data.total;
-    return diff > 0 ? diff : 0;
-  });
-
   constructor(
     public dialogRef: MatDialogRef<SalesModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { total: number }
   ) {}
+
+  podeConfirmar = computed(() => {
+    if (this.saldoRestante() <= 0) {
+      // Se for dinheiro, exige valor igual ou maior que o total
+      return true;
+    }
+    return false;
+  });
+
+  totalPago = computed(() => 
+    this.pagamentosRealizados().reduce((acc, p) => acc + p.valor, 0)
+  );
+
+  saldoRestante = computed(() => {
+    const restante = this.data.total - this.totalPago();
+    return restante > 0 ? restante : 0;
+  });
+  
+  troco = computed(() => {
+    const excesso = this.totalPago() - this.data.total;
+    return excesso > 0 ? excesso : 0;
+  })
 
   confirmar() {
     // Retorna os dados para o componente principal
@@ -56,5 +65,21 @@ export class SalesModalComponent {
 
   cancelar() {
     this.dialogRef.close(null);
+  }
+  
+  adicionarPagamento(forma: string) {
+    const valor = Number(this.valorRecebido());
+    
+    if (valor <= 0) return;
+
+    // Adiciona à lista
+    this.pagamentosRealizados.update(atual => [...atual, { forma, valor }]);
+    
+    // Reseta o campo de valor para o próximo
+    this.valorRecebido.set(0);
+  }
+
+  removerPagamento(index: number) {
+    this.pagamentosRealizados.update(atual => atual.filter((_, i) => i !== index));
   }
 }

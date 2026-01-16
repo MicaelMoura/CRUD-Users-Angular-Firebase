@@ -9,7 +9,7 @@ import { CashFlowService } from '../../services/cashflow.service';
 import { HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SalesModalComponent } from './sales-modal-finalizar-venda/sales-modal-finalizar.component';
-import { debounceTime, distinctUntilChanged, Observable, switchMap, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
 import { Produto } from '../../interfaces/produto';
 import { StockService } from '../../services/stock.service';
 import { SalesModalCupomComponent } from './sales-modal-cupom/sales-modal-cupom.component';
@@ -46,6 +46,7 @@ export class SalesComponent {
   telefoneEmpresa = '(00) 0000-0000';
   dataAtual = new Date();
   nomeOperador = 'Operador PDV';
+  textoDigitadoBusca = '';
 
   totalVenda = computed(() => {
     return this.itensVenda().reduce((acc, item) => acc + item.subtotal, 0);
@@ -79,7 +80,12 @@ export class SalesComponent {
       
       switchMap(valor => {
         if (typeof valor === 'string' && valor.length > 2) {
-          return this.produtosService.buscarProdutosComEstoque(valor);
+          let termoBusca = valor;
+          if (valor.toLowerCase().includes('x')) {
+            termoBusca = valor.split(/x|X/)[1] || '';
+          }
+          if (termoBusca.length < 2) return of([]);
+          return this.produtosService.buscarProdutosComEstoque(termoBusca);
         } else {
           return [];
         }
@@ -209,15 +215,20 @@ export class SalesComponent {
    */
   async onBarcodeRead(): Promise<void> {
     const code = this.vendaForm.value.barcode;
-    const qtd = this.vendaForm.value.quantidade;
+    let qtd = this.vendaForm.value.quantidade;
     const empresaId = this.authService.activeTenantId(); // Obtendo ID da empresa ativa
+    let partes = null;
 
     if (!code || !empresaId) return;
 
     this.carregando.set(true);
+    if(code.includes('x')) {
+      partes = code.split('x');
+      if(partes[0] && !isNaN(partes[0])) qtd = partes[0];
+    }
 
     try {
-      const produto = await this.produtosService.getProdutoByBarcode(empresaId, code);
+      const produto = await this.produtosService.getProdutoByBarcode(empresaId, partes ? partes[1] : code);
 
       if (produto) {
         this.adicionarItemAoCupom(produto, qtd);
@@ -279,9 +290,20 @@ export class SalesComponent {
 
   onProdutoSelecionado(produto: Produto): void {
     if(!produto.firebaseId) return;
-    console.log('Produto selecionado:', produto);
-    this.adicionarItemAoCupom(produto, 1);
-    this.searchControl.setValue(''); // Limpa a pesquisa após adicionar
+    let quantidade = 1;
+    console.log('Texto digitado na busca:', this.textoDigitadoBusca);
+    if (this.textoDigitadoBusca.toLowerCase().includes('x')) {
+      const partes = this.textoDigitadoBusca.toLowerCase().split('x');
+      const possivelQtd = Number(partes[0]);
+      
+      // Se o que vem antes do 'x' for um número válido, usamos ele
+      if (!isNaN(possivelQtd) && possivelQtd > 0) {
+        quantidade = possivelQtd;
+      }
+      console.log('Quantidade extraída do input:', quantidade);
+    }
+    this.adicionarItemAoCupom(produto, quantidade);
+    this.searchControl.setValue(''); 
   }
 
   private perguntarImpressao(urlDanfe: string) {

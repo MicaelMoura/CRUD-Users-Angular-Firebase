@@ -67,7 +67,7 @@ export class StockService {
     }
     const stockId = snapshot.docs[0].id;
     return this.getCompanyStockCollection(empresaId).doc(stockId).update({
-      estoque: firebase.firestore.FieldValue.increment(dec)
+      quantidade: firebase.firestore.FieldValue.increment(dec)
     } as any);
   }
 

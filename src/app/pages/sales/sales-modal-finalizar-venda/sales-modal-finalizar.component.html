@@ -1,38 +1,50 @@
 <h2 mat-dialog-title>Finalizar Venda</h2>
 
 <mat-dialog-content>
-  <div class="total-box mb-4">
-    <span class="label">TOTAL A PAGAR</span>
-    <strong class="valor">{{ data.total | currency:'BRL' }}</strong>
+  <div class="resumo-box mb-3">
+    <div class="d-flex justify-content-between">
+      <span>Total da Venda:</span>
+      <strong>{{ data.total | currency:'BRL' }}</strong>
+    </div>
+    <div class="d-flex justify-content-between text-success">
+      <span>Total Pago:</span>
+      <strong>{{ totalPago() | currency:'BRL' }}</strong>
+    </div>
+    <div class="d-flex justify-content-between text-danger" *ngIf="saldoRestante() > 0">
+      <span>Saldo Restante:</span>
+      <strong class="fs-5">{{ saldoRestante() | currency:'BRL' }}</strong>
+    </div>
   </div>
 
   <mat-form-field appearance="outline" class="w-100">
-    <mat-label>Forma de Pagamento</mat-label>
-    <mat-select [value]="formaPagamento()" (selectionChange)="formaPagamento.set($event.value)">
-      <mat-option value="dinheiro">Dinheiro</mat-option>
-      <mat-option value="pix">PIX</mat-option>
-      <mat-option value="debito">Cartão Débito</mat-option>
-      <mat-option value="credito">Cartão Crédito</mat-option>
-    </mat-select>
+    <mat-label>Valor Recebido (R$)</mat-label>
+    <input matInput type="number" 
+           [value]="valorRecebido() === 0 ? '' : valorRecebido()"
+           (input)="valorRecebido.set($any($event.target).value)" 
+           placeholder="0,00">
   </mat-form-field>
 
-  <div *ngIf="formaPagamento() === 'dinheiro'" class="dinheiro-section mt-2">
-    <mat-form-field appearance="outline" class="w-100">
-      <mat-label>Valor Recebido (R$)</mat-label>
-      <input matInput type="number" 
-             (input)="valorRecebido.set($any($event.target).value)" 
-             placeholder="0,00"
-             step="0.01">
-    </mat-form-field>
+  <div class="formas-grid mb-3">
+    <button mat-stroked-button (click)="adicionarPagamento('Dinheiro')">💵 Dinheiro</button>
+    <button mat-stroked-button (click)="adicionarPagamento('Cartão Crédito')">💳 Crédito</button>
+    <button mat-stroked-button (click)="adicionarPagamento('Cartão Débito')">💳 Débito</button>
+    <button mat-stroked-button (click)="adicionarPagamento('PIX')">📱 PIX</button>
+  </div>
 
-    <div class="troco-display p-3 mb-3" *ngIf="valorRecebido() >= data.total">
-      <span class="label">TROCO: </span>
-      <strong class="valor">{{ troco() | currency:'BRL' }}</strong>
+  <div class="pagamentos-lista mb-3" *ngIf="pagamentosRealizados().length > 0">
+    <h6>Pagamentos:</h6>
+    <div *ngFor="let p of pagamentosRealizados(); let i = index" class="p-item d-flex justify-content-between align-items-center">
+      <span>{{ p.forma }}</span>
+      <span>{{ p.valor | currency:'BRL' }} 
+        <button mat-icon-button color="warn" (click)="removerPagamento(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </span>
     </div>
+  </div>
 
-    <div class="alert alert-warning" *ngIf="valorRecebido() < data.total && valorRecebido() > 0">
-      <small>O valor recebido é menor que o total da venda.</small>
-    </div>
+  <div class="troco-display alert alert-success" *ngIf="troco() > 0">
+    <strong>TROCO: {{ troco() | currency:'BRL' }}</strong>
   </div>
 </mat-dialog-content>
 

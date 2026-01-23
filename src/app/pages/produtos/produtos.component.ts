@@ -89,8 +89,8 @@ export class ProdutosComponent implements OnInit {
 
   openModalViewProduto(produto: Produto) {
     this.dialog.open(ModalViewProdutoComponent, {
-      width: '1200px',
-      height: '900px',
+      width: '1500px',
+      height: '1200px',
       data: produto
     });
   }
@@ -116,7 +116,7 @@ export class ProdutosComponent implements OnInit {
     // NOTE: O ModalFormProdutoComponent precisará apenas do ID da empresa para CRUD.
     this.dialog.open(ModalFormProdutoComponent, {
       width: '1000px',
-      height: '600px', // Aumentei a altura para acomodar mais campos
+      height: '900px', // Aumentei a altura para acomodar mais campos
       data: { 
         produto: produto,
         empresaId: this.empresaIdAtual() // Passa o ID da empresa para o modal

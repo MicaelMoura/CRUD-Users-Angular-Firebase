@@ -87,7 +87,7 @@ export class ModalFormProdutoComponent implements OnInit {
       // DADOS PRINCIPAIS
       nome: ['', Validators.required],
       marca: ['', Validators.required],
-      codigoDeBarras: [''], // Não é obrigatório
+      codigoDeBarras: ['', Validators.required], 
       unidadeDeMedida: ['', Validators.required],
       fornecedorId: ['', Validators.required],
       
@@ -95,6 +95,7 @@ export class ModalFormProdutoComponent implements OnInit {
       valorUnitarioCompra: [0, [Validators.required, Validators.min(0)]],
       valorUnitarioVenda: [0, [Validators.required, Validators.min(0)]],
       quantidadeMinima: [0, [Validators.required, Validators.min(0)]],
+      pesoNoCodigo: [false],
 
       // NOTA FISCAL
       ncm: ['00000000', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
@@ -131,6 +132,7 @@ export class ModalFormProdutoComponent implements OnInit {
         unidadeDeMedida: produtoData.unidadeDeMedida,
         valorUnitarioCompra: produtoData.valorUnitarioCompra,
         valorUnitarioVenda: produtoData.valorUnitarioVenda,
+        pesoNoCodigo: produtoData.pesoNoCodigo || false,
         
         // Nota fiscal
         ncm: produtoData.ncm || '00000000',

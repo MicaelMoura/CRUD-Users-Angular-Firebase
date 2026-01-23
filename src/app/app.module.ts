@@ -53,6 +53,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 const BR_DATE_FORMATS = {
@@ -118,6 +119,7 @@ const BR_DATE_FORMATS = {
     MatProgressBarModule,
     MatAutocompleteModule,
     MatFormFieldModule,
+    MatCheckboxModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 

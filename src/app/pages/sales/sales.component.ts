@@ -93,6 +93,35 @@ export class SalesComponent {
     );
   }
 
+  validarCodigoDeBarras(codigo: string): boolean {
+    console.log('Validando código de barras:', codigo);
+    // 1. Verifica se o código tem 8, 12, 13 ou 14 dígitos e é apenas número
+    if (!/^\d{8,14}$/.test(codigo) || ![8, 12, 13, 14].includes(codigo.length)) {
+      return false;
+    }
+
+    // 2. Separa o dígito verificador (último número) do corpo do código
+    const corpo = codigo.substring(0, codigo.length - 1);
+    const digitoInformado = parseInt(codigo.charAt(codigo.length - 1));
+
+    // 3. Inverte o corpo para começar a multiplicação da direita para a esquerda
+    const corpoInvertido = corpo.split('').reverse();
+
+    let soma = 0;
+    for (let i = 0; i < corpoInvertido.length; i++) {
+      // Pesos alternados: posições ímpares multiplicam por 3, pares por 1
+      // (Considerando a contagem a partir da direita)
+      const peso = (i % 2 === 0) ? 3 : 1;
+      soma += parseInt(corpoInvertido[i]) * peso;
+    }
+
+    // 4. Calcula o dígito correto
+    const resto = soma % 10;
+    const digitoCalculado = (resto === 0) ? 0 : 10 - resto;
+    console.log("terminou a validação codigo de barras");
+    return digitoCalculado === digitoInformado;
+  }
+
   exibirPagamentoModal(): void {
     if (this.itensVenda().length === 0) {
       this.snackBar.open('Adicione ao menos um produto.', 'OK', { duration: 3000 });
@@ -174,7 +203,7 @@ export class SalesComponent {
         itens: this.itensVenda(), // Pegando do seu Signal
         valorTotal: this.totalVenda(),
         formaPagamento: '' + this.formaPagamento(),
-        dataHora: new Date()
+        dataHora: new Date(),
       };
 
       this.dialog.open(SalesModalCupomComponent, {
@@ -214,24 +243,38 @@ export class SalesComponent {
    * Acionado ao dar 'Enter' no input ou pelo scanner.
    */
   async onBarcodeRead(): Promise<void> {
-    const code = this.vendaForm.value.barcode;
+    let code = this.vendaForm.value.barcode;
     let qtd = this.vendaForm.value.quantidade;
     const empresaId = this.authService.activeTenantId(); // Obtendo ID da empresa ativa
     let partes = null;
 
     if (!code || !empresaId) return;
-
-    this.carregando.set(true);
     if(code.includes('x')) {
       partes = code.split('x');
       if(partes[0] && !isNaN(partes[0])) qtd = partes[0];
     }
 
+    if (!this.validarCodigoDeBarras(partes ? partes[1] : code)) {
+      // Exibe a mensagem de erro
+      this.snackBar.open('Dígito verificador do código de barras inválido!', 'Atenção', {
+        duration: 3000,
+        panelClass: ['error-snackbar'] // Estilo customizado
+      });
+      return;
+    }
+
+    const info = this.processarCodigoBalanca(partes ? partes[1] : code);
+
+    this.carregando.set(true);
+
     try {
-      const produto = await this.produtosService.getProdutoByBarcode(empresaId, partes ? partes[1] : code);
+      console.log('Buscando produto com código:', info.codigoBase);
+      const produto = await this.produtosService.getProdutoByBarcode(empresaId, info.codigoBase);
 
       if (produto) {
-        this.adicionarItemAoCupom(produto, qtd);
+        const qtdFinal = produto.pesoNoCodigo ? info.quantidadeOuPeso : 1;
+        produto.valorUnitarioVenda = info.isBalanca ? info.quantidadeOuPeso : produto.valorUnitarioVenda;
+        this.adicionarItemAoCupom(produto, qtdFinal);
       } else {
         this.snackBar.open('Produto não encontrado!', 'Fechar', { duration: 3000 });
       }
@@ -244,18 +287,41 @@ export class SalesComponent {
     }
   }
 
-  private adicionarItemAoCupom(produto: any, quantidade: number): void {
+  private adicionarItemAoCupom(produto: Produto, quantidade: number): void {
     const novoItem: ItemVenda = {
-      produtoId: produto.firebaseId,
+      produtoId: produto.firebaseId!,
       descricao: produto.nome, // Ajuste conforme seu campo de nome/descrição
       codigoBarras: produto.codigoDeBarras,
       quantidade: quantidade,
-      valorUnitario: produto.valorUnitarioVenda, // Ajuste conforme seu campo de preço
-      subtotal: produto.valorUnitarioVenda * quantidade
+      valorUnitario: produto.valorUnitarioVenda,
+      subtotal: produto.valorUnitarioVenda * quantidade,
     };
 
     // Adiciona ao topo da lista
     this.itensVenda.update(itens => [novoItem, ...itens]);
+  }
+
+  processarCodigoBalanca(codigoCompleto: string) {
+    // Etiquetas de balança geralmente começam com '2' e têm 13 dígitos
+    if (codigoCompleto.startsWith('2') && codigoCompleto.length === 13) {
+      
+      // Extrai o ID do produto (posições 1 a 6)
+      // Ex: 2000050012501 -> ID do produto é 00005
+      const codigoProduto = codigoCompleto.substring(1, 6).replace(/^0+/, '');
+      
+      // Extrai o valor/peso (posições 7 a 12)
+      // Ex: 01250 -> vira 1.250
+      const valorBruto = codigoCompleto.substring(7, 12);
+      const valorExtraido = parseFloat(valorBruto) / 1000; // Divide por 1000 para 3 casas (peso) ou 100 para 2 (preço)
+
+      return {
+        isBalanca: true,
+        codigoBase: codigoProduto,
+        quantidadeOuPeso: valorExtraido
+      };
+    }
+    
+    return { isBalanca: false, codigoBase: codigoCompleto, quantidadeOuPeso: 1 };
   }
   
   removerItem(index: number): void {
@@ -292,8 +358,8 @@ export class SalesComponent {
     if(!produto.firebaseId) return;
     let quantidade = 1;
     console.log('Texto digitado na busca:', this.textoDigitadoBusca);
+    const partes = this.textoDigitadoBusca.toLowerCase().split('x');
     if (this.textoDigitadoBusca.toLowerCase().includes('x')) {
-      const partes = this.textoDigitadoBusca.toLowerCase().split('x');
       const possivelQtd = Number(partes[0]);
       
       // Se o que vem antes do 'x' for um número válido, usamos ele

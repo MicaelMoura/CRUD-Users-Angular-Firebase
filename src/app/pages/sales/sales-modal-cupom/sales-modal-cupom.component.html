@@ -14,6 +14,7 @@
         <tr>
           <th>Item</th>
           <th>Qtd</th>
+          <th>Peso</th>
           <th>Total</th>
         </tr>
       </thead>
@@ -21,6 +22,7 @@
         <tr *ngFor="let item of data.itens">
           <td>{{ item.descricao | slice:0:18 }}</td>
           <td>{{ item.quantidade }}</td>
+          <td>{{ item.peso }}</td>
           <td>{{ item.valorUnitario * item.quantidade | currency:'BRL' }}</td>
         </tr>
       </tbody>

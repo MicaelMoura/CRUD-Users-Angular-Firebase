@@ -3,11 +3,11 @@
 }
 
 .titulo {
-  font-weight: 800;
+  font-weight: 400;
   color: #2c3e50;
   text-transform: uppercase;
   border-left: 5px solid #3f51b5;
-  padding-left: 15px;
+  padding-left: 10px;
 }
 
 // Display de valores grandes
@@ -39,30 +39,49 @@
   background: #fefefe;
   color: #333;
   font-family: 'Courier New', Courier, monospace;
-  padding: 20px;
-  min-height: 500px;
-  border: 1px solid #ddd;
+  padding: 30px 15px;
+  min-height: 600px;
+  border: 2px solid #ddd;
+  width: 500px;
 
-  .cupom-header { text-align: center; h3 { margin: 0; font-weight: bold; } }
+  .cupom-header { 
+    text-align: left; 
+    padding-left: 5px;
+    h3 { margin: 0; font-weight: bold; }
+  }
 
   .item-linha {
     display: flex;
     font-size: 0.85rem;
     padding: 5px 0;
-    border-bottom: 1px dashed #eee;
+    border-bottom: 2px dashed #eee;
     align-items: center;
 
-    span { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-    .desc { flex: 3; }
-    .qtd, .vlr, .sub { text-align: right; }
+    span { 
+      flex: 1; 
+      overflow: hidden; 
+      white-space: nowrap; 
+      text-overflow: ellipsis; 
+      text-align: left; // Força o alinhamento à esquerda por padrão
+    }
+    .cod { flex: 0 0 50px; } // Largura fixa para o código não empurrar a descrição
+    .desc { flex: 3; padding-left: 5px; }
+
+    .qtd, .peso, .vlr, .sub { 
+      flex: 1.7;
+      text-align: right; 
+    }
     
-    &.header { font-weight: bold; border-bottom: 1px solid #000; }
+    &.header { 
+      font-weight: bold; 
+      border-bottom: 1px solid #000; 
+    }
     
     .btn-del {
       font-size: 16px;
       cursor: pointer;
       color: #e74c3c;
-      margin-left: 5px;
+      margin-left: 10px;
     }
   }
 
@@ -73,6 +92,7 @@
 
   .cupom-footer {
     margin-top: 20px;
+    padding-left: 5px; // Alinha com o resto do texto à esquerda
     .total-venda {
       display: flex;
       justify-content: space-between;

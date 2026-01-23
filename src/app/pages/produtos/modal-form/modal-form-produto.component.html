@@ -26,9 +26,17 @@
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Código de Barras</mat-label>
                 <input type="text" matInput formControlName="codigoDeBarras" placeholder="Opcional">
+                <mat-error *ngIf="formProduto.controls['codigoDeBarras'].invalid">Preencha o código</mat-error>
             </mat-form-field>
         </div>
         <div class="col-12 col-md-6 mb-2">
+            <div class="checkbox-wrapper">
+                <mat-checkbox formControlName="pesoNoCodigo" color="primary">
+                    Peso no código de barras
+                </mat-checkbox>
+            </div>
+        </div>
+                <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Unidade de Medida</mat-label>
                 <mat-select formControlName="unidadeDeMedida" [required]="true">

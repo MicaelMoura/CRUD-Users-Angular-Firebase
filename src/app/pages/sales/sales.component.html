@@ -3,8 +3,8 @@
 <div class="pdv-container mt-3">
   <div class="row g-3">
     
-    <div class="col-md-7">
-      <div class="card p-4 shadow-sm h-100">
+    <div class="col-md-5">
+      <div class="card p-4 shadow-sm h-80">
         <h1 class="titulo">Frente de Caixa</h1>
         <div class="pesquisa-container mb-3">
           <mat-form-field class="w-100" appearance="outline">
@@ -41,7 +41,10 @@
             <div class="col-md-8">
               <mat-form-field class="w-100" appearance="outline">
                 <mat-label>Código de Barras</mat-label>
-                <input matInput formControlName="barcode" #barcodeInput autofocus autocomplete="off" [readonly]="carregando()">
+                <input matInput formControlName="barcode" #barcodeInput autofocus autocomplete="off" 
+                  [readonly]="carregando()"
+                  maxlength="16"
+                >
                 <mat-progress-bar mode="indeterminate" *ngIf="carregando()"></mat-progress-bar>
                 <mat-icon matSuffix *ngIf="!carregando()">qr_code_scanner</mat-icon>
               </mat-form-field>

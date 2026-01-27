@@ -1,0 +1,111 @@
+<app-menu></app-menu>
+
+<div class="pdv-container mt-3">
+  <div class="row g-3">
+    
+    <div class="col-md-5">
+      <div class="card p-4 shadow-sm h-80">
+        <h1 class="titulo">Frente de Caixa</h1>
+        <div class="pesquisa-container mb-3">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Pesquisar Produto (Nome)</mat-label>
+            <mat-icon matSuffix>search</mat-icon>
+            <input 
+                matInput 
+                [formControl]="searchControl" 
+                (input)="textoDigitadoBusca = $any($event.target).value"
+                [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" 
+                              (optionSelected)="onProdutoSelecionado($event.option.value)">
+              <mat-option *ngFor="let produto of produtosFiltrados$ | async" [value]="produto">
+                <div class="produto-option">
+                  <strong>{{ produto.nome }}</strong>
+                  <span class="spacer"></span>
+                  <small> {{ produto.valorUnitarioVenda | currency:'BRL' }}</small>
+                  <span class="estoque-tag">Estoque: {{  produto.estoqueQtd }}</span>
+                </div>
+              </mat-option>
+
+              <mat-option *ngIf="(produtosFiltrados$ | async)?.length === 0 && searchControl.value" disabled>
+                <div class="no-result">
+                  <mat-icon>error_outline</mat-icon>
+                  <span>Produto não encontrado</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+        
+        <form [formGroup]="vendaForm" (submit)="onBarcodeRead()">
+          <div class="row mt-4">
+            <div class="col-md-8">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Código de Barras</mat-label>
+                <input matInput formControlName="barcode" #barcodeInput autofocus autocomplete="off" 
+                  [readonly]="carregando()"
+                  maxlength="16"
+                >
+                <mat-progress-bar mode="indeterminate" *ngIf="carregando()"></mat-progress-bar>
+                <mat-icon matSuffix *ngIf="!carregando()">qr_code_scanner</mat-icon>
+              </mat-form-field>
+            </div>
+            </div>
+        </form>
+
+        <div class="display-valores mt-4" *ngIf="itensVenda().length > 0">
+          <div class="valor-box">
+            <span class="label">VALOR UNITÁRIO</span>
+            <span class="value">{{ itensVenda()[0].valorUnitario| currency:'BRL' }}</span>
+          </div>
+          <div class="valor-box total">
+            <span class="label">SUBTOTAL DO ITEM</span>
+            <span class="value">{{ itensVenda()[0].subtotal | currency:'BRL' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-5">
+      <div class="cupom-fiscal shadow-lg">
+        <div class="cupom-header">
+          <h3>CUPOM FISCAL</h3>
+          <p>------------------------------------------</p>
+        </div>
+
+        <div class="cupom-body">
+          <div class="item-linha header">
+            <span class="cod">CÓD</span>
+            <span class="desc">DESCRIÇÃO</span>
+            <span class="qtd">QTD</span>
+            <span class="vlr">VL.UN</span>
+            <span class="sub">TOTAL</span>
+          </div>
+
+          <div class="cupom-scroll">
+            <div class="item-linha" *ngFor="let item of itensVenda(); let i = index">
+              <span class="cod">{{ item.codigoBarras }}</span>
+              <span class="desc">{{ item.descricao }}</span>
+              <span class="qtdS">{{ item.quantidade }}x</span>
+              <span class="vlrS">{{ item.valorUnitario | number:'1.2-2' }}</span>
+              <span class="subS">{{ item.subtotal | number:'1.2-2' }}</span>
+              <mat-icon class="btn-del" (click)="removerItem(i)">delete_outline</mat-icon>
+            </div>
+          </div>
+        </div>
+
+        <div class="cupom-footer">
+          <div class="total-venda py-3">
+            <span>TOTAL R$</span>
+            <span class="total-numero">{{ totalVenda() | number:'1.2-2' }}</span>
+          </div>
+
+          <button mat-raised-button color="primary" class="w-100 p-4 btn-finalizar" 
+                  (click)="exibirPagamentoModal()">
+            <mat-icon>payments</mat-icon>
+            FINALIZAR VENDA (F2)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -46,7 +46,6 @@ export class EmpresasService {
       id: authUid,
       nome: empresa.nomeFantasia,
       email: empresa.emailAdmin,
-      empresaId: empresaId,
       perfilId: 'perfil.id',
     };
     

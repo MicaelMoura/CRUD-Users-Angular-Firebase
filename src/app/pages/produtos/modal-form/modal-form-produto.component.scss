@@ -39,6 +39,13 @@
     }
 }
 
+.checkbox-wrapper {
+    height: 56px; /* Mesma altura padrão do mat-form-field outline */
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+}
+
 // Estilo do botão primário (adaptado do seu uso anterior)
 .botao-primario {
     width: auto;

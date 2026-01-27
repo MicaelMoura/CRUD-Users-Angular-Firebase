@@ -12,4 +12,13 @@ export interface Produto {
     codigoDeBarras: string; // Pode ser string para lidar com zeros à esquerda
     quantidadeMinima: number;
     unidadeDeMedida: string; // Ex: UN, KG, L
+    nomeUnidadeMedida?: string; // Ex: Unidade, Quilograma, Litro (usado para exibição)
+    estoqueQtd?: number; // Quantidade em estoque, só é usado para trazer a quantidade na hora da busca
+    pesoNoCodigo: boolean; // Indica se o peso está codificado no código de barras
+
+    // Nota fiscal
+    ncm: string;
+    cfop: string;
+    origem: number;
+    csosn: string;
 }

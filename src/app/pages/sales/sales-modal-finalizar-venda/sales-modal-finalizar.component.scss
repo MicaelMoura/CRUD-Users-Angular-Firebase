@@ -1,0 +1,44 @@
+.resumo-box {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.formas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.p-item {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 5px 0;
+}
+
+.troco-display {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.botao {
+    background-color: #007bff; // Azul primário
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, opacity 0.3s;
+
+    &:hover:not([disabled]) {
+        background-color: #0056b3;
+    }
+
+    // Estilo para o botão desabilitado
+    &[disabled] {
+        background-color: #adb5bd; // Cinza claro
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}

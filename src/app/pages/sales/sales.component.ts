@@ -263,16 +263,22 @@ export class SalesComponent {
       return;
     }
 
-    const info = this.processarCodigoBalanca(partes ? partes[1] : code);
+    const info = await this.processarCodigoBarras(partes ? partes[1] : code);
+    if (!info) return;
 
     this.carregando.set(true);
 
     try {
-      console.log('Buscando produto com código:', info.codigoBase);
-      const produto = await this.produtosService.getProdutoByBarcode(empresaId, info.codigoBase);
+      const produto = info.produto;
 
       if (produto) {
-        const qtdFinal = produto.pesoNoCodigo ? info.quantidadeOuPeso : 1;
+        let qtdFinal: number;
+        if (info.isBalanca)
+        {
+          qtdFinal = produto.pesoNoCodigo ? info.quantidadeOuPeso : this.calculaPeso(info.quantidadeOuPeso, produto);
+        } else {
+          qtdFinal = qtd;
+        }
         produto.valorUnitarioVenda = info.isBalanca ? info.quantidadeOuPeso : produto.valorUnitarioVenda;
         this.adicionarItemAoCupom(produto, qtdFinal);
       } else {
@@ -285,6 +291,9 @@ export class SalesComponent {
       this.carregando.set(false);
       this.vendaForm.patchValue({ barcode: '', quantidade: 1 });
     }
+  }
+  calculaPeso(quantidadeOuPeso: number, produto: Produto): number {
+    throw new Error('Method not implemented.');
   }
 
   private adicionarItemAoCupom(produto: Produto, quantidade: number): void {
@@ -301,27 +310,44 @@ export class SalesComponent {
     this.itensVenda.update(itens => [novoItem, ...itens]);
   }
 
-  processarCodigoBalanca(codigoCompleto: string) {
+  async processarCodigoBarras(codigoCompleto: string) {
+    let produto = null;
     // Etiquetas de balança geralmente começam com '2' e têm 13 dígitos
     if (codigoCompleto.startsWith('2') && codigoCompleto.length === 13) {
       
       // Extrai o ID do produto (posições 1 a 6)
       // Ex: 2000050012501 -> ID do produto é 00005
       const codigoProduto = codigoCompleto.substring(1, 6).replace(/^0+/, '');
+
+      produto = await this.produtosService.getProdutoByBarcode(this.authService.activeTenantId()!, codigoProduto);
+      console.log('produto', produto);
+      if(!produto) {
+        console.log('codigo encontrado', codigoProduto);
+        this.snackBar.open('Produto não encontrado!', 'Fechar', { duration: 3000 });
+        return;
+      }
       
       // Extrai o valor/peso (posições 7 a 12)
       // Ex: 01250 -> vira 1.250
       const valorBruto = codigoCompleto.substring(7, 12);
-      const valorExtraido = parseFloat(valorBruto) / 1000; // Divide por 1000 para 3 casas (peso) ou 100 para 2 (preço)
+      // Divide por 1000 para 3 casas (peso) ou 100 para 2 (preço)
+      let valorExtraido: number;
+      if(!produto.pesoNoCodigo) {
+        valorExtraido = parseFloat(valorBruto) / 100;
+      } else {
+        valorExtraido = parseFloat(valorBruto) / 1000; 
+      }
+      
 
       return {
         isBalanca: true,
         codigoBase: codigoProduto,
-        quantidadeOuPeso: valorExtraido
+        quantidadeOuPeso: valorExtraido,
+        produto: produto
       };
     }
-    
-    return { isBalanca: false, codigoBase: codigoCompleto, quantidadeOuPeso: 1 };
+    produto = await this.produtosService.getProdutoByBarcode(this.authService.activeTenantId()!, codigoCompleto);
+    return { isBalanca: false, codigoBase: codigoCompleto, quantidadeOuPeso: 1, produto: produto };
   }
   
   removerItem(index: number): void {

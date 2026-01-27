@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { Stock } from '../interfaces/stock';
+import firebase from 'firebase/compat/app';
 
 @Injectable({
   providedIn: 'root'
@@ -51,5 +52,32 @@ export class StockService {
    */
   deleteStockEntry(empresaId: string, stockEntryId: string): Promise<void> {
     return this.getCompanyStockCollection(empresaId).doc(stockEntryId).delete();
+  }
+
+  async diminuirEstoque(empresaId: string, produtoId: string, quantidade: number): Promise<void> {
+    const dec = -1 * quantidade;
+    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
+      ref.where('produtoId', '==', produtoId).limit(1)
+    );
+    const snapshot = await firstValueFrom(query.get());
+    if (snapshot.empty) {
+      console.error(`Registro de estoque não encontrado para o produto: ${produtoId}`);
+      // Você pode optar por lançar um erro ou criar o registro de estoque aqui
+      throw new Error('Estoque não localizado.');
+    }
+    const stockId = snapshot.docs[0].id;
+    return this.getCompanyStockCollection(empresaId).doc(stockId).update({
+      quantidade: firebase.firestore.FieldValue.increment(dec)
+    } as any);
+  }
+
+  async getQuantidadeEmEstoque(empresaId: string, produtoId: string): Promise<number> {
+    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
+      ref.where('produtoId', '==', produtoId).limit(1)
+    );
+    const snapshot = await firstValueFrom(query.get());
+    this.getCompanyStockCollection(empresaId).doc(snapshot.docs[0].id);
+    const data = snapshot.docs[0].data() as Stock;
+    return data.quantidade;
   }
 }

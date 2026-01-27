@@ -87,7 +87,7 @@ export class ModalFormProdutoComponent implements OnInit {
       // DADOS PRINCIPAIS
       nome: ['', Validators.required],
       marca: ['', Validators.required],
-      codigoDeBarras: [''], // Não é obrigatório
+      codigoDeBarras: ['', Validators.required], 
       unidadeDeMedida: ['', Validators.required],
       fornecedorId: ['', Validators.required],
       
@@ -95,6 +95,13 @@ export class ModalFormProdutoComponent implements OnInit {
       valorUnitarioCompra: [0, [Validators.required, Validators.min(0)]],
       valorUnitarioVenda: [0, [Validators.required, Validators.min(0)]],
       quantidadeMinima: [0, [Validators.required, Validators.min(0)]],
+      pesoNoCodigo: [false],
+
+      // NOTA FISCAL
+      ncm: ['00000000', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]],
+      cfop: ['5102', [Validators.required, Validators.minLength(4), Validators.maxLength(4)]],
+      origem: [0, [Validators.required, Validators.min(0), Validators.max(7)]],
+      csosn: ['102', [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
     });
   }
 
@@ -124,7 +131,14 @@ export class ModalFormProdutoComponent implements OnInit {
         quantidadeMinima: produtoData.quantidadeMinima,
         unidadeDeMedida: produtoData.unidadeDeMedida,
         valorUnitarioCompra: produtoData.valorUnitarioCompra,
-        valorUnitarioVenda: produtoData.valorUnitarioVenda  
+        valorUnitarioVenda: produtoData.valorUnitarioVenda,
+        pesoNoCodigo: produtoData.pesoNoCodigo || false,
+        
+        // Nota fiscal
+        ncm: produtoData.ncm || '00000000',
+        cfop: produtoData.cfop || '5102',
+        origem: produtoData.origem || 0,
+        csosn: produtoData.csosn || '102', // Padrão para Simples Nacional
       };
 
       if (this.isEditMode && produtoEntry.firebaseId) {

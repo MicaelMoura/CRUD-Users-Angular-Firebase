@@ -10,6 +10,7 @@ import { ModalViewProdutoComponent } from './modal-view/modal-view-produto.compo
 import { ModalFormProdutoComponent } from './modal-form/modal-form-produto.component';
 import { Router } from '@angular/router'; 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-produtos',
@@ -20,7 +21,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class ProdutosComponent implements OnInit {
   
   // Colunas da tabela. 'compra' e 'venda' para valores.
-  displayedColumns: string[] = ['nome', 'marca', 'venda', 'action'];
+  displayedColumns: string[] = ['nome', 'marca', 'unidadeMedida', 'venda', 'action'];
   dataSource: any;
   listProdutos: Produto[] = [];
 
@@ -58,6 +59,9 @@ export class ProdutosComponent implements OnInit {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
         this.paginator._intl.itemsPerPageLabel = "Itens por página";
+        response.forEach(async produto => {
+          produto.nomeUnidadeMedida = await this.produtosService.getNomeUnidadeMedida(produto.unidadeDeMedida);
+        });
       },
       error: (err) => {
         console.log('Erro ao carregar produtos: ', err);
@@ -85,8 +89,8 @@ export class ProdutosComponent implements OnInit {
 
   openModalViewProduto(produto: Produto) {
     this.dialog.open(ModalViewProdutoComponent, {
-      width: '1000px',
-      height: '750px',
+      width: '1500px',
+      height: '1200px',
       data: produto
     });
   }
@@ -112,7 +116,7 @@ export class ProdutosComponent implements OnInit {
     // NOTE: O ModalFormProdutoComponent precisará apenas do ID da empresa para CRUD.
     this.dialog.open(ModalFormProdutoComponent, {
       width: '1000px',
-      height: '600px', // Aumentei a altura para acomodar mais campos
+      height: '900px', // Aumentei a altura para acomodar mais campos
       data: { 
         produto: produto,
         empresaId: this.empresaIdAtual() // Passa o ID da empresa para o modal

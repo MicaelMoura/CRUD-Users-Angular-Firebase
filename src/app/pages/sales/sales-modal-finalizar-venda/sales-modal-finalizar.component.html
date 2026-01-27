@@ -1,0 +1,61 @@
+<h2 mat-dialog-title>Finalizar Venda</h2>
+
+<mat-dialog-content>
+  <div class="resumo-box mb-3">
+    <div class="d-flex justify-content-between">
+      <span>Total da Venda:</span>
+      <strong>{{ data.total | currency:'BRL' }}</strong>
+    </div>
+    <div class="d-flex justify-content-between text-success">
+      <span>Total Pago:</span>
+      <strong>{{ totalPago() | currency:'BRL' }}</strong>
+    </div>
+    <div class="d-flex justify-content-between text-danger" *ngIf="saldoRestante() > 0">
+      <span>Saldo Restante:</span>
+      <strong class="fs-5">{{ saldoRestante() | currency:'BRL' }}</strong>
+    </div>
+  </div>
+
+  <mat-form-field appearance="outline" class="w-100">
+    <mat-label>Valor Recebido (R$)</mat-label>
+    <input matInput type="number" 
+           [value]="valorRecebido() === 0 ? '' : valorRecebido()"
+           (input)="valorRecebido.set($any($event.target).value)" 
+           placeholder="0,00">
+  </mat-form-field>
+
+  <div class="formas-grid mb-3">
+    <button mat-stroked-button (click)="adicionarPagamento('Dinheiro')">💵 Dinheiro</button>
+    <button mat-stroked-button (click)="adicionarPagamento('Cartão Crédito')">💳 Crédito</button>
+    <button mat-stroked-button (click)="adicionarPagamento('Cartão Débito')">💳 Débito</button>
+    <button mat-stroked-button (click)="adicionarPagamento('PIX')">📱 PIX</button>
+  </div>
+
+  <div class="pagamentos-lista mb-3" *ngIf="pagamentosRealizados().length > 0">
+    <h6>Pagamentos:</h6>
+    <div *ngFor="let p of pagamentosRealizados(); let i = index" class="p-item d-flex justify-content-between align-items-center">
+      <span>{{ p.forma }}</span>
+      <span>{{ p.valor | currency:'BRL' }} 
+        <button mat-icon-button color="warn" (click)="removerPagamento(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <div class="troco-display alert alert-success" *ngIf="troco() > 0">
+    <strong>TROCO: {{ troco() | currency:'BRL' }}</strong>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button class="botao" (click)="cancelar()" >Cancelar (Esc)</button>
+  <span class="spacer"></span>
+  <button mat-raised-button 
+          color="primary" 
+          class="botao"
+          (click)="confirmar()" 
+          [disabled]="!podeConfirmar()">
+    Confirmar Venda (Enter)
+  </button>
+</mat-dialog-actions>

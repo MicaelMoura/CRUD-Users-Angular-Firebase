@@ -162,9 +162,10 @@ export class AuthService {
         .collection('business')
         .doc<Empresas>(businessInput); 
 
+        console.log('Buscando empresa com ID:', businessInput);
         // 💡 Acessa o documento e espera a Promise
         const docSnap = await docRef.get().toPromise(); 
-
+        console.log('Buscando');
         if (docSnap && docSnap.exists) {
             // Retorna o ID do documento que foi encontrado no Firestore
             return docSnap.id; 

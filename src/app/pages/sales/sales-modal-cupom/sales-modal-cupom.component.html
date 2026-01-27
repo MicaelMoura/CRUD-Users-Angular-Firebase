@@ -1,0 +1,50 @@
+<div class="cupom-wrapper">
+  <div id="cupom-conteudo" class="print-area">
+    <div class="header">
+      <h2>{{ data.empresaNome }}</h2>
+      <p>{{ data.empresaEndereco }}</p>
+      <p>CNPJ: {{ data.cnpj }}</p>
+      <hr>
+      <h2>CUPOM NÃO FISCAL</h2>
+      <hr>
+    </div>
+
+    <table class="tabela-itens">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qtd</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of data.itens">
+          <td>{{ item.descricao | slice:0:18 }}</td>
+          <td>{{ item.quantidade }}</td>
+          <td>{{ item.valorUnitario * item.quantidade | currency:'BRL' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totais">
+      <hr>
+      <div class="linha-total">
+        <strong>TOTAL:</strong>
+        <strong>{{ data.valorTotal | currency:'BRL' }}</strong>
+      </div>
+      <p>Forma de Pagto: {{ data.formaPagamento }}</p>
+    </div>
+
+    <div class="footer">
+      <p>{{ data.dataHora | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+      <p>Obrigado pela preferência!</p>
+    </div>
+  </div>
+
+  <div class="no-print actions">
+    <button mat-raised-button color="primary" onclick="window.print()">
+      Imprimir Novamente
+    </button>
+    <button mat-button (click)="fechar()">Fechar</button>
+  </div>
+</div>

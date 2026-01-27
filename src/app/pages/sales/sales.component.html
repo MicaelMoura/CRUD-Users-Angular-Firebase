@@ -55,7 +55,7 @@
         <div class="display-valores mt-4" *ngIf="itensVenda().length > 0">
           <div class="valor-box">
             <span class="label">VALOR UNITÁRIO</span>
-            <span class="value">{{ itensVenda()[0].valorUnitario | currency:'BRL' }}</span>
+            <span class="value">{{ itensVenda()[0].valorUnitario| currency:'BRL' }}</span>
           </div>
           <div class="valor-box total">
             <span class="label">SUBTOTAL DO ITEM</span>
@@ -85,9 +85,9 @@
             <div class="item-linha" *ngFor="let item of itensVenda(); let i = index">
               <span class="cod">{{ item.codigoBarras }}</span>
               <span class="desc">{{ item.descricao }}</span>
-              <span class="qtd">{{ item.quantidade }}x</span>
-              <span class="vlr">{{ item.valorUnitario | number:'1.2-2' }}</span>
-              <span class="sub">{{ item.subtotal | number:'1.2-2' }}</span>
+              <span class="qtdS">{{ item.quantidade }}x</span>
+              <span class="vlrS">{{ item.valorUnitario | number:'1.2-2' }}</span>
+              <span class="subS">{{ item.subtotal | number:'1.2-2' }}</span>
               <mat-icon class="btn-del" (click)="removerItem(i)">delete_outline</mat-icon>
             </div>
           </div>

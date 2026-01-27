@@ -275,11 +275,11 @@ export class SalesComponent {
         let qtdFinal: number;
         if (info.isBalanca)
         {
-          qtdFinal = produto.pesoNoCodigo ? info.quantidadeOuPeso : this.calculaPeso(info.quantidadeOuPeso, produto);
+          qtdFinal = produto.pesoNoCodigo ? info.quantidadeOuPeso : this.calculaPeso(info.quantidadeOuPeso, produto.valorUnitarioVenda);
         } else {
           qtdFinal = qtd;
         }
-        produto.valorUnitarioVenda = info.isBalanca ? info.quantidadeOuPeso : produto.valorUnitarioVenda;
+        
         this.adicionarItemAoCupom(produto, qtdFinal);
       } else {
         this.snackBar.open('Produto não encontrado!', 'Fechar', { duration: 3000 });
@@ -292,8 +292,11 @@ export class SalesComponent {
       this.vendaForm.patchValue({ barcode: '', quantidade: 1 });
     }
   }
-  calculaPeso(quantidadeOuPeso: number, produto: Produto): number {
-    throw new Error('Method not implemented.');
+  calculaPeso(valorObtido: number, valorVendaProduto: number): number {
+    let peso = valorObtido * 1000 / valorVendaProduto;
+    let inteiro = peso / 1000
+    let resultadoSextoDigito = inteiro.toString().substring(0, 6);
+    return parseFloat(resultadoSextoDigito);
   }
 
   private adicionarItemAoCupom(produto: Produto, quantidade: number): void {

@@ -26,9 +26,17 @@
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Código de Barras</mat-label>
                 <input type="text" matInput formControlName="codigoDeBarras" placeholder="Opcional">
+                <mat-error *ngIf="formProduto.controls['codigoDeBarras'].invalid">Preencha o código</mat-error>
             </mat-form-field>
         </div>
         <div class="col-12 col-md-6 mb-2">
+            <div class="checkbox-wrapper">
+                <mat-checkbox formControlName="pesoNoCodigo" color="primary">
+                    Peso no código de barras
+                </mat-checkbox>
+            </div>
+        </div>
+                <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="example-full-width w-100">
                 <mat-label>Unidade de Medida</mat-label>
                 <mat-select formControlName="unidadeDeMedida" [required]="true">
@@ -76,6 +84,36 @@
                 <input type="number" matInput formControlName="quantidadeMinima" placeholder="0">
                 <mat-error *ngIf="formProduto.controls['quantidadeMinima'].invalid">Quantidade mínima é obrigatória</mat-error>
             </mat-form-field>
+        </div>
+
+        <div class="row fiscal-section">
+            <h2>Dados Fiscais (Obrigatório para NF-e)</h2>
+            
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>NCM</mat-label>
+                <input matInput formControlName="ncm" placeholder="Ex: 61091000">
+                <mat-hint>8 dígitos numéricos</mat-hint>
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CFOP Padrão</mat-label>
+                <input matInput formControlName="cfop" placeholder="Ex: 5102">
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                <mat-label>CSOSN</mat-label>
+                <mat-select formControlName="csosn">
+                    <mat-option value="102">102 - Simples Nacional</mat-option>
+                    <mat-option value="500">500 - ICMS Pago Ant.</mat-option>
+                    <mat-option value="400">400 - Não tributada</mat-option>
+                </mat-select>
+                </mat-form-field>
+            </div>
         </div>
 
         <div class="col-12">

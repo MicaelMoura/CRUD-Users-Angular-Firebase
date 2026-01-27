@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewUserComponent } from './modal-view-user/modal-view-user.component';
 import { ModalFormUserComponent } from './modal-form-user/modal-form-user.component';
-import { Empresas } from '../../interfaces/empresas'; // Importar a interface de empresas
+import { Empresas } from '../../interfaces/empresas'; 
 
 @Component({
   selector: 'app-users',
@@ -19,10 +19,10 @@ import { Empresas } from '../../interfaces/empresas'; // Importar a interface de
 
 export class UsersComponent implements OnInit {
   
-  displayedColumns: string[] = ['id', 'name', 'email', 'action'];
+  displayedColumns: string[] = ['name', 'email', 'action'];
   dataSource: any;
   listUsers: User[] = [];
-  listEmpresas: Empresas[] = []; // Adicionar a lista de empresas
+  listEmpresas: Empresas[] = []; 
 
   // VARIÁVEL DE ESTADO MULTI-EMPRESA
 
@@ -40,10 +40,10 @@ export class UsersComponent implements OnInit {
   public empresaIdAtual = this.authService.activeTenantId;
 
   ngOnInit() {
+    console.log('Empresa ID Atual:', this.empresaIdAtual());
     this.getListUsers(this.empresaIdAtual() || '');
   }
 
-  // MÉTODO AGORA RECEBE O ID DA EMPRESA
   getListUsers(empresaId: string) {
     // Passar o ID da empresa para o serviço
     this.usersService.getAllUsers(empresaId).subscribe({

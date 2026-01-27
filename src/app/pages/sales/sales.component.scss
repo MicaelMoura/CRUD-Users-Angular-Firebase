@@ -67,10 +67,15 @@
     .cod { flex: 0 0 50px; } // Largura fixa para o código não empurrar a descrição
     .desc { flex: 3; padding-left: 5px; }
 
-    .qtd, .peso, .vlr, .sub { 
-      flex: 1.7;
-      text-align: right; 
+    .qtd, .vlr, .sub { 
+      flex: 0.9;
+      text-align: left; 
     }
+
+    .qtdS, .vlrS, .subS {
+      text-align: right;
+    }
+
     
     &.header { 
       font-weight: bold; 

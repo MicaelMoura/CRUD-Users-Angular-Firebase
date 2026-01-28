@@ -29,18 +29,14 @@ export class AuthService {
     // DADOS DO TENANT ATIVO
     private _activeTenantId = signal<string | null>(null);
     public activeTenantId = this._activeTenantId.asReadonly();
-    
+
     // PAPEL (ROLE) DO USUÁRIO NO TENANT ATIVO
     private _userRole = signal<UserRole>(null);
     public userRole = this._userRole.asReadonly();
     
-    // ====================================================================
-    // INICIALIZAÇÃO
-    // ====================================================================
-
     constructor(
-        private ngAuth: AngularFireAuth, // Use o AngularFireAuth (Compat)
-        private ngFirestore: AngularFirestore, // Use o AngularFirestore (Compat)
+        private ngAuth: AngularFireAuth,
+        private ngFirestore: AngularFirestore,
     ) {
         // Observa mudanças no estado de autenticação (login/logout)
         this.ngAuth.onAuthStateChanged((user) => {
@@ -58,14 +54,7 @@ export class AuthService {
         this._userRole.set(null);
     }
     
-    // ====================================================================
-    // MÉTODOS PÚBLICOS
-    // ====================================================================
-    
-    /**
-     * Define o Tenant ID ativo e busca o papel do usuário dentro desse Tenant.
-     * @param tenantId O ID da empresa (tenant).
-     */
+    // Define o Tenant ID ativo e busca o papel do usuário dentro desse Tenant.
     public async setActiveTenant(tenantId: string): Promise<void> {
         this._activeTenantId.set(tenantId);
         
@@ -77,11 +66,7 @@ export class AuthService {
         }
     }
     
-    /**
-     * Obtém o papel (role) do usuário logado na empresa ativa.
-     * @param tenantId O ID da empresa.
-     * @param uid O UID do Firebase Auth.
-     */
+    // Obtém o papel (role) do usuário logado na empresa ativa.
     private async _fetchUserRole(tenantId: string, uid: string): Promise<void> {
         try {
             const docRef = this.ngFirestore
@@ -129,16 +114,12 @@ export class AuthService {
         );
     }
 
-    /**
-     * Cria um novo usuário no Firebase Auth. Usado pelo gerenciamento de usuários.
-     */
+    // Cria um novo usuário no Firebase Auth.
     registerUser(email: string, password: string): Promise<firebase.auth.UserCredential> {
         return this.ngAuth.createUserWithEmailAndPassword(email, password);
     }
 
-    /**
-     * Realiza o logout do usuário.
-     */
+    // Realiza o logout do usuário.
     logout(): Promise<void> {
         this._resetState();
         return this.ngAuth.signOut();
@@ -152,10 +133,10 @@ export class AuthService {
         }
     }
 
-    public setPreLoginTenantId(tenantId: string | null): void {
-    // Apenas define o ID. Não carrega a role, pois o usuário ainda não está logado.
-        this._activeTenantId.set(tenantId);
-    }
+    // public setPreLoginTenantId(tenantId: string | null): void {
+    // // Apenas define o ID. Não carrega a role, pois o usuário ainda não está logado.
+    //     this._activeTenantId.set(tenantId);
+    // }
 
     public async getBusinessId(businessInput: string): Promise<string> {
         const docRef = this.ngFirestore
@@ -163,11 +144,11 @@ export class AuthService {
         .doc<Empresas>(businessInput); 
 
         console.log('Buscando empresa com ID:', businessInput);
-        // 💡 Acessa o documento e espera a Promise
+
         const docSnap = await docRef.get().toPromise(); 
-        console.log('Buscando');
+        console.log('Buscando...');
+
         if (docSnap && docSnap.exists) {
-            // Retorna o ID do documento que foi encontrado no Firestore
             return docSnap.id; 
         } else {
             // Caso o documento não exista

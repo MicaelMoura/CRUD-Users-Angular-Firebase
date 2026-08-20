@@ -3,9 +3,10 @@ import { Empresas } from '../../../interfaces/empresas';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-modal-view-empresas',
-  templateUrl: './modal-view-empresas.component.html',
-  styleUrl: './modal-view-empresas.component.scss'
+    selector: 'app-modal-view-empresas',
+    templateUrl: './modal-view-empresas.component.html',
+    styleUrl: './modal-view-empresas.component.scss',
+    standalone: false
 })
 export class ModalViewEmpresasComponent {
   

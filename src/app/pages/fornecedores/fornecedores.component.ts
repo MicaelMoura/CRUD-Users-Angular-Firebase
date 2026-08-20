@@ -13,9 +13,10 @@ import { ModalFormFornecedorComponent } from './modal-form/modal-form-fornecedor
 import { ModalViewFornecedorComponent } from './modal-view/modal-view-fornecedor.component'; 
 
 @Component({
-  selector: 'app-fornecedores',
-  templateUrl: './fornecedores.component.html',
-  styleUrls: ['./fornecedores.component.scss']
+    selector: 'app-fornecedores',
+    templateUrl: './fornecedores.component.html',
+    styleUrls: ['./fornecedores.component.scss'],
+    standalone: false
 })
 export class FornecedoresComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Produto } from '../../../interfaces/produto';
 
 @Component({
-  selector: 'app-modal-view-produto',
-  templateUrl: './modal-view-produto.component.html',
-  styleUrls: ['./modal-view-produto.component.scss']
+    selector: 'app-modal-view-produto',
+    templateUrl: './modal-view-produto.component.html',
+    styleUrls: ['./modal-view-produto.component.scss'],
+    standalone: false
 })
 export class ModalViewProdutoComponent implements OnInit {
 

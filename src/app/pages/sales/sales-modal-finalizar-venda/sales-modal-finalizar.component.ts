@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormaPagamento, ItemVenda } from '../../../interfaces/sales';
 
 @Component({
-  selector: 'app-sales-modal',
-  templateUrl: './sales-modal-finalizar.component.html',
-  styleUrls: ['./sales-modal-finalizar.component.scss']
+    selector: 'app-sales-modal',
+    templateUrl: './sales-modal-finalizar.component.html',
+    styleUrls: ['./sales-modal-finalizar.component.scss'],
+    standalone: false
 })
 export class SalesModalComponent {
   formaPagamento = signal<FormaPagamento>('dinheiro');

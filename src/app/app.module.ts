@@ -9,7 +9,6 @@ import { HomeComponent } from './pages/home/home.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { environment } from '../environments/environment';
 import { UsersComponent } from './pages/users/users.component';
 import { ModalFormUserComponent } from './pages/users/modal-form-user/modal-form-user.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,10 +32,6 @@ import { ModalFechamentoCaixaComponent } from './pages/cashier/fechamento-caixa/
 import { ModalAberturaCaixaComponent } from './pages/cashier/abertura-caixa/modal-abertura-caixa.component';
 import { SalesComponent } from './pages/sales/sales.component';
 import { SalesModalComponent } from './pages/sales/sales-modal-finalizar-venda/sales-modal-finalizar.component';
-
-import { AngularFireModule } from '@angular/fire/compat'; 
-import { AngularFireAuthModule } from '@angular/fire/compat/auth'; 
-import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule} from '@angular/material/table';
@@ -124,9 +119,6 @@ const BR_DATE_FORMATS = {
     NoopAnimationsModule,
     NgxMaskDirective, 
     NgxMaskPipe, 
-    AngularFireAuthModule, 
-    AngularFirestoreModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [
     provideNgxMask(),

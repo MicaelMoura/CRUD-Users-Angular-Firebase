@@ -1,49 +1,30 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { Fornecedor } from '../interfaces/fornecedor';
+import { collectionData$, FirebaseService } from './firebase.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class FornecedoresService {
+  constructor(private firebase: FirebaseService) {}
 
-  constructor(private firestore: AngularFirestore) { }
-
-  /**
-   * Obtém a referência da sub-coleção 'fornecedores' para a empresa fornecida.
-   * Path: empresas/{empresaId}/fornecedores
-   */
-  private getCompanyFornecedoresCollection(empresaId: string): AngularFirestoreCollection<Fornecedor> {
-    return this.firestore
-      .collection('business')
-      .doc(empresaId)
-      .collection<Fornecedor>('supplier');
+  private collectionPath(empresaId: string) {
+    return collection(this.firebase.firestore, 'business', empresaId, 'supplier');
   }
-  
+
   getAllFornecedores(empresaId: string): Observable<Fornecedor[]> {
-    return this.getCompanyFornecedoresCollection(empresaId).valueChanges({ idField: 'id' });
+    return collectionData$<Fornecedor>(this.collectionPath(empresaId), 'id');
   }
 
-  /**
-   * Adiciona um novo fornecedor à sub-coleção da empresa.
-   */
-  addFornecedor(empresaId: string, fornecedor: Omit<Fornecedor, 'id'>): Promise<any> {
-    // Usamos Omit<'id'> pois o Firestore gera o ID
-    return this.getCompanyFornecedoresCollection(empresaId).add(fornecedor);
+  addFornecedor(empresaId: string, fornecedor: Omit<Fornecedor, 'id'>) {
+    return addDoc(this.collectionPath(empresaId), fornecedor);
   }
 
-  /**
-   * Atualiza os dados de um fornecedor específico.
-   */
   updateFornecedor(empresaId: string, fornecedorId: string, data: Partial<Fornecedor>): Promise<void> {
-    return this.getCompanyFornecedoresCollection(empresaId).doc(fornecedorId).update(data);
+    return updateDoc(doc(this.collectionPath(empresaId), fornecedorId), data);
   }
 
-  /**
-   * Exclui um fornecedor da sub-coleção da empresa.
-   */
   deleteFornecedor(empresaId: string, fornecedorId: string): Promise<void> {
-    return this.getCompanyFornecedoresCollection(empresaId).doc(fornecedorId).delete();
+    return deleteDoc(doc(this.collectionPath(empresaId), fornecedorId));
   }
 }

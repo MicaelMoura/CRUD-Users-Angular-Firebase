@@ -1,48 +1,30 @@
-import { Injectable, } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { addDoc, collection, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { User } from '../interfaces/user';
+import { collectionData$, FirebaseService } from './firebase.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UsersService {
+  constructor(private firebase: FirebaseService) {}
 
-  constructor(private firestore: AngularFirestore) { }
-
-  private getUsuariosCollectionRef(empresaId: string): AngularFirestoreCollection<User> {
-    return this.firestore
-          .collection('business')
-          .doc(empresaId)
-          .collection<User>('users');
+  private collectionPath(empresaId: string) {
+    return collection(this.firebase.firestore, 'business', empresaId, 'users');
   }
 
-  /**
-   * Busca todos os usuários de uma empresa específica.
-   */
   getAllUsers(empresaId: string): Observable<User[]> {
-    return this.getUsuariosCollectionRef(empresaId).valueChanges({ idField: 'id' });
+    return collectionData$<User>(this.collectionPath(empresaId), 'id');
   }
 
-  /**
-   * Adiciona um novo usuário à sub-coleção da empresa.
-   */
   addUser(empresaId: string, user: User) {
-    return this.getUsuariosCollectionRef(empresaId).add(user);
+    return addDoc(this.collectionPath(empresaId), user);
   }
 
-  /**
-   * Atualiza um usuário específico em uma empresa específica.
-   * A função original não usava o ID da empresa. Agora ela precisa.
-   */
   updateUser(empresaId: string, userId: string, data: Partial<User>): Promise<void> {
-    return this.getUsuariosCollectionRef(empresaId).doc(userId).update(data);
+    return updateDoc(doc(this.collectionPath(empresaId), userId), data);
   }
 
-  /**
-   * Exclui um usuário da sub-coleção da empresa.
-   */
   deleteUser(empresaId: string, userId: string): Promise<void> {
-    return this.getUsuariosCollectionRef(empresaId).doc(userId).delete();
+    return deleteDoc(doc(this.collectionPath(empresaId), userId));
   }
 }

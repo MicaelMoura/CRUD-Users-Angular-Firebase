@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Fornecedor } from '../../../interfaces/fornecedor';
 
 @Component({
-  selector: 'app-modal-view-fornecedor',
-  templateUrl: './modal-view-fornecedor.component.html',
-  styleUrls: ['./modal-view-fornecedor.component.scss']
+    selector: 'app-modal-view-fornecedor',
+    templateUrl: './modal-view-fornecedor.component.html',
+    styleUrls: ['./modal-view-fornecedor.component.scss'],
+    standalone: false
 })
 export class ModalViewFornecedorComponent implements OnInit {
 

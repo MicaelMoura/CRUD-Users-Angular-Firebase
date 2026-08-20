@@ -1,71 +1,58 @@
-import { inject, Injectable } from '@angular/core';
-import { Observable, switchAll } from 'rxjs';
-import { Firestore, collection, doc, setDoc, DocumentReference, deleteDoc, CollectionReference, updateDoc,
-} from '@angular/fire/firestore';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore';
 import { Empresas } from '../interfaces/empresas';
-import { AuthService } from './auth.services';
 import { User } from '../interfaces/user';
-import { Profile } from '../interfaces/Profile';
-//import {profileService} from './profileService.services'
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AuthService } from './auth.services';
+import { collectionData$, FirebaseService } from './firebase.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class EmpresasService {
-
-  constructor(private dataBaseStore: AngularFirestore,
+  constructor(
+    private firebase: FirebaseService,
     private authService: AuthService,
-    //private profileService:
-  ) { }
+  ) {}
 
-  getEmpresas(): Observable<Empresas[]> { 
-        // Usa valueChanges para obter um Observable do array de dados
-        return this.dataBaseStore.collection<Empresas>('business')
-            // O idField garante que o ID do documento seja incluído no objeto como 'firebaseId'
-          .valueChanges({ idField: 'firebaseId' }); 
+  getEmpresas(): Observable<Empresas[]> {
+    return collectionData$<Empresas>(
+      collection(this.firebase.firestore, 'business'),
+      'firebaseId',
+    );
   }
 
   async addEmpresa(empresa: Empresas): Promise<string> {
-    // 1. CRIA O USUÁRIO DE LOGIN NO FIREBASE AUTH (Antes do Firestore)
     const authResult = await this.authService.registerUser(empresa.emailAdmin, empresa.senhaAdmin);
-    const authUid = authResult.user!.uid;
+    const companyReference = doc(collection(this.firebase.firestore, 'business'));
+    const empresaId = companyReference.id;
 
-    // 2. Obtém uma referência de documento COM ID GERADO (Compat)
-    const newDocRef = this.dataBaseStore.collection('business').ref.doc();
-    const empresaId = newDocRef.id;
+    await setDoc(companyReference, { ...empresa, firebaseId: empresaId });
 
-    // 3. Persiste a empresa no Firestore (Compat set)
-    await newDocRef.set({ 
-        ...empresa, 
-        firebaseId: empresaId 
-    });
-    
-    // 4. Cria o usuário administrador na sub-coleção (Compat set)
     const empresaAdminUser: User = {
-      id: authUid,
+      id: authResult.user.uid,
       nome: empresa.nomeFantasia,
       email: empresa.emailAdmin,
       perfilId: 'perfil.id',
     };
-    
-    // 💡 Método auxiliar para a sub-coleção precisa ser refeito para Compat, 
-    // mas vamos fazer a chamada direta aqui assumindo que você não usará a função auxiliar modular.
-    await this.dataBaseStore
-        .collection('business').doc(empresaId)
-        .collection('users').doc(authUid).set(empresaAdminUser);
-    
+    await setDoc(
+      doc(this.firebase.firestore, 'business', empresaId, 'users', authResult.user.uid),
+      empresaAdminUser,
+    );
+
     return empresaId;
   }
 
-  // Adiciona o método para excluir uma empresa
-  async deleteEmpresa(empresaId: string): Promise<void> {
-    return this.dataBaseStore.collection('business').doc(empresaId).delete();
+  deleteEmpresa(empresaId: string): Promise<void> {
+    return deleteDoc(doc(this.firebase.firestore, 'business', empresaId));
   }
 
-  // Método para atualizar uma empresa
   async updateEmpresa(empresaId: string, empresa: Empresas): Promise<void> {
-    const businessPayload: any = {
+    const businessPayload = {
       razaoSocial: empresa.razaoSocial,
       nomeFantasia: empresa.nomeFantasia,
       cnpj: empresa.cnpj,
@@ -76,12 +63,13 @@ export class EmpresasService {
       bairro: empresa.bairro,
       cep: empresa.cep,
       complemento: empresa.complemento,
-      emailAdmin: empresa.emailAdmin,   
-      senhaAdmin: empresa.senhaAdmin
-    }
-    try{
-      this.dataBaseStore.collection('business').doc(empresaId).update(businessPayload);  
-    } catch (error){
+      emailAdmin: empresa.emailAdmin,
+      senhaAdmin: empresa.senhaAdmin,
+    };
+
+    try {
+      await updateDoc(doc(this.firebase.firestore, 'business', empresaId), businessPayload);
+    } catch (error) {
       console.error(`Erro ao atualizar empresa ${empresaId}:`, error);
       throw new Error(`Falha ao atualizar a empresa: ${error instanceof Error ? error.message : 'Erro desconhecido.'}`);
     }

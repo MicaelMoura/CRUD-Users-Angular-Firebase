@@ -5,20 +5,26 @@
     <h1 class="titulo">{{ nameSoftware }}</h1>
     <h2 class="subtitulo">{{ slogan }}</h2>
 
-      <mat-form-field class="full-width-input" *ngIf="showBusinessField">
+    @if (showBusinessField) {
+      <mat-form-field class="full-width-input">
         <mat-label>Business</mat-label>
         <input matInput formControlName="business" type="text" placeholder="Digite o Business Id">
       </mat-form-field>
+    }
 
     <mat-form-field class="full-width-input">
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" placeholder="Digite seu email">
-      <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-        Email é obrigatório.
-      </mat-error>
-      <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-        Email inválido.
-      </mat-error>
+      @if (loginForm.get('email')?.hasError('required')) {
+        <mat-error>
+          Email é obrigatório.
+        </mat-error>
+      }
+      @if (loginForm.get('email')?.hasError('email')) {
+        <mat-error>
+          Email inválido.
+        </mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field class="full-width-input">
@@ -27,21 +33,27 @@
       <mat-icon matSuffix class="password-toggle-icon" (click)="togglePasswordVisibility()" [class.visible]="!hidePassword()">
         {{ hidePassword() ? 'visibility_off' : 'visibility' }}
       </mat-icon>
-      <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-        Senha é obrigatória.
-      </mat-error>
-      <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-        A senha deve ter no mínimo 6 caracteres.
-      </mat-error>
+      @if (loginForm.get('password')?.hasError('required')) {
+        <mat-error>
+          Senha é obrigatória.
+        </mat-error>
+      }
+      @if (loginForm.get('password')?.hasError('minlength')) {
+        <mat-error>
+          A senha deve ter no mínimo 6 caracteres.
+        </mat-error>
+      }
     </mat-form-field>
 
     <a (click)="recoverPassword()" class="forgot-password-link">Esqueci minha senha</a>
 
     <app-button textButton="Acessar" type="submit" [disabled]="loginForm.invalid"></app-button>
 
-    <div *ngIf="errorMessage" class="error-message-box">
-      {{ errorMessage }}
-    </div>
+    @if (errorMessage) {
+      <div class="error-message-box">
+        {{ errorMessage }}
+      </div>
+    }
   </form>
 
   <p class="footer">© 2025 | Desenvolvido por TecMhaicky</p>

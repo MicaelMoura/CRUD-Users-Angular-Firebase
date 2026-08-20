@@ -1,16 +1,17 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { NAME_SOFTWARE, SLOGAN } from '../../../constants'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.services';
 import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    standalone: false
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
@@ -26,7 +27,6 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private afAuth: AngularFireAuth,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -70,10 +70,8 @@ export class LoginComponent implements OnInit {
       // Obtém e define o ID da empresa
       const businessId = await this.authService.getBusinessId(this.nameBusiness.toLowerCase());
       console.log('Business ID definido como:', businessId);
+      await firstValueFrom(this.authService.login(email, password));
       await this.authService.setBusinessId(businessId);
-      
-      // Realiza o login do usuário
-      await this.afAuth.signInWithEmailAndPassword(email, password);
       this.router.navigate(['vendas']);
 
     } catch (error: any) {
@@ -88,7 +86,7 @@ export class LoginComponent implements OnInit {
 
     if (emailControl && emailControl.valid) {
       try {
-        await this.afAuth.sendPasswordResetEmail(emailControl.value);
+        await this.authService.sendPasswordResetEmail(emailControl.value);
         this.snackBar.open('Email de recuperação enviado! Verifique sua caixa de entrada.', 'Fechar', { duration: 3000 });
       } catch (error: any) {
         console.error('Erro ao enviar email de recuperação:', error.message);

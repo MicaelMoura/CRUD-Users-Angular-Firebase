@@ -1,48 +1,52 @@
 <div class="container-fluid p-3">
-    <mat-icon class="float-end hover" (click)="onCancel()">close</mat-icon>
+  <mat-icon class="float-end hover" (click)="onCancel()">close</mat-icon>
 
-    <h1 class="titulo">Abrir Caixa</h1>
-    <h2 class="subtitulo">Informe o valor inicial para troco (suprimento)</h2>
+  <h1 class="titulo">Abrir Caixa</h1>
+  <h2 class="subtitulo">Informe o valor inicial para troco (suprimento)</h2>
 
-    <form [formGroup]="form" (ngSubmit)="submit()">
-        <div class="row">
-            <div class="col-12 mb-4">
-                <mat-form-field class="w-100">
-                    <mat-label>Troco Inicial (R$)</mat-label>
-                    <input 
-                        type="text" 
-                        matInput 
-                        formControlName="valorInicialTroco" 
-                        placeholder="0,00"
-                        required
-                        mask="separator.2" 
-                        thousandSeparator="." 
-                        decimalMarker="," 
-                    >
-                    <mat-error *ngIf="form.controls['valorInicialTroco'].hasError('required')">O valor é obrigatório.</mat-error>
-                    <mat-error *ngIf="form.controls['valorInicialTroco'].hasError('min')">O valor deve ser positivo.</mat-error>
-                </mat-form-field>
-            </div>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <mat-form-field class="w-100">
+          <mat-label>Troco Inicial (R$)</mat-label>
+          <input
+            type="text"
+            matInput
+            formControlName="valorInicialTroco"
+            placeholder="0,00"
+            required
+            mask="separator.2"
+            thousandSeparator="."
+            decimalMarker=","
+            >
+            @if (form.controls['valorInicialTroco'].hasError('required')) {
+              <mat-error>O valor é obrigatório.</mat-error>
+            }
+            @if (form.controls['valorInicialTroco'].hasError('min')) {
+              <mat-error>O valor deve ser positivo.</mat-error>
+            }
+          </mat-form-field>
         </div>
+      </div>
 
-        <div class="row">
-            <div class="col-12 text-end">
-                <button 
-                    type="button" 
-                    mat-button 
-                    (click)="onCancel()" 
-                    class="me-2"
-                >Cancelar</button>
-                <button 
-                    type="submit" 
-                    mat-raised-button 
-                    color="primary" 
-                    [disabled]="form.invalid"
-                >
-                    <mat-icon>lock_open</mat-icon>
-                    Abrir Caixa
-                </button>
-            </div>
+      <div class="row">
+        <div class="col-12 text-end">
+          <button
+            type="button"
+            mat-button
+            (click)="onCancel()"
+            class="me-2"
+          >Cancelar</button>
+          <button
+            type="submit"
+            mat-raised-button
+            color="primary"
+            [disabled]="form.invalid"
+            >
+            <mat-icon>lock_open</mat-icon>
+            Abrir Caixa
+          </button>
         </div>
+      </div>
     </form>
-</div>
+  </div>

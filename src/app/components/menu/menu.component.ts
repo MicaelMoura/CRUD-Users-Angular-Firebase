@@ -4,9 +4,10 @@ import { AuthService } from '../../services/auth.services';
 import { NAME_SOFTWARE, NAME_EMPRESA } from '../../../constants'
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrl: './menu.component.scss'
+    selector: 'app-menu',
+    templateUrl: './menu.component.html',
+    styleUrl: './menu.component.scss',
+    standalone: false
 })
 export class MenuComponent {
   nameSoftware: string = NAME_SOFTWARE;

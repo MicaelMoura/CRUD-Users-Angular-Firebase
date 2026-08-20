@@ -1,13 +1,17 @@
 import { Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router'; 
-
 import { toObservable } from '@angular/core/rxjs-interop'; 
-import { Observable, from, map, of, catchError, throwError } from 'rxjs';
+import { Observable, from, map, catchError, throwError } from 'rxjs';
 import { Empresas } from '../interfaces/empresas';
-
-import { AngularFireAuth } from '@angular/fire/compat/auth'; 
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app';
+import {
+    UserCredential,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    sendPasswordResetEmail,
+    signInWithEmailAndPassword,
+    signOut,
+} from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { FirebaseService } from './firebase.service';
 
 // Tipagem
 export type UserRole = 'visitante' | 'usuario' | 'administrador' | null;
@@ -35,11 +39,10 @@ export class AuthService {
     public userRole = this._userRole.asReadonly();
     
     constructor(
-        private ngAuth: AngularFireAuth,
-        private ngFirestore: AngularFirestore,
+        private firebase: FirebaseService,
     ) {
         // Observa mudanças no estado de autenticação (login/logout)
-        this.ngAuth.onAuthStateChanged((user) => {
+        onAuthStateChanged(this.firebase.auth, (user) => {
             if (user) {
                 this._currentUserUid.set(user.uid);
             } else {
@@ -69,15 +72,9 @@ export class AuthService {
     // Obtém o papel (role) do usuário logado na empresa ativa.
     private async _fetchUserRole(tenantId: string, uid: string): Promise<void> {
         try {
-            const docRef = this.ngFirestore
-            .collection('business') // Acessa a coleção raiz
-            .doc(tenantId)          // Acessa o documento da empresa
-            .collection('users') // Acessa a sub-coleção de usuários
-            .doc(uid);              // Acessa o documento do usuário (o usuário logado)
-
-            // Obtém o valor do documento como uma Promise (requer .toPromise() no Compat)
-            const docSnap = await docRef.get().toPromise();
-            if (docSnap && docSnap.exists) {
+            const docRef = doc(this.firebase.firestore, 'business', tenantId, 'users', uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
                 const data = docSnap.data();
                 const role = data?.['acesso'] as UserRole;
                 this._userRole.set(role || 'visitante');
@@ -95,7 +92,7 @@ export class AuthService {
      * Retorna o UID.
      */
     login(email: string, password: string): Observable<string> {
-        const loginPromise = this.ngAuth.signInWithEmailAndPassword(email, password);
+        const loginPromise = signInWithEmailAndPassword(this.firebase.auth, email, password);
         
         return from(loginPromise).pipe(
             map(userCredential => userCredential.user!.uid), 
@@ -115,19 +112,19 @@ export class AuthService {
     }
 
     // Cria um novo usuário no Firebase Auth.
-    registerUser(email: string, password: string): Promise<firebase.auth.UserCredential> {
-        return this.ngAuth.createUserWithEmailAndPassword(email, password);
+    registerUser(email: string, password: string): Promise<UserCredential> {
+        return createUserWithEmailAndPassword(this.firebase.auth, email, password);
     }
 
     // Realiza o logout do usuário.
     logout(): Promise<void> {
         this._resetState();
-        return this.ngAuth.signOut();
+        return signOut(this.firebase.auth);
     }
 
     async sendPasswordResetEmail(email: string): Promise<void> {
         try {
-        await this.ngAuth.sendPasswordResetEmail(email);
+        await sendPasswordResetEmail(this.firebase.auth, email);
         } catch (error) {
         throw error;
         }
@@ -139,16 +136,14 @@ export class AuthService {
     // }
 
     public async getBusinessId(businessInput: string): Promise<string> {
-        const docRef = this.ngFirestore
-        .collection('business')
-        .doc<Empresas>(businessInput); 
+        const docRef = doc(this.firebase.firestore, 'business', businessInput);
 
         console.log('Buscando empresa com ID:', businessInput);
 
-        const docSnap = await docRef.get().toPromise(); 
+        const docSnap = await getDoc(docRef);
         console.log('Buscando...');
 
-        if (docSnap && docSnap.exists) {
+        if (docSnap.exists()) {
             return docSnap.id; 
         } else {
             // Caso o documento não exista

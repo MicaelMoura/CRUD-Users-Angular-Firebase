@@ -12,9 +12,10 @@ import { ModalFormUserComponent } from './modal-form-user/modal-form-user.compon
 import { Empresas } from '../../interfaces/empresas'; 
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+    selector: 'app-users',
+    templateUrl: './users.component.html',
+    styleUrl: './users.component.scss',
+    standalone: false
 })
 
 export class UsersComponent implements OnInit {

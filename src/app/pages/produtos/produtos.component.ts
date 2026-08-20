@@ -13,9 +13,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
-  selector: 'app-produtos',
-  templateUrl: './produtos.component.html',
-  styleUrl: './produtos.component.scss'
+    selector: 'app-produtos',
+    templateUrl: './produtos.component.html',
+    styleUrl: './produtos.component.scss',
+    standalone: false
 })
 
 export class ProdutosComponent implements OnInit {

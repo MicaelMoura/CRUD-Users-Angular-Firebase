@@ -10,9 +10,10 @@ import { Payment } from '../../../interfaces/payment';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-modal-form-entrada',
-  templateUrl: './modal-entrada.component.html',
-  styleUrls: ['./modal-entrada.component.scss']
+    selector: 'app-modal-form-entrada',
+    templateUrl: './modal-entrada.component.html',
+    styleUrls: ['./modal-entrada.component.scss'],
+    standalone: false
 })
 export class ModalEntradaComponent implements OnInit {
 

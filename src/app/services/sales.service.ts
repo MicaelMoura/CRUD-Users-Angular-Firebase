@@ -1,22 +1,19 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { addDoc, collection } from 'firebase/firestore';
 import { Venda } from '../interfaces/sales';
+import { FirebaseService } from './firebase.service';
 
 @Injectable({ providedIn: 'root' })
 export class VendasService {
-  constructor(private firestore: AngularFirestore) {}
+  constructor(private firebase: FirebaseService) {}
 
   async salvarVenda(empresaId: string, venda: Venda): Promise<string> {
-    const ref = await this.firestore
-      .collection('business')
-      .doc(empresaId)
-      .collection('sales')
-      .add(venda);
-    return ref.id;
+    const source = collection(this.firebase.firestore, 'business', empresaId, 'sales');
+    const reference = await addDoc(source, venda);
+    return reference.id;
   }
 
   async emitirNfce(empresaId: string, vendaId: string, venda: Venda) {
-    
     return { sucesso: true, urlDanfe: 'https://example.com/danfe.pdf' };
   }
 }

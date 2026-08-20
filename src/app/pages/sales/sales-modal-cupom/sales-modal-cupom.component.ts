@@ -4,11 +4,10 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-sales-modal-cupom',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
-  templateUrl: './sales-modal-cupom.component.html',
-  styleUrl: './sales-modal-cupom.component.scss'
+    selector: 'app-sales-modal-cupom',
+    imports: [CommonModule, MatDialogModule, MatButtonModule],
+    templateUrl: './sales-modal-cupom.component.html',
+    styleUrl: './sales-modal-cupom.component.scss'
 })
 export class SalesModalCupomComponent implements OnInit {
   constructor(

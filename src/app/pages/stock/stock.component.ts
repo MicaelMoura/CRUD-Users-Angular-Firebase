@@ -12,9 +12,10 @@ import { ModalFormStockComponent } from './modal-cadastro/modal-form-stock.compo
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-stock',
-  templateUrl: './stock.component.html',
-  styleUrl: './stock.component.scss'
+    selector: 'app-stock',
+    templateUrl: './stock.component.html',
+    styleUrl: './stock.component.scss',
+    standalone: false
 })
 export class StockComponent implements OnInit {
 

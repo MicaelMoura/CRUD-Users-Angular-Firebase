@@ -1,98 +1,94 @@
 <app-menu></app-menu>
 
 <div class="container-fluid pt-3">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="titulo">Controle de Caixa</h1>
-            <h2 class="subtitulo">Gerencie as entradas e saídas do caixa da empresa.</h2>
-        </div>
+  <div class="row">
+    <div class="col-12">
+      <h1 class="titulo">Controle de Caixa</h1>
+      <h2 class="subtitulo">Gerencie as entradas e saídas do caixa da empresa.</h2>
     </div>
+  </div>
 
-    <div class="row mt-2">
-        <div class="col-md-6 mb-3">
-            <mat-form-field class="w-100">
-                <mat-label>Busca Movimentação</mat-label>
-                <input matInput 
-                       (keyup)="applyFilter($event)" 
-                       placeholder="Digite a descrição ou valor" 
-                       #input
-                       [disabled]="caixaStatus() === 'FECHADO'"
-                >
-            </mat-form-field>
-        </div>
+  <div class="row mt-2">
+    <div class="col-md-6 mb-3">
+      <mat-form-field class="w-100">
+        <mat-label>Busca Movimentação</mat-label>
+        <input matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Digite a descrição ou valor"
+          #input
+          [disabled]="caixaStatus() === 'FECHADO'"
+          >
+        </mat-form-field>
+      </div>
 
-        <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
-            <h3 class="saldo-caixa me-4">
-                Saldo Atual: 
-                <span [ngClass]="{'saldo-positivo': saldoAtual >= 0, 'saldo-negativo': saldoAtual < 0}">
-                    R$ {{ saldoAtual | number: '1.2-2' }}
-                </span>
-            </h3>
+      <div class="col-md-6 d-flex justify-content-end align-items-center mb-3">
+        <h3 class="saldo-caixa me-4">
+          Saldo Atual:
+          <span [ngClass]="{'saldo-positivo': saldoAtual >= 0, 'saldo-negativo': saldoAtual < 0}">
+            R$ {{ saldoAtual | number: '1.2-2' }}
+          </span>
+        </h3>
 
-            <ng-container *ngIf="caixaStatus() === 'ABERTO'; else caixaFechado">
-                <app-button textButton="Encerrar Caixa" class="me-2" (click)="openFechamentoModal()"></app-button>
-                <app-button textButton="+ Entrada" class="me-2" (click)="openModalEntrada()"></app-button>
-                <app-button textButton="+ Saída" (click)="openModalSaida()"></app-button>
+        @if (caixaStatus() === 'ABERTO') {
+          <app-button textButton="Encerrar Caixa" class="me-2" (click)="openFechamentoModal()"></app-button>
+          <app-button textButton="+ Entrada" class="me-2" (click)="openModalEntrada()"></app-button>
+          <app-button textButton="+ Saída" (click)="openModalSaida()"></app-button>
+        } @else {
+          <app-button textButton="Abrir Caixa" (click)="abrirCaixa()"></app-button>
+        }
+
+      </div>
+
+      <div class="col-12 shadow-lg">
+        @if (caixaStatus() === 'ABERTO') {
+          <table mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="data">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Data </th>
+              <td mat-cell class="td-table" *matCellDef="let item"> {{ item.dataMovimento | date: 'dd/MM/yyyy HH:mm' }} </td>
             </ng-container>
-
-            <ng-template #caixaFechado>
-                <app-button textButton="Abrir Caixa" (click)="abrirCaixa()"></app-button>
-            </ng-template>
-        </div>
-
-        <div class="col-12 shadow-lg">
-            <ng-container *ngIf="caixaStatus() === 'ABERTO'; else mensagemCaixaFechado">
-                <table mat-table [dataSource]="dataSource" matSort>
-                    <ng-container matColumnDef="data">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Data </th>
-                        <td mat-cell class="td-table" *matCellDef="let item"> {{ item.dataMovimento | date: 'dd/MM/yyyy HH:mm' }} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="tipo">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Tipo </th>
-                        <td mat-cell class="td-table" *matCellDef="let item" [ngClass]="{'text-success': item.tipo === 'ENTRADA', 'text-danger': item.tipo === 'SAÍDA'}"> 
-                            {{ item.tipo }} 
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="descricao">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Descrição </th>
-                        <td mat-cell class="td-table" *matCellDef="let item"> {{ item.descricao }} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="valor">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Valor (R$) </th>
-                        <td mat-cell class="td-table" *matCellDef="let item"> {{ item.valor | number: '1.2-2' }} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="action">
-                        <th mat-header-cell *matHeaderCellDef class="th-table"> Ações </th>
-                        <td mat-cell class="td-table" *matCellDef="let item">
-                            <mat-icon *ngIf="item.tipo === 'ENTRADA'" class="icone-tabela" (click)="openModalEntrada(item)">edit</mat-icon>
-                            <mat-icon *ngIf="item.tipo === 'SAÍDA'" class="icone-tabela" (click)="openModalSaida(item)">edit</mat-icon>
-                            <mat-icon class="icone-tabela" (click)="deleteCashFlow(item.id!)">delete</mat-icon>
-                        </td>
-                    </ng-container>
-
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                
-                    <tr class="mat-row no-data" *matNoDataRow>
-                        <td class="mat-cell" [attr.colspan]="displayedColumns.length">Nenhuma movimentação encontrada.</td>
-                    </tr>
-                </table>
-                <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+            <ng-container matColumnDef="tipo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Tipo </th>
+              <td mat-cell class="td-table" *matCellDef="let item" [ngClass]="{'text-success': item.tipo === 'ENTRADA', 'text-danger': item.tipo === 'SAÍDA'}">
+                {{ item.tipo }}
+              </td>
             </ng-container>
+            <ng-container matColumnDef="descricao">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Descrição </th>
+              <td mat-cell class="td-table" *matCellDef="let item"> {{ item.descricao }} </td>
+            </ng-container>
+            <ng-container matColumnDef="valor">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="th-table"> Valor (R$) </th>
+              <td mat-cell class="td-table" *matCellDef="let item"> {{ item.valor | number: '1.2-2' }} </td>
+            </ng-container>
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef class="th-table"> Ações </th>
+              <td mat-cell class="td-table" *matCellDef="let item">
+                @if (item.tipo === 'ENTRADA') {
+                  <mat-icon class="icone-tabela" (click)="openModalEntrada(item)">edit</mat-icon>
+                }
+                @if (item.tipo === 'SAÍDA') {
+                  <mat-icon class="icone-tabela" (click)="openModalSaida(item)">edit</mat-icon>
+                }
+                <mat-icon class="icone-tabela" (click)="deleteCashFlow(item.id!)">delete</mat-icon>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr class="mat-row no-data" *matNoDataRow>
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">Nenhuma movimentação encontrada.</td>
+            </tr>
+          </table>
+          <mat-paginator [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
+        } @else {
+          <mat-card class="p-5 text-center mt-3">
+            <mat-card-title>Caixa Fechado</mat-card-title>
+            <mat-card-content>
+              <p>Para visualizar as movimentações e realizar vendas, você precisa **Abrir o Caixa**.</p>
+              <p>Clique no botão "Abrir Caixa" acima para iniciar um novo turno.</p>
+            </mat-card-content>
+          </mat-card>
+        }
 
-            <ng-template #mensagemCaixaFechado>
-                <mat-card class="p-5 text-center mt-3">
-                    <mat-card-title>Caixa Fechado</mat-card-title>
-                    <mat-card-content>
-                        <p>Para visualizar as movimentações e realizar vendas, você precisa **Abrir o Caixa**.</p>
-                        <p>Clique no botão "Abrir Caixa" acima para iniciar um novo turno.</p>
-                    </mat-card-content>
-                </mat-card>
-            </ng-template>
-        </div>
+      </div>
     </div>
-</div>
+  </div>

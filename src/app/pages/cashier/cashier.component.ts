@@ -16,9 +16,10 @@ import { ModalFechamentoCaixaComponent } from './fechamento-caixa/modal-fechamen
 import { ModalAberturaCaixaComponent } from './abertura-caixa/modal-abertura-caixa.component';
 
 @Component({
-  selector: 'app-caixa',
-  templateUrl: './cashier.component.html',
-  styleUrls: ['./cashier.component.scss']
+    selector: 'app-caixa',
+    templateUrl: './cashier.component.html',
+    styleUrls: ['./cashier.component.scss'],
+    standalone: false
 })
 export class CashierComponent implements OnInit {
 

@@ -1,19 +1,21 @@
 <nav class="sidemenu">
-    <ul>
-        <li routerLink="/vendas">
-            <img src="../../../assets/logo.png" width="30px">
-            <span class="logo">{{ nameSoftware }}</span>
-        </li>
-        <!-- <li routerLink="/home"><mat-icon>home</mat-icon>Home</li> -->
-        <li routerLink="/vendas"><mat-icon>shopping_cart</mat-icon>Vendas</li>
-        <li routerLink="/users"><mat-icon>person_add</mat-icon>Cadastrar Usuário</li>
-        <li routerLink="/empresas" *ngIf="isSystemAdmin()"><mat-icon>business</mat-icon>Empresas</li>  
-        <li routerLink="/fornecedores"><mat-icon>handshake</mat-icon>Fornecedores</li>
-        <li routerLink="/produtos"><mat-icon>category</mat-icon>Produtos</li>
-        <li routerLink="/stock"><mat-icon>inventory_2</mat-icon>Estoque</li>
-        <li routerLink="/cashier"><mat-icon>account_balance_wallet</mat-icon>Caixa</li>
-        
-        <!--<li><mat-icon>description</mat-icon>Relatório</li>-->
-        <li class="logout" (click)="logout()"><mat-icon>logout</mat-icon>Sair</li>
-    </ul>
+  <ul>
+    <li routerLink="/vendas">
+      <img src="../../../assets/logo.png" width="30px">
+      <span class="logo">{{ nameSoftware }}</span>
+    </li>
+    <!-- <li routerLink="/home"><mat-icon>home</mat-icon>Home</li> -->
+    <li routerLink="/vendas"><mat-icon>shopping_cart</mat-icon>Vendas</li>
+    <li routerLink="/users"><mat-icon>person_add</mat-icon>Cadastrar Usuário</li>
+    @if (isSystemAdmin()) {
+      <li routerLink="/empresas"><mat-icon>business</mat-icon>Empresas</li>
+    }
+    <li routerLink="/fornecedores"><mat-icon>handshake</mat-icon>Fornecedores</li>
+    <li routerLink="/produtos"><mat-icon>category</mat-icon>Produtos</li>
+    <li routerLink="/stock"><mat-icon>inventory_2</mat-icon>Estoque</li>
+    <li routerLink="/cashier"><mat-icon>account_balance_wallet</mat-icon>Caixa</li>
+
+    <!--<li><mat-icon>description</mat-icon>Relatório</li>-->
+    <li class="logout" (click)="logout()"><mat-icon>logout</mat-icon>Sair</li>
+  </ul>
 </nav>

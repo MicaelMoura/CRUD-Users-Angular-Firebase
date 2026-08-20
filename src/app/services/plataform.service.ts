@@ -1,32 +1,23 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { Unit } from '../interfaces/units';
 import { Observable } from 'rxjs';
+import { collection } from 'firebase/firestore';
+import { Unit } from '../interfaces/units';
 import { Payment } from '../interfaces/payment';
+import { collectionData$, FirebaseService } from './firebase.service';
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PlataformService {
-    
-    
-    constructor(
-        private ngFirestore: AngularFirestore,
-    ) {}
+  private readonly platformDocumentId = 'vOyNkQyF32YgFkc1ijyy';
 
-    public getUnits(): Observable<Unit[]> {
-        return this.ngFirestore
-            .collection('plataform')
-            .doc('vOyNkQyF32YgFkc1ijyy')
-            .collection<Unit>('units')
-            .valueChanges({ idField: 'id' }); 
-    }
+  constructor(private firebase: FirebaseService) {}
 
-    public getPayments(): Observable<Payment[]> {
-        return this.ngFirestore
-            .collection('plataform')
-            .doc('vOyNkQyF32YgFkc1ijyy')
-            .collection<Payment>('payments')
-            .valueChanges({ idField: 'id' }); 
-    }
+  getUnits(): Observable<Unit[]> {
+    const source = collection(this.firebase.firestore, 'plataform', this.platformDocumentId, 'units');
+    return collectionData$<Unit>(source, 'id');
+  }
+
+  getPayments(): Observable<Payment[]> {
+    const source = collection(this.firebase.firestore, 'plataform', this.platformDocumentId, 'payments');
+    return collectionData$<Payment>(source, 'id');
+  }
 }

@@ -1,112 +1,125 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  endAt,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAt,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { Produto } from '../interfaces/produto';
+import { Stock } from '../interfaces/stock';
 import { AuthService } from './auth.services';
+import { collectionData$, FirebaseService } from './firebase.service';
 import { PlataformService } from './plataform.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+type ProdutoComEstoque = Produto & { stockId?: string | null };
+
+@Injectable({ providedIn: 'root' })
 export class ProdutosService {
-  
   constructor(
-    private dataBaseStore: AngularFirestore,
-    private firestore: AngularFirestore,
+    private firebase: FirebaseService,
     private authService: AuthService,
     private plataformService: PlataformService,
   ) {}
-  
-  buscarProdutosComEstoque(termo: string): Observable<any[]> {
+
+  private productsCollection(empresaId: string) {
+    return collection(this.firebase.firestore, 'business', empresaId, 'products');
+  }
+
+  private stockCollection(empresaId: string) {
+    return collection(this.firebase.firestore, 'business', empresaId, 'stock');
+  }
+
+  buscarProdutosComEstoque(termo: string): Observable<ProdutoComEstoque[]> {
     const empresaId = this.authService.activeTenantId();
+    if (!empresaId) {
+      return of([]);
+    }
+
     const busca = termo.toUpperCase();
+    const productsQuery = query(
+      this.productsCollection(empresaId),
+      orderBy('nome'),
+      startAt(busca),
+      endAt(`${busca}\uf8ff`),
+      limit(5),
+    );
 
-    return this.firestore.collection<Produto>(`business/${empresaId}/products`, ref => 
-      ref.orderBy('nome').startAt(busca).endAt(busca + '\uf8ff').limit(5)
-    ).valueChanges({ idField: 'id' }).pipe(
-      switchMap(produtos => {
-        if (produtos.length === 0) return of([]);
+    return collectionData$<Produto>(productsQuery, 'firebaseId').pipe(
+      switchMap((produtos) => {
+        if (produtos.length === 0) {
+          return of([]);
+        }
 
-        // Para cada produto, criamos uma busca na coleção stock
-        const buscasEstoque = produtos.map(produto => 
-          this.firestore.collection(`business/${empresaId}/stock`, ref => 
-            ref.where('produtoId', '==', produto.id).limit(1)
-          ).valueChanges().pipe(
-            map(stocks => ({
+        const stockQueries = produtos.map((produto) => {
+          const stockQuery = query(
+            this.stockCollection(empresaId),
+            where('produtoId', '==', produto.firebaseId),
+            limit(1),
+          );
+          return collectionData$<Stock>(stockQuery, 'id').pipe(
+            map((stocks) => ({
               ...produto,
-              estoqueQtd: stocks.length > 0 ? (stocks[0] as any).quantidade : 0,
-              stockId: stocks.length > 0 ? (stocks[0] as any).id : null
-            }))
-          )
-        );
+              estoqueQtd: stocks[0]?.quantidade ?? 0,
+              stockId: stocks[0]?.id ?? null,
+            })),
+          );
+        });
 
-        // combinaLatest junta todos os resultados das buscas de estoque em um único array
-        return combineLatest(buscasEstoque);
-      })
+        return combineLatest(stockQueries);
+      }),
     );
   }
 
-  /**
-   * Obtém a referência da sub-coleção 'produtos' para a empresa fornecida.
-   * Path: empresas/{empresaId}/produtos
-   */
-  private getCompanyProductsCollection(empresaId: string): AngularFirestoreCollection<Produto> {
-    return this.dataBaseStore
-      .collection('business')
-      .doc(empresaId)
-      .collection<Produto>('products');
-  }
-
-  /**
-   * Busca todos os produtos de uma empresa específica.
-   */
   getAllProdutos(empresaId: string): Observable<Produto[]> {
-    return this.getCompanyProductsCollection(empresaId)
-      .valueChanges({ idField: 'firebaseId' }) as Observable<Produto[]>;
+    return collectionData$<Produto>(this.productsCollection(empresaId), 'firebaseId');
   }
 
-  /**
-   * Adiciona um novo produto à sub-coleção da empresa.
-   */
   addProduto(empresaId: string, produto: Produto) {
-    //console.log('produto a salvar e empresa', produto, empresaId);
-    produto.nome = produto.nome.toUpperCase(); // Garantir que o nome esteja em maiúsculas
-    return this.getCompanyProductsCollection(empresaId).add(produto);
+    return addDoc(this.productsCollection(empresaId), {
+      ...produto,
+      nome: produto.nome.toUpperCase(),
+    });
   }
 
-  /**
-   * Atualiza um produto específico em uma empresa específica.
-   */
   updateProduto(empresaId: string, produtoId: string, data: Partial<Produto>): Promise<void> {
-    data.nome = data.nome?.toUpperCase(); // Garantir que o nome esteja em maiúsculas
-    return this.getCompanyProductsCollection(empresaId).doc(produtoId).update(data);
+    const payload = {
+      ...data,
+      ...(data.nome ? { nome: data.nome.toUpperCase() } : {}),
+    };
+    return updateDoc(doc(this.productsCollection(empresaId), produtoId), payload);
   }
 
-  /**
-   * Exclui um produto da sub-coleção da empresa.
-   */
   deleteProduto(empresaId: string, produtoId: string): Promise<void> {
-    return this.getCompanyProductsCollection(empresaId).doc(produtoId).delete();
+    return deleteDoc(doc(this.productsCollection(empresaId), produtoId));
   }
 
   async getProdutoByBarcode(empresaId: string, barcode: string): Promise<Produto | null> {
-    const snapshot = await this.getCompanyProductsCollection(empresaId).ref
-      .where('codigoDeBarras', '==', barcode) // Certifique-se que o campo no Firestore é 'codigoBarras'
-      .limit(1)
-      .get();
+    const productQuery = query(
+      this.productsCollection(empresaId),
+      where('codigoDeBarras', '==', barcode),
+      limit(1),
+    );
+    const snapshot = await getDocs(productQuery);
 
     if (snapshot.empty) {
       return null;
     }
 
-    const doc = snapshot.docs[0];
-    const data = doc.data() as Produto;
-    return { ...data, firebaseId: doc.id };
+    const productDocument = snapshot.docs[0];
+    return { ...productDocument.data(), firebaseId: productDocument.id } as Produto;
   }
 
   async getNomeUnidadeMedida(codigo: string): Promise<string> {
     const units = await firstValueFrom(this.plataformService.getUnits());
-    const unidade = units.find(u => u.id === codigo);
-    return unidade?.name || 'Desconhecida';
+    return units.find((unit) => unit.id === codigo)?.name ?? 'Desconhecida';
   }
 }

@@ -8,9 +8,10 @@ import { FechamentoCaixa } from '../../../interfaces/fechamento-caixa';
 import { AuthService } from '../../../services/auth.services';
 
 @Component({
-  selector: 'app-modal-fechamento-caixa',
-  templateUrl: './modal-fechamento-caixa.component.html',
-  styleUrls: ['./modal-fechamento-caixa.component.scss']
+    selector: 'app-modal-fechamento-caixa',
+    templateUrl: './modal-fechamento-caixa.component.html',
+    styleUrls: ['./modal-fechamento-caixa.component.scss'],
+    standalone: false
 })
 export class ModalFechamentoCaixaComponent implements OnInit {
 

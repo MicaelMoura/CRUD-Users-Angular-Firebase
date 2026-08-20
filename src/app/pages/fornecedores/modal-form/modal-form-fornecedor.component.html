@@ -1,68 +1,78 @@
 <div class="container-fluid p-3">
-    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
 
-    <h1 class="titulo">{{ isEditMode ? 'Editar Fornecedor' : 'Cadastro de Fornecedor' }}</h1>
-    <h2 class="subtitulo">Preencha o formulário com os dados do fornecedor</h2>
+  <h1 class="titulo">{{ isEditMode ? 'Editar Fornecedor' : 'Cadastro de Fornecedor' }}</h1>
+  <h2 class="subtitulo">Preencha o formulário com os dados do fornecedor</h2>
 
-    <form class="row" [formGroup]="formFornecedor" (ngSubmit)="saveFornecedor()">
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Razão Social</mat-label>
-                <input type="text" matInput formControlName="corporate" placeholder="Digite a razão social">
-                <mat-error *ngIf="formFornecedor.controls['corporate'].invalid">Preencha a razão social</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>CNPJ</mat-label>
-                <input type="text" matInput formControlName="cnpj" placeholder="00.000.000/0000-00">
-                <mat-error *ngIf="formFornecedor.controls['cnpj'].invalid">Preencha o CNPJ</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Nome fantasia</mat-label>
-                <input type="text" matInput formControlName="fantasyName" placeholder="Digite o nome fantasia">
-                <mat-error *ngIf="formFornecedor.controls['fantasyName'].invalid">Preencha o Nome Fantasia</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>E-mail</mat-label>
-                <input type="email" matInput formControlName="email" placeholder="email@exemplo.com">
-                <mat-error *ngIf="formFornecedor.controls['email'].invalid">Preencha com um e-mail válido</mat-error>
-            </mat-form-field>
-        </div>
-        <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Telefone</mat-label>
-                <input type="text" matInput formControlName="phone" placeholder="(00) 00000-0000">
-                <mat-error *ngIf="formFornecedor.controls['phone'].invalid">Preencha o telefone</mat-error>
-            </mat-form-field>
-        </div>
+  <form class="row" [formGroup]="formFornecedor" (ngSubmit)="saveFornecedor()">
+    <div class="col-12 col-md-6 mb-2">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>Razão Social</mat-label>
+        <input type="text" matInput formControlName="corporate" placeholder="Digite a razão social">
+        @if (formFornecedor.controls['corporate'].invalid) {
+          <mat-error>Preencha a razão social</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-md-6 mb-2">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>CNPJ</mat-label>
+        <input type="text" matInput formControlName="cnpj" placeholder="00.000.000/0000-00">
+        @if (formFornecedor.controls['cnpj'].invalid) {
+          <mat-error>Preencha o CNPJ</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-md-6 mb-2">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>Nome fantasia</mat-label>
+        <input type="text" matInput formControlName="fantasyName" placeholder="Digite o nome fantasia">
+        @if (formFornecedor.controls['fantasyName'].invalid) {
+          <mat-error>Preencha o Nome Fantasia</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-md-6 mb-2">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>E-mail</mat-label>
+        <input type="email" matInput formControlName="email" placeholder="email@exemplo.com">
+        @if (formFornecedor.controls['email'].invalid) {
+          <mat-error>Preencha com um e-mail válido</mat-error>
+        }
+      </mat-form-field>
+    </div>
+    <div class="col-12 col-md-6 mb-2">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>Telefone</mat-label>
+        <input type="text" matInput formControlName="phone" placeholder="(00) 00000-0000">
+        @if (formFornecedor.controls['phone'].invalid) {
+          <mat-error>Preencha o telefone</mat-error>
+        }
+      </mat-form-field>
+    </div>
 
-        <div class="col-12 mb-4">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Representante</mat-label>
-                <textarea matInput formControlName="salesRep" placeholder="nome do representante"></textarea>
-            </mat-form-field>
-        </div>
-        
-        <div class="col-12 mb-4">
-            <mat-form-field class="example-full-width w-100">
-                <mat-label>Observações</mat-label>
-                <textarea matInput formControlName="observations" placeholder="Notas sobre o fornecedor..."></textarea>
-            </mat-form-field>
-        </div>
+    <div class="col-12 mb-4">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>Representante</mat-label>
+        <textarea matInput formControlName="salesRep" placeholder="nome do representante"></textarea>
+      </mat-form-field>
+    </div>
 
-        <div class="col-12">
-            <button 
-                class="botao-primario float-end" 
-                [disabled]="formFornecedor.invalid" 
-                type="submit"
-            >
-                {{ isEditMode ? 'Atualizar' : 'Salvar' }} Fornecedor
-            </button>
-        </div>
-    </form>
+    <div class="col-12 mb-4">
+      <mat-form-field class="example-full-width w-100">
+        <mat-label>Observações</mat-label>
+        <textarea matInput formControlName="observations" placeholder="Notas sobre o fornecedor..."></textarea>
+      </mat-form-field>
+    </div>
+
+    <div class="col-12">
+      <button
+        class="botao-primario float-end"
+        [disabled]="formFornecedor.invalid"
+        type="submit"
+        >
+        {{ isEditMode ? 'Atualizar' : 'Salvar' }} Fornecedor
+      </button>
+    </div>
+  </form>
 </div>

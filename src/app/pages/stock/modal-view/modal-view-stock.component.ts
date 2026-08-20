@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Stock } from '../../../interfaces/stock';
 
 @Component({
-  selector: 'app-modal-view-stock',
-  templateUrl: './modal-view-stock.component.html',
-  styleUrl: './modal-view-stock.component.scss'
+    selector: 'app-modal-view-stock',
+    templateUrl: './modal-view-stock.component.html',
+    styleUrl: './modal-view-stock.component.scss',
+    standalone: false
 })
 export class ModalViewStockComponent {
   

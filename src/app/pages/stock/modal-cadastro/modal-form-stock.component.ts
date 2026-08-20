@@ -12,9 +12,10 @@ import { Subscription, combineLatest} from 'rxjs';
 import { AuthService } from '../../../services/auth.services';
 
 @Component({
-  selector: 'app-modal-form-stock',
-  templateUrl: './modal-form-stock.component.html',
-  styleUrls: ['./modal-form-stock.component.scss']
+    selector: 'app-modal-form-stock',
+    templateUrl: './modal-form-stock.component.html',
+    styleUrls: ['./modal-form-stock.component.scss'],
+    standalone: false
 })
 export class ModalFormStockComponent implements OnInit {
 

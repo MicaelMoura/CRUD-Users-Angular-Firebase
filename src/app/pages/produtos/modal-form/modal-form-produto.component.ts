@@ -12,9 +12,10 @@ import { Fornecedor } from '../../../interfaces/fornecedor';
 import { FornecedoresService } from '../../../services/fornecedores.service';
 
 @Component({
-  selector: 'app-modal-form-produto',
-  templateUrl: './modal-form-produto.component.html',
-  styleUrls: ['./modal-form-produto.component.scss']
+    selector: 'app-modal-form-produto',
+    templateUrl: './modal-form-produto.component.html',
+    styleUrls: ['./modal-form-produto.component.scss'],
+    standalone: false
 })
 export class ModalFormProdutoComponent implements OnInit {
 

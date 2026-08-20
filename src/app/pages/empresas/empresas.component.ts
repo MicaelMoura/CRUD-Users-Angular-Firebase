@@ -10,9 +10,10 @@ import { ModalViewEmpresasComponent } from './modal-view-empresas/modal-view-emp
 import { AuthService } from '../../services/auth.services';
 
 @Component({
-  selector: 'app-empresas',
-  templateUrl: './empresas.component.html',
-  styleUrls: ['./empresas.component.scss']
+    selector: 'app-empresas',
+    templateUrl: './empresas.component.html',
+    styleUrls: ['./empresas.component.scss'],
+    standalone: false
 })
 export class EmpresasComponent implements OnInit {
   displayedColumns: string[] = ['name', 'cnpj', 'action'];

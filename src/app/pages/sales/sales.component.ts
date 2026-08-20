@@ -16,9 +16,10 @@ import { SalesModalCupomComponent } from './sales-modal-cupom/sales-modal-cupom.
 
 
 @Component({
-  selector: 'app-sales',
-  templateUrl: './sales.component.html',
-  styleUrls: ['./sales.component.scss']
+    selector: 'app-sales',
+    templateUrl: './sales.component.html',
+    styleUrls: ['./sales.component.scss'],
+    standalone: false
 })
 export class SalesComponent {
 

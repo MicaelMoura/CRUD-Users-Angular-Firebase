@@ -7,9 +7,10 @@ import { AuthService } from '../../../services/auth.services';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-modal-form-fornecedor',
-  templateUrl: './modal-form-fornecedor.component.html',
-  styleUrls: ['./modal-form-fornecedor.component.scss']
+    selector: 'app-modal-form-fornecedor',
+    templateUrl: './modal-form-fornecedor.component.html',
+    styleUrls: ['./modal-form-fornecedor.component.scss'],
+    standalone: false
 })
 export class ModalFormFornecedorComponent implements OnInit {
 

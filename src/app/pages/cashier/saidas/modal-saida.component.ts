@@ -10,9 +10,10 @@ import { Payment } from '../../../interfaces/payment';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-  selector: 'app-modal-form-saida',
-  templateUrl: './modal-saida.component.html',
-  styleUrls: ['./modal-saida.component.scss']
+    selector: 'app-modal-form-saida',
+    templateUrl: './modal-saida.component.html',
+    styleUrls: ['./modal-saida.component.scss'],
+    standalone: false
 })
 export class ModalSaidaComponent implements OnInit {
   listPayments: Payment[] = [];

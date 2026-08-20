@@ -5,9 +5,10 @@ import { EmpresasService } from '../../../services/empresas.service';
 import { Empresas } from '../../../interfaces/empresas';
 
 @Component({
-  selector: 'app-companies-form',
-  templateUrl: './modal-form-empresas.component.html',
-  styleUrls: ['./modal-form-empresas.component.scss'],
+    selector: 'app-companies-form',
+    templateUrl: './modal-form-empresas.component.html',
+    styleUrls: ['./modal-form-empresas.component.scss'],
+    standalone: false
 })
 export class ModalEmpresasFormComponent implements OnInit {
   formCompany!: FormGroup;

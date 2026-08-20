@@ -4,9 +4,10 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-modal-abertura-caixa',
-  templateUrl: './modal-abertura-caixa.component.html',
-  styleUrls: ['./modal-abertura-caixa.component.scss']
+    selector: 'app-modal-abertura-caixa',
+    templateUrl: './modal-abertura-caixa.component.html',
+    styleUrls: ['./modal-abertura-caixa.component.scss'],
+    standalone: false
 })
 export class ModalAberturaCaixaComponent {
   

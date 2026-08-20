@@ -1,83 +1,71 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Observable } from 'rxjs';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
+import { Observable } from 'rxjs';
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  increment,
+  limit,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
 import { Stock } from '../interfaces/stock';
-import firebase from 'firebase/compat/app';
+import { collectionData$, FirebaseService } from './firebase.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class StockService {
+  constructor(private firebase: FirebaseService) {}
 
-  constructor(private firestore: AngularFirestore) { }
-
-  /**
-   * Obtém a referência da sub-coleção 'stock' para a empresa fornecida.
-   * Path: business/{empresaId}/stock
-   */
-  private getCompanyStockCollection(empresaId: string): AngularFirestoreCollection<Stock> {
-    return this.firestore
-      .collection('business')
-      .doc(empresaId)
-      .collection<Stock>('stock');
+  private collectionPath(empresaId: string) {
+    return collection(this.firebase.firestore, 'business', empresaId, 'stock');
   }
 
-  /**
-   * Obtém todos os registros de estoque (movimentações) da empresa.
-   */
   getAllStockEntries(empresaId: string): Observable<Stock[]> {
-    // Ordenar por dataMovimento descendente para mostrar os mais recentes primeiro
-    return this.getCompanyStockCollection(empresaId).valueChanges({ idField: 'id' });
+    return collectionData$<Stock>(this.collectionPath(empresaId), 'id');
   }
 
-  /**
-   * Adiciona um novo registro de movimento de estoque (entrada ou ajuste)
-   */
-  addStockEntry(empresaId: string, stockEntry: Omit<Stock, 'id'>): Promise<any> {
-    // Usamos Omit<'id'> pois o Firestore gera o ID
-    return this.getCompanyStockCollection(empresaId).add({
-        ...stockEntry 
-    });
+  addStockEntry(empresaId: string, stockEntry: Omit<Stock, 'id'>) {
+    return addDoc(this.collectionPath(empresaId), stockEntry);
   }
 
-  /**
-   * Atualiza um registro de movimento de estoque específico (Geralmente usado apenas para correção de dados)
-   */
   updateStockEntry(empresaId: string, stockEntryId: string, data: Partial<Stock>): Promise<void> {
-    return this.getCompanyStockCollection(empresaId).doc(stockEntryId).update(data);
+    return updateDoc(doc(this.collectionPath(empresaId), stockEntryId), data);
   }
 
-  /**
-   * Exclui um registro de movimento de estoque.
-   */
   deleteStockEntry(empresaId: string, stockEntryId: string): Promise<void> {
-    return this.getCompanyStockCollection(empresaId).doc(stockEntryId).delete();
+    return deleteDoc(doc(this.collectionPath(empresaId), stockEntryId));
   }
 
   async diminuirEstoque(empresaId: string, produtoId: string, quantidade: number): Promise<void> {
-    const dec = -1 * quantidade;
-    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
-      ref.where('produtoId', '==', produtoId).limit(1)
+    const stockQuery = query(
+      this.collectionPath(empresaId),
+      where('produtoId', '==', produtoId),
+      limit(1),
     );
-    const snapshot = await firstValueFrom(query.get());
+    const snapshot = await getDocs(stockQuery);
+
     if (snapshot.empty) {
-      console.error(`Registro de estoque não encontrado para o produto: ${produtoId}`);
-      // Você pode optar por lançar um erro ou criar o registro de estoque aqui
       throw new Error('Estoque não localizado.');
     }
-    const stockId = snapshot.docs[0].id;
-    return this.getCompanyStockCollection(empresaId).doc(stockId).update({
-      quantidade: firebase.firestore.FieldValue.increment(dec)
-    } as any);
+
+    await updateDoc(snapshot.docs[0].ref, { quantidade: increment(-quantidade) });
   }
 
   async getQuantidadeEmEstoque(empresaId: string, produtoId: string): Promise<number> {
-    const query = this.firestore.collection(`business/${empresaId}/stock`, ref => 
-      ref.where('produtoId', '==', produtoId).limit(1)
+    const stockQuery = query(
+      this.collectionPath(empresaId),
+      where('produtoId', '==', produtoId),
+      limit(1),
     );
-    const snapshot = await firstValueFrom(query.get());
-    this.getCompanyStockCollection(empresaId).doc(snapshot.docs[0].id);
-    const data = snapshot.docs[0].data() as Stock;
-    return data.quantidade;
+    const snapshot = await getDocs(stockQuery);
+
+    if (snapshot.empty) {
+      return 0;
+    }
+
+    return Number(snapshot.docs[0].data()['quantidade'] ?? 0);
   }
 }

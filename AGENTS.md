@@ -19,6 +19,7 @@ O repositório ainda usa o nome técnico Angular `simple`; não renomeie projeto
 - Reactive Forms como padrão para formulários; há uso pontual de FormsModule.
 - Signals e `computed` para estado local e estado de autenticação; RxJS para streams do Firestore e eventos de formulário.
 - Firebase Authentication e Cloud Firestore pela API modular do Firebase JavaScript SDK 12.
+- Cloud Functions callable em Node.js 22 para operações administrativas que exigem o Firebase Admin SDK.
 - Firebase Hosting para a SPA gerada em `dist/simple/browser`.
 - Estrutura SSR/Express gerada pelo Angular presente, embora o deploy configurado seja de SPA estática.
 - Karma + Jasmine para testes unitários.
@@ -83,12 +84,14 @@ Trate esta lista como dívida já existente. Atualize-a quando uma lacuna for re
 
 ### Prioridade crítica
 
-- Não há guards nas rotas internas nem autorização por papel. Ocultar o menu de empresas não protege a rota `/empresas`.
-- Não há `firestore.rules` versionado nem configuração de rules em `firebase.json`. O isolamento entre tenants precisa ser garantido no servidor, não apenas pelo `empresaId` do cliente.
-- `senhaAdmin` faz parte do documento/interface de empresa e é enviada ao Firestore. Senhas não podem ser persistidas, exibidas, registradas ou atualizadas como dado de negócio.
-- O logout do menu limpa `sessionStorage`, mas não chama `AuthService.logout()`; a sessão Firebase pode continuar autenticada.
-- O tenant é definido antes do login e o carregamento do papel depende de `userUid`; o callback posterior de autenticação não recarrega automaticamente o papel. Revisar a sequência de login/restauração de sessão.
 - Finalização da venda, baixa de estoque e lançamento no caixa são operações separadas. Falhas parciais podem deixar os dados inconsistentes; implementar transação, batch ou backend idempotente antes de considerar o fluxo confiável.
+
+### Implantação de segurança pendente
+
+- Guards, autorização por papel, restauração segura do tenant e logout Firebase estão implementados no código.
+- `firestore.rules` está versionado e coberto por testes de emulador, mas o ambiente remoto só estará protegido depois do deploy explícito das regras.
+- `senhaAdmin` não integra mais o contrato persistido. O provisionamento usa a callable Function `provisionarEmpresa`, mas a Function precisa ser publicada antes de novos cadastros.
+- A migração `functions/scripts/migrate-remove-senha-admin.mjs` precisa ser executada com credenciais administrativas para remover campos legados, invalidar senhas potencialmente expostas e revogar sessões. Não considere a exposição remediada antes dessa execução.
 
 ### Prioridade alta
 
@@ -97,17 +100,16 @@ Trate esta lista como dívida já existente. Atualize-a quando uma lacuna for re
 - A abertura/fechamento de caixa usa registros na coleção `caixa_fechamento`; revisar o período usado no fechamento e impedir mais de um caixa aberto por empresa/operador.
 - A emissão de NFC-e é somente um stub com URL de exemplo e está desativada no fluxo de venda.
 - Dados exibidos no cupom e identificação do operador/empresa ainda contêm placeholders.
-- A criação de empresa cria uma conta no Firebase Auth usando a sessão do cliente, o que pode trocar o usuário autenticado. Mover provisionamento administrativo para ambiente confiável.
 
 ### Qualidade e manutenção
 
 - Os testes atuais são majoritariamente smoke tests gerados e não cobrem regras de negócio.
-- Na linha de base de 20/08/2026, a suíte headless executa 11 testes com sucesso. A cobertura ainda é predominantemente de smoke tests e deve crescer junto das regras de negócio.
+- Na linha de base de 20/08/2026, a suíte headless executa 21 testes com sucesso e as regras do Firestore executam 7 cenários no emulador. A cobertura ainda inclui smoke tests e deve crescer junto das demais regras de negócio.
 - Há subscriptions sem estratégia uniforme de descarte, uso frequente de `any`, logs de depuração e mensagens com `alert`/`confirm` misturadas a snackbars.
 - Não há lint configurado no `package.json`.
 - O README ainda não documenta instalação, Firebase, arquitetura nem operação.
 - O build alerta sobre o orçamento do bundle inicial, o orçamento de `sales.component.scss` e o uso CommonJS de Moment.
-- A auditoria de dependências de produção está zerada. A auditoria completa ainda aponta alertas transitivos exclusivos do toolchain Angular 21 (`less/image-size` e `webpack-dev-server/sockjs/uuid`) sem correção compatível publicada. Não execute correção forçada: ela propõe Angular 22, que exige uma versão de Node mais nova e ainda requer uma migração principal separada.
+- As auditorias de dependências de produção do frontend e das Functions estão zeradas. A auditoria completa do frontend ainda aponta alertas transitivos exclusivos do toolchain Angular 21 (`less/image-size` e `webpack-dev-server/sockjs/uuid`) sem correção compatível publicada. Não execute correção forçada: ela propõe Angular 22, que exige uma versão de Node mais nova e ainda requer uma migração principal separada.
 
 ## Padrões para alterações
 
@@ -131,12 +133,17 @@ Use a versão travada no `package-lock.json`:
 npm ci
 npm start
 npm run build
+npm run build:functions
 npx ng test --watch=false --browsers=ChromeHeadless
+npm run test:rules
 npm audit --omit=dev
+npm --prefix functions audit --omit=dev
 npm run deploy
 ```
 
 `npm run deploy` altera o ambiente Firebase remoto. Execute somente quando o usuário pedir explicitamente e após confirmar o projeto/alias de destino. Não use `npm audit fix --force` sem autorização e uma tarefa dedicada de atualização.
+
+O script `npm run deploy` publica somente o Hosting. O deploy de `firestore.rules` e Functions é uma operação separada e também exige confirmação explícita do projeto `prod`. A migração de `senhaAdmin` exige `--project`, `--apply` e `--confirm-project` e nunca deve ser executada por suposição.
 
 ## Validação obrigatória
 

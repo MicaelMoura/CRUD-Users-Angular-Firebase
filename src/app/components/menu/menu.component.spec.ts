@@ -8,13 +8,26 @@ import { AuthService } from '../../services/auth.services';
 describe('MenuComponent', () => {
   let component: MenuComponent;
   let fixture: ComponentFixture<MenuComponent>;
+  let router: jasmine.SpyObj<Router>;
+  let authService: {
+    activeTenantId: () => string;
+    isSystemAdmin: () => boolean;
+    logout: jasmine.Spy<() => Promise<void>>;
+  };
 
   beforeEach(async () => {
+    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    router.navigate.and.resolveTo(true);
+    authService = {
+      activeTenantId: () => 'tenant-test',
+      isSystemAdmin: () => false,
+      logout: jasmine.createSpy('logout').and.resolveTo(),
+    };
     await TestBed.configureTestingModule({
       declarations: [MenuComponent],
       providers: [
-        { provide: Router, useValue: jasmine.createSpyObj<Router>('Router', ['navigate']) },
-        { provide: AuthService, useValue: { activeTenantId: () => 'tenant-test' } },
+        { provide: Router, useValue: router },
+        { provide: AuthService, useValue: authService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -27,5 +40,12 @@ describe('MenuComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('encerra a sessão Firebase antes de navegar para o login do tenant', async () => {
+    await component.logout();
+
+    expect(authService.logout).toHaveBeenCalledOnceWith();
+    expect(router.navigate).toHaveBeenCalledOnceWith(['login', 'tenant-test']);
   });
 });

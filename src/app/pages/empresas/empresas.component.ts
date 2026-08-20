@@ -47,8 +47,10 @@ export class EmpresasComponent implements OnInit {
       width: '900px',
       data: empresas // Passa os dados da empresa para o modal
     })
-    .afterClosed().subscribe(() => {
-      this.getListEmpresas(this.empresaIdAtual() || '');
+    .afterClosed().subscribe((result) => {
+      if (result?.changed) {
+        this.getListEmpresas(this.empresaIdAtual() || '');
+      }
     });
   }
 

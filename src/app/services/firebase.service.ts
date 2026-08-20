@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FirebaseApp, getApp, getApps, initializeApp } from 'firebase/app';
 import { Auth, getAuth } from 'firebase/auth';
+import { Functions, getFunctions } from 'firebase/functions';
 import {
   DocumentData,
   Firestore,
@@ -19,6 +20,7 @@ export class FirebaseService {
 
   readonly auth: Auth = getAuth(this.app);
   readonly firestore: Firestore = getFirestore(this.app);
+  readonly functions: Functions = getFunctions(this.app, 'southamerica-east1');
 }
 
 export function collectionData$<T>(

@@ -11,16 +11,25 @@ import { AuthService } from '../../services/auth.services';
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
+  let router: jasmine.SpyObj<Router>;
+  let authService: jasmine.SpyObj<AuthService>;
 
   beforeEach(async () => {
+    router = jasmine.createSpyObj<Router>('Router', ['navigate']);
+    router.navigate.and.resolveTo(true);
+    authService = jasmine.createSpyObj<AuthService>('AuthService', [
+      'loginForTenant',
+      'sendPasswordResetEmail',
+    ]);
+    authService.loginForTenant.and.resolveTo();
     await TestBed.configureTestingModule({
       imports: [ReactiveFormsModule],
       declarations: [LoginComponent],
       providers: [
-        { provide: Router, useValue: jasmine.createSpyObj<Router>('Router', ['navigate']) },
+        { provide: Router, useValue: router },
         { provide: ActivatedRoute, useValue: { paramMap: of(convertToParamMap({})) } },
         { provide: MatSnackBar, useValue: jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']) },
-        { provide: AuthService, useValue: jasmine.createSpyObj<AuthService>('AuthService', ['getBusinessId', 'login', 'setBusinessId', 'sendPasswordResetEmail']) },
+        { provide: AuthService, useValue: authService },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     })
@@ -33,5 +42,22 @@ describe('LoginComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('autentica antes de navegar para a área interna', async () => {
+    component.loginForm.setValue({
+      business: 'tenant-a',
+      email: 'user@example.com',
+      password: 'senha-segura',
+    });
+
+    await component.onLogin();
+
+    expect(authService.loginForTenant).toHaveBeenCalledOnceWith(
+      'tenant-a',
+      'user@example.com',
+      'senha-segura',
+    );
+    expect(router.navigate).toHaveBeenCalledOnceWith(['vendas']);
   });
 });

@@ -72,9 +72,9 @@
         <div class="col-12 col-md-6 form-field-container">
             <mat-form-field class="w-100">
                 <mat-label>Cidade-UF</mat-label>
-                <input type="text" matInput formControlName="cidadeUf" placeholder="Digite o nome da cidade e o estado">
-                @if (formCompany.controls['cidadeUf'].invalid) {
-                  <mat-error>Preencha com uma cidade válida</mat-error>
+                <input type="text" matInput formControlName="cidade" placeholder="Digite o nome da cidade e o estado">
+                @if (formCompany.controls['cidade'].invalid) {
+                    <mat-error>Preencha com uma cidade válida</mat-error>
                 }
             </mat-form-field>
         </div>
@@ -88,8 +88,36 @@
             </mat-form-field>
         </div>
 
+        <div class="col-12 col-md-6 form-field-container">
+            <mat-form-field class="w-100">
+                <mat-label>E-mail do administrador</mat-label>
+                <input type="email" matInput formControlName="emailAdmin" placeholder="Ex. administrador@empresa.com">
+                @if (formCompany.controls['emailAdmin'].invalid) {
+                  <mat-error>Preencha com um e-mail válido</mat-error>
+                }
+            </mat-form-field>
+        </div>
+
+        @if (!isEditMode) {
+          <div class="col-12 col-md-6 form-field-container">
+              <mat-form-field class="w-100">
+                  <mat-label>Senha inicial do administrador</mat-label>
+                  <input type="password" matInput formControlName="senhaAdmin" autocomplete="new-password">
+                  @if (formCompany.controls['senhaAdmin'].invalid) {
+                    <mat-error>Use pelo menos 12 caracteres</mat-error>
+                  }
+              </mat-form-field>
+          </div>
+        }
+
+        @if (errorMessage) {
+          <div class="col-12" role="alert">{{ errorMessage }}</div>
+        }
+
         <div class="col-12">
-            <button class="botao-primario float-end" [disabled]="!formCompany.valid" type="submit">{{ isEditMode ? 'Atualizar' : 'Salvar' }}</button>
+            <button class="botao-primario float-end" [disabled]="formCompany.invalid || isSaving" type="submit">
+              {{ isSaving ? 'Salvando...' : (isEditMode ? 'Atualizar' : 'Salvar') }}
+            </button>
         </div>
     </form>
 </div>

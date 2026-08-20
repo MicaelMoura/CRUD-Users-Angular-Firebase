@@ -5,7 +5,6 @@ import { NAME_SOFTWARE, SLOGAN } from '../../../constants'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/auth.services';
 import { ActivatedRoute } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -67,16 +66,12 @@ export class LoginComponent implements OnInit {
         this.nameBusiness = business; 
       }
 
-      // Obtém e define o ID da empresa
-      const businessId = await this.authService.getBusinessId(this.nameBusiness.toLowerCase());
-      console.log('Business ID definido como:', businessId);
-      await firstValueFrom(this.authService.login(email, password));
-      await this.authService.setBusinessId(businessId);
-      this.router.navigate(['vendas']);
+      await this.authService.loginForTenant(this.nameBusiness, email, password);
+      await this.router.navigate(['vendas']);
 
-    } catch (error: any) {
-      console.error('Erro no login:', error);
-      this.snackBar.open(error, 'Fechar', { duration: 4000 });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Não foi possível realizar o login.';
+      this.snackBar.open(message, 'Fechar', { duration: 4000 });
     }
   }
 
@@ -88,8 +83,8 @@ export class LoginComponent implements OnInit {
       try {
         await this.authService.sendPasswordResetEmail(emailControl.value);
         this.snackBar.open('Email de recuperação enviado! Verifique sua caixa de entrada.', 'Fechar', { duration: 3000 });
-      } catch (error: any) {
-        console.error('Erro ao enviar email de recuperação:', error.message);
+      } catch {
+        this.snackBar.open('Não foi possível enviar o e-mail de recuperação.', 'Fechar', { duration: 3000 });
       }
     } else {
       this.snackBar.open('Por favor, insira um email válido para continuar', 'Fechar', { duration: 3000 });

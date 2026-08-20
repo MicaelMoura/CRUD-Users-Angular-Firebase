@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function tenantUserPath(empresaId) {
+      return /databases/$(database)/documents/business/$(empresaId)/users/$(request.auth.uid);
+    }
+
+    function isTenantMember(empresaId) {
+      return isSignedIn() && exists(tenantUserPath(empresaId));
+    }
+
+    function tenantRole(empresaId) {
+      return get(tenantUserPath(empresaId)).data.acesso;
+    }
+
+    function hasTenantRole(empresaId, roles) {
+      return isTenantMember(empresaId) && tenantRole(empresaId) in roles;
+    }
+
+    function isTenantAdmin(empresaId) {
+      return hasTenantRole(empresaId, ['administrador']);
+    }
+
+    function isSystemAdmin() {
+      return isTenantAdmin('tecmhaicky');
+    }
+
+    function isOperationalCollection(collectionName) {
+      return collectionName in [
+        'supplier',
+        'products',
+        'stock',
+        'sales',
+        'cashflow',
+        'caixa_fechamento'
+      ];
+    }
+
+    match /business/{empresaId} {
+      allow get: if isTenantMember(empresaId) || isSystemAdmin();
+      allow list: if isSystemAdmin();
+      allow create: if false;
+      allow update: if isSystemAdmin()
+        && !request.resource.data.keys().hasAny(['senhaAdmin']);
+      allow delete: if isSystemAdmin();
+
+      match /users/{userId} {
+        allow get: if isSignedIn()
+          && (request.auth.uid == userId || isTenantAdmin(empresaId) || isSystemAdmin());
+        allow list: if isTenantAdmin(empresaId) || isSystemAdmin();
+        allow create, update, delete: if isTenantAdmin(empresaId) || isSystemAdmin();
+      }
+
+      match /{collectionName}/{documentId} {
+        allow read: if isOperationalCollection(collectionName)
+          && isTenantMember(empresaId);
+        allow create, update, delete: if isOperationalCollection(collectionName)
+          && hasTenantRole(empresaId, ['usuario', 'administrador']);
+      }
+    }
+
+    match /plataform/vOyNkQyF32YgFkc1ijyy/{collectionName}/{documentId} {
+      allow read: if isSignedIn() && collectionName in ['units', 'payments'];
+      allow create, update, delete: if isSystemAdmin()
+        && collectionName in ['units', 'payments'];
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

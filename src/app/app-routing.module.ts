@@ -9,20 +9,37 @@ import { FornecedoresComponent } from './pages/fornecedores/fornecedores.compone
 import { StockComponent } from './pages/stock/stock.component';
 import { CashierComponent } from './pages/cashier/cashier.component';
 import { SalesComponent } from './pages/sales/sales.component';
+import { authGuard } from './guards/auth.guard';
+import { authorizationGuard } from './guards/authorization.guard';
+
+const tenantAccess = {
+  canActivate: [authGuard, authorizationGuard],
+  data: { roles: ['usuario', 'administrador'] },
+};
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full' },
   {path: 'login', component: LoginComponent},
   {path: 'login/:business', component: LoginComponent },
   // {path: 'home', component: HomeComponent},
-  {path: 'users', component: UsersComponent},
-  {path: 'empresas', component: EmpresasComponent},
-  {path: 'produtos', component: ProdutosComponent},
-  {path: 'fornecedores', component: FornecedoresComponent},
-  {path: 'stock', component: StockComponent},
-  {path: 'cashier', component: CashierComponent},
-  {path: 'vendas', component: SalesComponent},
-
+  {
+    path: 'users',
+    component: UsersComponent,
+    canActivate: [authGuard, authorizationGuard],
+    data: { roles: ['administrador'] },
+  },
+  {
+    path: 'empresas',
+    component: EmpresasComponent,
+    canActivate: [authGuard, authorizationGuard],
+    data: { roles: ['administrador'], systemTenantOnly: true },
+  },
+  {path: 'produtos', component: ProdutosComponent, ...tenantAccess},
+  {path: 'fornecedores', component: FornecedoresComponent, ...tenantAccess},
+  {path: 'stock', component: StockComponent, ...tenantAccess},
+  {path: 'cashier', component: CashierComponent, ...tenantAccess},
+  {path: 'vendas', component: SalesComponent, ...tenantAccess},
+  {path: '**', redirectTo: 'login'},
 ];
 
 @NgModule({

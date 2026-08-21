@@ -10,16 +10,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class ModalViewUserComponent {
   
-  userData: User;
-
   constructor(
-    public dialogRef: MatDialogRef<ModalViewUserComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
-    this.userData = data;
+    readonly dialogRef: MatDialogRef<ModalViewUserComponent>,
+    @Inject(MAT_DIALOG_DATA) readonly userData: User,
+  ) {}
+
+  closeModal(): void {
+    this.dialogRef.close();
   }
 
-  closeModal() {
-    this.dialogRef.close();
+  get accessLabel(): string {
+    return {
+      administrador: 'Administrador',
+      usuario: 'Usuário',
+      visitante: 'Visitante',
+    }[this.userData.acesso] ?? 'Não informado';
   }
 }

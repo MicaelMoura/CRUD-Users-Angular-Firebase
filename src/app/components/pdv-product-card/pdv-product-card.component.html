@@ -1,0 +1,10 @@
+<button type="button" class="product-card" (click)="selectProduct.emit(produto)">
+  <span class="product-visual" aria-hidden="true">
+    <mat-icon>inventory_2</mat-icon>
+  </span>
+  <span class="product-name">{{ produto.nome }}</span>
+  <strong>{{ produto.valorUnitarioVenda | currency:'BRL' }}</strong>
+  @if (produto.estoqueQtd !== undefined) {
+    <small>{{ produto.estoqueQtd | number:'1.0-3' }} em estoque</small>
+  }
+</button>

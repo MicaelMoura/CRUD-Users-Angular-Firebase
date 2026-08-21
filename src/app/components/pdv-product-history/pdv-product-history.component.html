@@ -1,0 +1,28 @@
+<section class="history-panel" aria-live="polite">
+  <header>
+    <div>
+      <span>SESSÃO ATUAL</span>
+      <h2>{{ title }}</h2>
+    </div>
+    <button type="button" aria-label="Fechar histórico" (click)="closePanel.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  @if (products.length === 0) {
+    <div class="empty-state">
+      <mat-icon>history</mat-icon>
+      <p>Nenhum produto foi adicionado nesta sessão.</p>
+    </div>
+  } @else {
+    <div class="history-list">
+      @for (produto of products; track produto.firebaseId ?? produto.codigoDeBarras) {
+        <button type="button" (click)="selectProduct.emit(produto)">
+          <span>{{ produto.nome }}</span>
+          <strong>{{ produto.valorUnitarioVenda | currency:'BRL' }}</strong>
+          <mat-icon aria-hidden="true">add_circle_outline</mat-icon>
+        </button>
+      }
+    </div>
+  }
+</section>

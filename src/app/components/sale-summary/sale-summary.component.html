@@ -1,0 +1,66 @@
+<section class="summary-card">
+  <header class="summary-header">
+    <span class="summary-icon" aria-hidden="true"><mat-icon>receipt_long</mat-icon></span>
+    <div class="summary-heading">
+      <h2>Resumo da venda</h2>
+      <p><mat-icon>calendar_today</mat-icon>{{ startedAt | date:'dd/MM/yyyy HH:mm:ss' }}</p>
+      <p><mat-icon>sell</mat-icon>ID da venda: {{ saleId }}</p>
+    </div>
+    <button type="button" class="clear-top" [disabled]="items.length === 0 || loading" (click)="clearSale.emit()">
+      <mat-icon>delete_outline</mat-icon>
+      Limpar venda
+    </button>
+  </header>
+
+  <div class="items-table" role="table" aria-label="Itens da venda">
+    <div class="table-row table-head" role="row">
+      <span role="columnheader">Cód.</span>
+      <span role="columnheader">Descrição</span>
+      <span role="columnheader">Qtd.</span>
+      <span role="columnheader">Vl. un.</span>
+      <span role="columnheader">Total</span>
+      <span aria-hidden="true"></span>
+    </div>
+
+    <div class="table-body">
+      @for (item of items; track item.produtoId; let index = $index) {
+        <div class="table-row" role="row">
+          <span role="cell" data-label="Cód.">{{ item.codigoBarras || '—' }}</span>
+          <span role="cell" data-label="Descrição" class="description">{{ item.descricao }}</span>
+          <span role="cell" data-label="Qtd.">{{ item.quantidade | number:'1.0-3' }}</span>
+          <span role="cell" data-label="Vl. un.">{{ item.valorUnitario | number:'1.2-2' }}</span>
+          <strong role="cell" data-label="Total">{{ item.subtotal | number:'1.2-2' }}</strong>
+          <button type="button" aria-label="Remover {{ item.descricao }}" [disabled]="loading" (click)="removeItem.emit(index)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+      } @empty {
+        <div class="empty-sale">
+          <mat-icon>shopping_cart</mat-icon>
+          <strong>Sua venda está vazia</strong>
+          <span>Pesquise um produto para começar.</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="totals">
+    <p><span>Subtotal:</span><strong>{{ total | currency:'BRL' }}</strong></p>
+    <p><span>Desconto:</span><strong>{{ 0 | currency:'BRL' }}</strong></p>
+    <div class="grand-total">
+      <span>Total a pagar:</span>
+      <strong>{{ total | currency:'BRL' }}</strong>
+    </div>
+  </div>
+
+  <button type="button" class="finalize-button" [disabled]="items.length === 0 || loading" (click)="finalizeSale.emit()">
+    @if (loading) {
+      <mat-spinner diameter="22"></mat-spinner>
+      Processando venda
+    } @else {
+      <mat-icon>payments</mat-icon>
+      Finalizar venda (F2)
+    }
+  </button>
+
+</section>

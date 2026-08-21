@@ -53,7 +53,8 @@ service cloud.firestore {
         allow get: if isSignedIn()
           && (request.auth.uid == userId || isTenantAdmin(empresaId) || isSystemAdmin());
         allow list: if isTenantAdmin(empresaId) || isSystemAdmin();
-        allow create, update, delete: if isTenantAdmin(empresaId) || isSystemAdmin();
+        // Escritas passam pelas callable Functions para manter Auth e associação consistentes.
+        allow create, update, delete: if false;
       }
 
       match /{collectionName}/{documentId} {

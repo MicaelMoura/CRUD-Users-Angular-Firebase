@@ -1,0 +1,29 @@
+.confirmation-dialog {
+  padding: 24px;
+  text-align: center;
+
+  h2 { margin: 14px 0 8px; color: #183153; font-size: 1.25rem; }
+  p { margin: 0; color: #66758e; line-height: 1.5; }
+}
+
+.dialog-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eef4fb;
+  color: #1769c2;
+
+  &.destructive { background: #fff0f0; color: #c62828; }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.destructive-button { background: #c62828 !important; color: #fff !important; }

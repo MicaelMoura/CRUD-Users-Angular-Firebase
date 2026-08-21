@@ -29,6 +29,8 @@ npm run build
 npm run build:functions
 npx ng test --watch=false --browsers=ChromeHeadless
 npm run test:rules
+npm --prefix functions test
+npm run test:functions
 npm audit --omit=dev
 npm --prefix functions audit --omit=dev
 ```
@@ -39,6 +41,9 @@ npm --prefix functions audit --omit=dev
 - `/users` exige papel `administrador` no tenant.
 - `/empresas` exige `administrador` no tenant de sistema `tecmhaicky`.
 - O provisionamento de empresas ocorre na callable Function `provisionarEmpresa`, na região `southamerica-east1`.
+- O cadastro, a edição e a remoção de acesso de usuários passam pelas callable Functions `provisionarUsuario`, `atualizarUsuario` e `removerAcessoUsuario`. O UID do Authentication é também o ID da associação no tenant ativo.
+- A remoção retira a associação da empresa atual e preserva a conta global do Authentication, pois um mesmo usuário pode pertencer a mais de um tenant.
+- Escritas diretas em `business/{empresaId}/users` são rejeitadas pelas regras; somente as Functions administrativas mantêm Authentication e Firestore sincronizados.
 - A senha inicial do administrador é transitória: segue para a Function e nunca entra no documento da empresa.
 
 Confirme primeiro o alias/projeto Firebase. Publique a Function e o novo frontend antes da migração:

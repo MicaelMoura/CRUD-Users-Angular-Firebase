@@ -1,0 +1,50 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.action-card {
+  width: 100%;
+  min-height: 102px;
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  background: #fff;
+  color: #10213f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 8px;
+  font: inherit;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 5px 16px rgba(30, 60, 100, 0.07);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+
+  mat-icon {
+    width: 31px;
+    height: 31px;
+    font-size: 31px;
+  }
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    transform: translateY(-2px);
+    border-color: #0b68d8;
+    box-shadow: 0 10px 24px rgba(11, 104, 216, 0.14);
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.48;
+  }
+}
+
+@media (max-width: 640px) {
+  .action-card {
+    min-height: 94px;
+  }
+}

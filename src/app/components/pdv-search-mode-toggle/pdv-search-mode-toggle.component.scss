@@ -1,0 +1,36 @@
+.mode-buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  button {
+    width: 38px;
+    height: 38px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #65748c;
+    display: grid;
+    place-items: center;
+
+    mat-icon {
+      width: 23px;
+      height: 23px;
+      font-size: 23px;
+    }
+
+    &.active {
+      border-color: #0b68d8;
+      background: #eaf4ff;
+      color: #075dcc;
+      box-shadow: 0 3px 9px rgba(11, 104, 216, 0.14);
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .mode-buttons button {
+    width: 34px;
+    height: 34px;
+  }
+}

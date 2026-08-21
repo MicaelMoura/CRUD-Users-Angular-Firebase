@@ -15,7 +15,7 @@ describe('ModalViewUserComponent', () => {
       declarations: [ModalViewUserComponent],
       providers: [
         { provide: MatDialogRef, useValue: jasmine.createSpyObj<MatDialogRef<ModalViewUserComponent>>('MatDialogRef', ['close']) },
-        { provide: MAT_DIALOG_DATA, useValue: { nome: 'Usuário Teste', email: 'teste@example.com', perfilId: 'usuario' } },
+        { provide: MAT_DIALOG_DATA, useValue: { id: 'uid-test', nome: 'Usuário Teste', email: 'teste@example.com', acesso: 'usuario' } },
       ],
     })
     .compileComponents();
@@ -27,5 +27,9 @@ describe('ModalViewUserComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('exibe o perfil normalizado', () => {
+    expect(component.accessLabel).toBe('Usuário');
   });
 });

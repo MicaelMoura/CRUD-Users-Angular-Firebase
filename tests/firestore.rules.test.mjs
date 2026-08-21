@@ -76,11 +76,12 @@ test('usuário consulta a própria associação, mas não lista usuários', asyn
   await assertFails(getDocs(collection(firestore, 'business/tenant-a/users')));
 });
 
-test('administrador do tenant lista e gerencia usuários do próprio tenant', async () => {
+test('administrador lista usuários, mas alterações exigem a Function administrativa', async () => {
   const firestore = testEnvironment.authenticatedContext('admin-a').firestore();
   const snapshot = await assertSucceeds(getDocs(collection(firestore, 'business/tenant-a/users')));
   assert.equal(snapshot.empty, false);
-  await assertSucceeds(setDoc(doc(firestore, 'business/tenant-a/users/new-user'), { acesso: 'usuario' }));
+  await assertFails(setDoc(doc(firestore, 'business/tenant-a/users/new-user'), { acesso: 'usuario' }));
+  await assertFails(updateDoc(doc(firestore, 'business/tenant-a/users/user-a'), { acesso: 'administrador' }));
   await assertFails(setDoc(doc(firestore, 'business/tenant-b/users/intrusion'), { acesso: 'administrador' }));
 });
 

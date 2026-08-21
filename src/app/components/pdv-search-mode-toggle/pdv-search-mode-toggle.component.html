@@ -1,0 +1,20 @@
+<div class="mode-buttons" role="group" aria-label="Modo da pesquisa">
+  <button
+    type="button"
+    aria-label="Adicionar produto ao carrinho"
+    title="Adicionar ao carrinho"
+    [class.active]="mode === 'venda'"
+    [attr.aria-pressed]="mode === 'venda'"
+    (click)="modeChange.emit('venda')">
+    <mat-icon>qr_code_scanner</mat-icon>
+  </button>
+  <button
+    type="button"
+    aria-label="Consultar produto"
+    title="Consultar produto"
+    [class.active]="mode === 'consulta'"
+    [attr.aria-pressed]="mode === 'consulta'"
+    (click)="modeChange.emit('consulta')">
+    <mat-icon>search</mat-icon>
+  </button>
+</div>

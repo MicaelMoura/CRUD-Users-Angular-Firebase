@@ -49,6 +49,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
+import { PdvActionCardComponent } from './components/pdv-action-card/pdv-action-card.component';
+import { PdvProductCardComponent } from './components/pdv-product-card/pdv-product-card.component';
+import { PdvProductHistoryComponent } from './components/pdv-product-history/pdv-product-history.component';
+import { SaleSummaryComponent } from './components/sale-summary/sale-summary.component';
+import { PdvSearchModeToggleComponent } from './components/pdv-search-mode-toggle/pdv-search-mode-toggle.component';
 
 
 const BR_DATE_FORMATS = {
@@ -92,7 +100,13 @@ const BR_DATE_FORMATS = {
     ModalFechamentoCaixaComponent,
     ModalAberturaCaixaComponent,
     SalesComponent,
-    SalesModalComponent
+    SalesModalComponent,
+    PdvActionCardComponent,
+    PdvProductCardComponent,
+    PdvProductHistoryComponent,
+    SaleSummaryComponent,
+    PdvSearchModeToggleComponent,
+    ConfirmationDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -115,6 +129,8 @@ const BR_DATE_FORMATS = {
     MatAutocompleteModule,
     MatFormFieldModule,
     MatCheckboxModule,
+    MatButtonModule,
+    MatSnackBarModule,
 
     NoopAnimationsModule,
     NgxMaskDirective, 

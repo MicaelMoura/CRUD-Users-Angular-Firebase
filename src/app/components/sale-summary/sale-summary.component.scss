@@ -1,0 +1,271 @@
+:host {
+  display: block;
+  min-width: 0;
+  height: 100%;
+}
+
+.summary-card {
+  height: 100%;
+  min-height: 0;
+  border: 1px solid #dce4ef;
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 28px rgba(30, 60, 100, 0.08);
+  color: #10213f;
+}
+
+.summary-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #0873e7, #0052bd);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 18px rgba(0, 87, 194, 0.2);
+
+  mat-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+  }
+}
+
+.summary-heading {
+  h2 {
+    margin: 3px 0 6px;
+    font-size: 1.06rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  p {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 3px 0;
+    color: #5b6b86;
+    font-size: 0.8rem;
+
+    mat-icon {
+      width: 16px;
+      height: 16px;
+      font-size: 16px;
+    }
+  }
+}
+
+button {
+  font: inherit;
+}
+
+.clear-top {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid #f2c8c8;
+  border-radius: 9px;
+  background: #fff;
+  color: #e22626;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.items-table {
+  min-height: 130px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dce4ef;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: minmax(74px, 0.9fr) minmax(150px, 2.2fr) 0.7fr 0.9fr 0.9fr 36px;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 10px;
+  border-bottom: 1px solid #dce4ef;
+  gap: 8px;
+  font-size: 0.8rem;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  .description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > button {
+    border: 0;
+    background: transparent;
+    color: #dc3434;
+    display: grid;
+    place-items: center;
+  }
+}
+
+.table-head {
+  min-height: 36px;
+  background: #f6f8fb;
+  color: #52627b;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.table-body {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.empty-sale {
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  color: #75839a;
+  text-align: center;
+
+  mat-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 34px;
+    color: #9cacbf;
+  }
+
+  strong {
+    color: #40506a;
+  }
+}
+
+.totals {
+  margin: 10px 2px 8px;
+
+  p {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0;
+    padding: 6px 0;
+    border-bottom: 1px solid #e6ebf2;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+  }
+}
+
+.grand-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0 4px;
+  color: #075dcc;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  font-weight: 800;
+
+  strong {
+    font-size: clamp(1.45rem, 2.4vw, 1.85rem);
+  }
+}
+
+.finalize-button {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #096ddd, #074fc4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px rgba(5, 89, 201, 0.2);
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.48;
+}
+
+@media (max-width: 640px) {
+  .summary-card {
+    height: auto;
+    padding: 18px 14px;
+  }
+
+  .summary-header {
+    grid-template-columns: auto 1fr;
+  }
+
+  .clear-top {
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+
+  .table-head {
+    display: none;
+  }
+
+  .table-row:not(.table-head) {
+    grid-template-columns: 1fr auto;
+    padding: 12px;
+    gap: 6px 14px;
+
+    span,
+    strong {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      grid-column: 1;
+
+      &::before {
+        content: attr(data-label);
+        color: #75839a;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+    }
+
+    > button {
+      grid-column: 2;
+      grid-row: 1 / 6;
+    }
+
+    .description {
+      white-space: normal;
+    }
+  }
+
+  .empty-sale {
+    min-height: 170px;
+  }
+}

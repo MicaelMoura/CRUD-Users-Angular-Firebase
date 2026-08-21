@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild, computed, signal } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormaPagamento, ItemVenda, Venda } from '../../interfaces/sales';
@@ -6,13 +6,15 @@ import { ProdutosService } from '../../services/produtos.service';
 import { AuthService } from '../../services/auth.services';
 import { VendasService } from '../../services/sales.service';
 import { CashFlowService } from '../../services/cashflow.service';
-import { HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { SalesModalComponent } from './sales-modal-finalizar-venda/sales-modal-finalizar.component';
-import { debounceTime, distinctUntilChanged, Observable, of, switchMap } from 'rxjs';
+import { debounceTime, distinctUntilChanged, firstValueFrom, Observable, of, switchMap } from 'rxjs';
 import { Produto } from '../../interfaces/produto';
 import { StockService } from '../../services/stock.service';
 import { SalesModalCupomComponent } from './sales-modal-cupom/sales-modal-cupom.component';
+import { UsersService } from '../../services/users.service';
+import { ModalViewProdutoComponent } from '../produtos/modal-view/modal-view-produto.component';
 
 
 @Component({
@@ -21,19 +23,30 @@ import { SalesModalCupomComponent } from './sales-modal-cupom/sales-modal-cupom.
     styleUrls: ['./sales.component.scss'],
     standalone: false
 })
-export class SalesComponent {
+export class SalesComponent implements OnInit {
+
+  @ViewChild('productSearch') productSearch?: ElementRef<HTMLInputElement>;
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger?: MatAutocompleteTrigger;
 
   @HostListener('window:keydown', ['$event'])
   handleGlobalKeyDown(event: KeyboardEvent) {
-    // Atalho F2 para abrir o pagamento
     if (event.key === 'F2') {
       event.preventDefault();
       this.exibirPagamentoModal();
+    } else if (event.key === 'F3') {
+      event.preventDefault();
+      this.limparVenda();
     }
   }
 
   searchControl = new FormControl('');
-  produtosFiltrados$: Observable<Produto[]>;  
+  produtosFiltrados$!: Observable<Produto[]>;
+  produtosRecentes = signal<Produto[]>([]);
+  historicoLeituras = signal<Produto[]>([]);
+  painelHistorico = signal<'recentes' | 'historico' | null>(null);
+  modoPesquisa = signal<'venda' | 'consulta'>('venda');
+  idVenda = signal(this.gerarIdVenda());
+  inicioVenda = signal(new Date());
   
   vendaForm!: FormGroup;
   itensVenda = signal<ItemVenda[]>([]); // Lista de itens no cupom
@@ -45,8 +58,7 @@ export class SalesComponent {
   nomeEmpresa = 'Minha Empresa Ltda';
   enderecoEmpresa = 'Rua Exemplo, 123 - Cidade - Estado';
   telefoneEmpresa = '(00) 0000-0000';
-  dataAtual = new Date();
-  nomeOperador = 'Operador PDV';
+  nomeOperador = 'Operador autenticado';
   textoDigitadoBusca = '';
 
   totalVenda = computed(() => {
@@ -66,7 +78,8 @@ export class SalesComponent {
     private vendasService: VendasService,
     private cashFlowService: CashFlowService,
     private dialog: MatDialog,
-    private estoqueService: StockService
+    private estoqueService: StockService,
+    private usersService: UsersService,
   ) {
     this.vendaForm = this.fb.group({
       barcode: ['', [Validators.required]],
@@ -74,6 +87,22 @@ export class SalesComponent {
     });
     this.filtraggemProdutos();
   }
+
+  async ngOnInit(): Promise<void> {
+    const empresaId = this.authService.activeTenantId();
+    const userId = this.authService.userUid();
+    if (!empresaId || !userId) {
+      return;
+    }
+
+    try {
+      const operador = await this.usersService.getUserById(empresaId, userId);
+      this.nomeOperador = operador?.nome || this.nomeOperador;
+    } catch (error: unknown) {
+      console.error('Não foi possível carregar o operador do caixa.', error);
+    }
+  }
+
   filtraggemProdutos() {
       this.produtosFiltrados$ = this.searchControl.valueChanges.pipe(
       debounceTime(300), // Aguarda 300ms após o utilizador parar de digitar
@@ -236,7 +265,83 @@ export class SalesComponent {
     this.formaPagamento.set('dinheiro');
     this.valorRecebido.set(0);
     this.exibirPagamento.set(false);
+    this.idVenda.set(this.gerarIdVenda());
+    this.inicioVenda.set(new Date());
 
+  }
+
+  limparVenda(): void {
+    if (this.itensVenda().length === 0) {
+      this.snackBar.open('A venda já está vazia.', 'OK', { duration: 2200 });
+      return;
+    }
+
+    this.limparPDV();
+    this.snackBar.open('Venda limpa com sucesso.', 'OK', { duration: 2200 });
+  }
+
+  selecionarModoPesquisa(modo: 'venda' | 'consulta'): void {
+    this.modoPesquisa.set(modo);
+    this.painelHistorico.set(null);
+    setTimeout(() => this.productSearch?.nativeElement.focus());
+  }
+
+  async processarBuscaAtual(event?: KeyboardEvent): Promise<void> {
+    if (this.autocompleteTrigger?.panelOpen && this.autocompleteTrigger.activeOption) {
+      return;
+    }
+
+    event?.preventDefault();
+    const valor = this.searchControl.value?.trim() || '';
+    const empresaId = this.authService.activeTenantId();
+    if (!valor || !empresaId || this.carregando()) {
+      return;
+    }
+
+    const { termo, quantidade } = this.extrairTermoEQuantidade(valor);
+    this.carregando.set(true);
+
+    try {
+      let produto: Produto | null = null;
+      let quantidadeFinal = quantidade;
+
+      if (/^\d+$/.test(termo)) {
+        const info = await this.processarCodigoBarras(termo);
+        produto = info?.produto || null;
+        if (produto && info?.isBalanca) {
+          quantidadeFinal = produto.pesoNoCodigo
+            ? info.quantidadeOuPeso
+            : this.calculaPeso(info.quantidadeOuPeso, produto.valorUnitarioVenda);
+        }
+      } else {
+        const produtos = await firstValueFrom(this.produtosService.buscarProdutosComEstoque(termo));
+        produto = produtos[0] || null;
+      }
+
+      if (!produto) {
+        this.snackBar.open('Produto não encontrado.', 'Fechar', { duration: 3000 });
+        return;
+      }
+
+      this.executarAcaoProduto(produto, quantidadeFinal);
+    } catch (error: unknown) {
+      console.error('Não foi possível processar a pesquisa do produto.', error);
+      this.snackBar.open('Não foi possível consultar o produto.', 'Fechar', { duration: 3000 });
+    } finally {
+      this.carregando.set(false);
+    }
+  }
+
+  mostrarUltimosItens(): void {
+    this.painelHistorico.set('recentes');
+  }
+
+  mostrarHistorico(): void {
+    this.painelHistorico.set('historico');
+  }
+
+  fecharHistorico(): void {
+    this.painelHistorico.set(null);
   }
 
   /**
@@ -281,7 +386,7 @@ export class SalesComponent {
           qtdFinal = qtd;
         }
         
-        this.adicionarItemAoCupom(produto, qtdFinal);
+        this.executarAcaoProduto(produto, qtdFinal);
       } else {
         this.snackBar.open('Produto não encontrado!', 'Fechar', { duration: 3000 });
       }
@@ -301,17 +406,40 @@ export class SalesComponent {
   }
 
   private adicionarItemAoCupom(produto: Produto, quantidade: number): void {
+    if (!produto.firebaseId || !Number.isFinite(quantidade) || quantidade <= 0) {
+      this.snackBar.open('Não foi possível adicionar o produto.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
     const novoItem: ItemVenda = {
-      produtoId: produto.firebaseId!,
-      descricao: produto.nome, // Ajuste conforme seu campo de nome/descrição
+      produtoId: produto.firebaseId,
+      descricao: produto.nome,
       codigoBarras: produto.codigoDeBarras,
       quantidade: quantidade,
       valorUnitario: produto.valorUnitarioVenda,
       subtotal: produto.valorUnitarioVenda * quantidade,
     };
 
-    // Adiciona ao topo da lista
-    this.itensVenda.update(itens => [novoItem, ...itens]);
+    this.itensVenda.update((itens) => {
+      const itemExistente = itens.find((item) => item.produtoId === novoItem.produtoId);
+      if (!itemExistente) {
+        return [novoItem, ...itens];
+      }
+
+      return itens.map((item) => item.produtoId === novoItem.produtoId
+        ? {
+            ...item,
+            quantidade: item.quantidade + quantidade,
+            subtotal: item.valorUnitario * (item.quantidade + quantidade),
+          }
+        : item);
+    });
+
+    this.historicoLeituras.update((produtos) => [produto, ...produtos]);
+    this.produtosRecentes.update((produtos) => [
+      produto,
+      ...produtos.filter((item) => item.firebaseId !== produto.firebaseId),
+    ].slice(0, 4));
   }
 
   async processarCodigoBarras(codigoCompleto: string) {
@@ -370,12 +498,7 @@ export class SalesComponent {
     this.valorRecebido.set(0);
     this.formaPagamento.set('dinheiro');
 
-    // 3. Opcional: Devolve o foco para o campo de código de barras
-    // Isso agiliza a retomada da venda sem precisar usar o mouse
-    setTimeout(() => {
-      const input = document.querySelector('input[formControlName="barcode"]') as HTMLInputElement;
-      if (input) input.focus();
-    }, 100);
+    setTimeout(() => this.productSearch?.nativeElement.focus(), 100);
   }
 
   onFormaPagamentoChange(valor: any): void {
@@ -386,20 +509,41 @@ export class SalesComponent {
 
   onProdutoSelecionado(produto: Produto): void {
     if(!produto.firebaseId) return;
-    let quantidade = 1;
-    console.log('Texto digitado na busca:', this.textoDigitadoBusca);
-    const partes = this.textoDigitadoBusca.toLowerCase().split('x');
-    if (this.textoDigitadoBusca.toLowerCase().includes('x')) {
-      const possivelQtd = Number(partes[0]);
-      
-      // Se o que vem antes do 'x' for um número válido, usamos ele
-      if (!isNaN(possivelQtd) && possivelQtd > 0) {
-        quantidade = possivelQtd;
-      }
-      console.log('Quantidade extraída do input:', quantidade);
+    const { quantidade } = this.extrairTermoEQuantidade(this.textoDigitadoBusca);
+    this.executarAcaoProduto(produto, quantidade);
+  }
+
+  private executarAcaoProduto(produto: Produto, quantidade: number): void {
+    if (this.modoPesquisa() === 'consulta') {
+      this.dialog.open(ModalViewProdutoComponent, {
+        data: produto,
+        width: '620px',
+        maxWidth: '94vw',
+      });
+    } else {
+      this.adicionarItemAoCupom(produto, quantidade);
     }
-    this.adicionarItemAoCupom(produto, quantidade);
+
     this.searchControl.setValue(''); 
+    this.textoDigitadoBusca = '';
+    setTimeout(() => this.productSearch?.nativeElement.focus());
+  }
+
+  private extrairTermoEQuantidade(valor: string): { termo: string; quantidade: number } {
+    const partes = valor.trim().split(/x/i);
+    if (partes.length > 1) {
+      const quantidade = Number(partes[0]);
+      if (Number.isFinite(quantidade) && quantidade > 0) {
+        return { termo: partes.slice(1).join('x').trim(), quantidade };
+      }
+    }
+
+    return { termo: valor.trim(), quantidade: 1 };
+  }
+
+  private gerarIdVenda(): string {
+    const timestamp = Date.now().toString().slice(-6);
+    return `PDV-${timestamp}`;
   }
 
   private perguntarImpressao(urlDanfe: string) {

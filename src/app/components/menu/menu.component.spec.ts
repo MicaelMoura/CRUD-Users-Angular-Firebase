@@ -42,6 +42,25 @@ describe('MenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('recolhe o menu no desktop e informa a mudança', () => {
+    spyOnProperty(window, 'innerWidth', 'get').and.returnValue(1200);
+    spyOn(component.collapsedChange, 'emit');
+
+    component.toggleMenu();
+
+    expect(component.collapsed()).toBeTrue();
+    expect(component.collapsedChange.emit).toHaveBeenCalledOnceWith(true);
+  });
+
+  it('abre o drawer sem recolher o menu no mobile', () => {
+    spyOnProperty(window, 'innerWidth', 'get').and.returnValue(390);
+
+    component.toggleMenu();
+
+    expect(component.mobileOpen()).toBeTrue();
+    expect(component.collapsed()).toBeFalse();
+  });
+
   it('encerra a sessão Firebase antes de navegar para o login do tenant', async () => {
     await component.logout();
 

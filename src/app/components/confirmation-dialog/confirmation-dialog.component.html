@@ -1,0 +1,13 @@
+<section class="confirmation-dialog" role="alertdialog" [attr.aria-labelledby]="'confirmation-title'">
+  <div class="dialog-icon" [class.destructive]="data.destructive">
+    <mat-icon>{{ data.destructive ? 'delete_outline' : 'help_outline' }}</mat-icon>
+  </div>
+  <h2 id="confirmation-title">{{ data.title }}</h2>
+  <p>{{ data.message }}</p>
+  <div class="dialog-actions">
+    <button mat-button type="button" (click)="close(false)">{{ data.cancelLabel || 'Cancelar' }}</button>
+    <button mat-flat-button type="button" [class.destructive-button]="data.destructive" (click)="close(true)">
+      {{ data.confirmLabel || 'Confirmar' }}
+    </button>
+  </div>
+</section>

@@ -71,7 +71,7 @@ Datas gravadas no Firestore devem ser tratadas como `Timestamp` na leitura e con
 
 - Login por empresa, e-mail e senha e recuperação de senha.
 - Estado de usuário, tenant e papel por Signals no `AuthService`.
-- CRUD de empresas, usuários, fornecedores e produtos.
+- CRUD de empresas, usuários, fornecedores e produtos. Usuários são provisionados e atualizados por callable Functions no tenant ativo; a remoção exclui somente a associação daquele tenant.
 - Cadastro, ajuste, consulta e baixa de estoque.
 - PDV com busca de produtos, leitura e validação de EAN, multiplicador de quantidade, etiquetas de balança, seleção de pagamento, registro da venda, baixa do estoque, lançamento no caixa e cupom visual.
 - Entradas, saídas, saldo, abertura e fechamento de caixa.
@@ -89,8 +89,9 @@ Trate esta lista como dívida já existente. Atualize-a quando uma lacuna for re
 ### Implantação de segurança pendente
 
 - Guards, autorização por papel, restauração segura do tenant e logout Firebase estão implementados no código.
-- `firestore.rules` está versionado e coberto por testes de emulador, mas o ambiente remoto só estará protegido depois do deploy explícito das regras.
-- `senhaAdmin` não integra mais o contrato persistido. O provisionamento usa a callable Function `provisionarEmpresa`, mas a Function precisa ser publicada antes de novos cadastros.
+- `firestore.rules` está versionado, coberto por testes de emulador e publicado no projeto `curso-angular-8e009` desde 21/08/2026.
+- `senhaAdmin` não integra mais o contrato persistido. O provisionamento usa a callable Function `provisionarEmpresa`, publicada no projeto `curso-angular-8e009` em 21/08/2026.
+- O gerenciamento de usuários usa `provisionarUsuario`, `atualizarUsuario` e `removerAcessoUsuario`. As Functions, as regras que bloqueiam escrita direta e o frontend correspondente foram publicados no projeto `curso-angular-8e009` em 21/08/2026.
 - A migração `functions/scripts/migrate-remove-senha-admin.mjs` precisa ser executada com credenciais administrativas para remover campos legados, invalidar senhas potencialmente expostas e revogar sessões. Não considere a exposição remediada antes dessa execução.
 
 ### Prioridade alta
@@ -104,7 +105,7 @@ Trate esta lista como dívida já existente. Atualize-a quando uma lacuna for re
 ### Qualidade e manutenção
 
 - Os testes atuais são majoritariamente smoke tests gerados e não cobrem regras de negócio.
-- Na linha de base de 20/08/2026, a suíte headless executa 21 testes com sucesso e as regras do Firestore executam 7 cenários no emulador. A cobertura ainda inclui smoke tests e deve crescer junto das demais regras de negócio.
+- Na linha de base de 21/08/2026, a suíte headless executa 47 testes, as regras do Firestore executam 7 cenários, as validações puras das Functions executam 4 testes e o fluxo integrado de usuários executa 3 cenários nos emuladores de Auth, Firestore e Functions. A cobertura ainda inclui smoke tests e deve crescer junto das demais regras de negócio.
 - Há subscriptions sem estratégia uniforme de descarte, uso frequente de `any`, logs de depuração e mensagens com `alert`/`confirm` misturadas a snackbars.
 - Não há lint configurado no `package.json`.
 - O README ainda não documenta instalação, Firebase, arquitetura nem operação.

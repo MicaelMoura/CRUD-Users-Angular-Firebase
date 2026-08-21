@@ -1,123 +1,111 @@
 <app-menu></app-menu>
 
-<div class="pdv-container mt-3">
-  <div class="row g-3">
+<main class="pdv-page">
+  <div class="pdv-grid">
+    <section class="workspace-card">
+      <header class="page-title">
+        <span aria-hidden="true"></span>
+        <h1>Frente de caixa</h1>
+      </header>
 
-    <div class="col-md-5">
-      <div class="card p-4 shadow-sm h-80">
-        <h1 class="titulo">Frente de Caixa</h1>
-        <div class="pesquisa-container mb-3">
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Pesquisar Produto (Nome)</mat-label>
-            <mat-icon matSuffix>search</mat-icon>
-            <input
-              matInput
-              [formControl]="searchControl"
-              (input)="textoDigitadoBusca = $any($event.target).value"
-              [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete"
-                (optionSelected)="onProdutoSelecionado($event.option.value)">
-                @for (produto of produtosFiltrados$ | async; track produto) {
-                  <mat-option [value]="produto">
-                    <div class="produto-option">
-                      <strong>{{ produto.nome }}</strong>
-                      <span class="spacer"></span>
-                      <small> {{ produto.valorUnitarioVenda | currency:'BRL' }}</small>
-                      <span class="estoque-tag">Estoque: {{  produto.estoqueQtd }}</span>
-                    </div>
-                  </mat-option>
-                }
+      <div class="product-search">
+        <input
+          #productSearch
+          type="search"
+          aria-label="Pesquisar produto"
+          #autocompleteTrigger="matAutocompleteTrigger"
+          placeholder="Pesquisar produto por nome ou código"
+          [formControl]="searchControl"
+          [matAutocomplete]="auto"
+          (keydown.enter)="processarBuscaAtual()"
+          (input)="textoDigitadoBusca = $any($event.target).value">
+        <app-pdv-search-mode-toggle
+          [mode]="modoPesquisa()"
+          (modeChange)="selecionarModoPesquisa($event)">
+        </app-pdv-search-mode-toggle>
+      </div>
 
-                @if ((produtosFiltrados$ | async)?.length === 0 && searchControl.value) {
-                  <mat-option disabled>
-                    <div class="no-result">
-                      <mat-icon>error_outline</mat-icon>
-                      <span>Produto não encontrado</span>
-                    </div>
-                  </mat-option>
-                }
-              </mat-autocomplete>
-            </mat-form-field>
-          </div>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onProdutoSelecionado($event.option.value)">
+        @for (produto of produtosFiltrados$ | async; track produto.firebaseId) {
+          <mat-option [value]="produto">
+            <div class="produto-option">
+              <span>
+                <strong>{{ produto.nome }}</strong>
+                <small>{{ produto.codigoDeBarras }}</small>
+              </span>
+              <span class="produto-preco">{{ produto.valorUnitarioVenda | currency:'BRL' }}</span>
+              <span class="estoque-tag">Estoque: {{ produto.estoqueQtd | number:'1.0-3' }}</span>
+            </div>
+          </mat-option>
+        }
 
-          <form [formGroup]="vendaForm" (submit)="onBarcodeRead()">
-            <div class="row mt-4">
-              <div class="col-md-8">
-                <mat-form-field class="w-100" appearance="outline">
-                  <mat-label>Código de Barras</mat-label>
-                  <input matInput formControlName="barcode" #barcodeInput autofocus autocomplete="off"
-                    [readonly]="carregando()"
-                    maxlength="16"
-                    >
-                    @if (carregando()) {
-                      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                    }
-                    @if (!carregando()) {
-                      <mat-icon matSuffix>qr_code_scanner</mat-icon>
-                    }
-                  </mat-form-field>
-                </div>
-              </div>
-            </form>
+        @if ((produtosFiltrados$ | async)?.length === 0 && searchControl.value) {
+          <mat-option disabled>
+            <div class="no-result"><mat-icon>search_off</mat-icon>Produto não encontrado</div>
+          </mat-option>
+        }
+      </mat-autocomplete>
 
-            @if (itensVenda().length > 0) {
-              <div class="display-valores mt-4">
-                <div class="valor-box">
-                  <span class="label">VALOR UNITÁRIO</span>
-                  <span class="value">{{ itensVenda()[0].valorUnitario| currency:'BRL' }}</span>
-                </div>
-                <div class="valor-box total">
-                  <span class="label">SUBTOTAL DO ITEM</span>
-                  <span class="value">{{ itensVenda()[0].subtotal | currency:'BRL' }}</span>
-                </div>
-              </div>
+      <div class="quick-actions" aria-label="Ações rápidas">
+        <app-pdv-action-card
+          icon="history_toggle_off"
+          label="Últimos itens lidos"
+          (action)="mostrarUltimosItens()">
+        </app-pdv-action-card>
+        <app-pdv-action-card
+          icon="manage_history"
+          label="Histórico de leituras"
+          (action)="mostrarHistorico()">
+        </app-pdv-action-card>
+      </div>
+
+      @if (painelHistorico(); as painel) {
+        <app-pdv-product-history
+          [title]="painel === 'recentes' ? 'Últimos itens lidos' : 'Histórico de leituras'"
+          [products]="painel === 'recentes' ? produtosRecentes() : historicoLeituras()"
+          (closePanel)="fecharHistorico()"
+          (selectProduct)="onProdutoSelecionado($event)">
+        </app-pdv-product-history>
+      }
+
+      <section class="recent-products">
+        <h2>Produtos recentes</h2>
+
+        @if (produtosRecentes().length > 0) {
+          <div class="product-grid">
+            @for (produto of produtosRecentes(); track produto.firebaseId) {
+              <app-pdv-product-card
+                [produto]="produto"
+                (selectProduct)="onProdutoSelecionado($event)">
+              </app-pdv-product-card>
             }
           </div>
-        </div>
-
-        <div class="col-md-5">
-          <div class="cupom-fiscal shadow-lg">
-            <div class="cupom-header">
-              <h3>CUPOM FISCAL</h3>
-              <p>------------------------------------------</p>
-            </div>
-
-            <div class="cupom-body">
-              <div class="item-linha header">
-                <span class="cod">CÓD</span>
-                <span class="desc">DESCRIÇÃO</span>
-                <span class="qtd">QTD</span>
-                <span class="vlr">VL.UN</span>
-                <span class="sub">TOTAL</span>
-              </div>
-
-              <div class="cupom-scroll">
-                @for (item of itensVenda(); track item; let i = $index) {
-                  <div class="item-linha">
-                    <span class="cod">{{ item.codigoBarras }}</span>
-                    <span class="desc">{{ item.descricao }}</span>
-                    <span class="qtdS">{{ item.quantidade }}x</span>
-                    <span class="vlrS">{{ item.valorUnitario | number:'1.2-2' }}</span>
-                    <span class="subS">{{ item.subtotal | number:'1.2-2' }}</span>
-                    <mat-icon class="btn-del" (click)="removerItem(i)">delete_outline</mat-icon>
-                  </div>
-                }
-              </div>
-            </div>
-
-            <div class="cupom-footer">
-              <div class="total-venda py-3">
-                <span>TOTAL R$</span>
-                <span class="total-numero">{{ totalVenda() | number:'1.2-2' }}</span>
-              </div>
-
-              <button mat-raised-button color="primary" class="w-100 p-4 btn-finalizar"
-                (click)="exibirPagamentoModal()">
-                <mat-icon>payments</mat-icon>
-                FINALIZAR VENDA (F2)
-              </button>
+        } @else {
+          <div class="recent-empty">
+            <mat-icon>inventory_2</mat-icon>
+            <div>
+              <strong>Nenhum produto recente</strong>
+              <span>Os produtos adicionados aparecerão aqui para acesso rápido.</span>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        }
+      </section>
+
+      <footer class="status-bar">
+        <span><mat-icon>person</mat-icon>Operador: {{ nomeOperador }}</span>
+        <span><mat-icon>point_of_sale</mat-icon>Terminal: Caixa 01</span>
+      </footer>
+    </section>
+
+    <app-sale-summary
+      [items]="itensVenda()"
+      [total]="totalVenda()"
+      [saleId]="idVenda()"
+      [startedAt]="inicioVenda()"
+      [loading]="carregando()"
+      (removeItem)="removerItem($event)"
+      (clearSale)="limparVenda()"
+      (finalizeSale)="exibirPagamentoModal()">
+    </app-sale-summary>
+  </div>
+</main>
